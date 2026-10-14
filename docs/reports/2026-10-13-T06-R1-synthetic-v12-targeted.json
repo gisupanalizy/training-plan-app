@@ -1,0 +1,52 @@
+{
+  "task": "T06",
+  "date": "2026-10-13T11:01:37.728Z",
+  "model": "gpt-6-luna",
+  "promptVersion": "import-pl-v12",
+  "schemaVersion": 2,
+  "sampleCount": 2,
+  "successfulCount": 2,
+  "fieldAccuracy": 1,
+  "omissionCount": 0,
+  "additionCount": 0,
+  "mismatchCount": 0,
+  "p50Ms": 7077,
+  "p95Ms": 11643,
+  "p50SuccessfulMs": 7077,
+  "p95SuccessfulMs": 11643,
+  "inputTokens": 3726,
+  "outputTokens": 1465,
+  "outputLimitHits": 0,
+  "estimatedCostUsd": 0.001105,
+  "accountCostUsd": null,
+  "rows": [
+    {
+      "id": "text-kg",
+      "format": "text",
+      "latencyMs": 7077,
+      "correct": 6,
+      "total": 6,
+      "differences": [],
+      "issueCount": 0,
+      "inputTokens": 1858,
+      "outputTokens": 408,
+      "errorDiagnostics": null,
+      "estimatedCostUsd": 0.00039,
+      "error": null
+    },
+    {
+      "id": "text-superset",
+      "format": "text",
+      "latencyMs": 11643,
+      "correct": 11,
+      "total": 11,
+      "differences": [],
+      "issueCount": 0,
+      "inputTokens": 1868,
+      "outputTokens": 1057,
+      "errorDiagnostics": null,
+      "estimatedCostUsd": 0.000715,
+      "error": null
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "apka-plan-treningowy",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:t03:local": "node scripts/run-local-t03.mjs",
+    "test:t04:local": "node scripts/run-local-t04.mjs",
+    "test:t05:local": "node scripts/run-local-t05.mjs",
+    "test:t08:local": "node scripts/run-local-t05.mjs scripts/test-t08-api.mjs",
+    "test:t09:local": "node scripts/run-local-t05.mjs scripts/test-t09-api.mjs",
+    "test:t06:local": "node scripts/run-local-t06.mjs",
+    "test:t06:http": "node scripts/run-local-t06-http.mjs",
+    "evaluate:t06": "vitest run src/lib/imports/live-evaluation.test.ts",
+    "predev": "node scripts/copy-pdf-worker.mjs",
+    "prebuild": "node scripts/copy-pdf-worker.mjs",
+    "test:t06r1:local": "node scripts/run-local-t05.mjs scripts/test-t06r1-api.mjs",
+    "evaluate:t06:real": "node scripts/evaluate-t06-real.mjs",
+    "test:t07r1:http": "node scripts/run-local-t06-http.mjs",
+    "test:t04r1:http": "node scripts/run-local-t04r1-http.mjs",
+    "test:t10:local": "node scripts/run-local-t10.mjs"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.3",
+    "exceljs": "^4.4.0",
+    "next": "16.4.0",
+    "pdf-lib": "^1.17.1",
+    "pdfjs-dist": "^6.4.299",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "^19.2.0",
+    "jsdom": "^30.1.2",
+    "supabase": "^2.120.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.11"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
+  },
+  "engines": {
+    "node": ">=22.13.0 <23 || >=24"
+  }
+}

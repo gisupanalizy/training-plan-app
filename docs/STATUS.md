@@ -1,0 +1,77 @@
+# Aktualny stan projektu
+
+Aktualizacja: 2026-10-14.
+
+## Co istnieje
+
+T01–T08, T06-R1, T07-R1 i T04-R1 są ukończone lokalnie. T09 jest `done` lokalnie po rozstrzygnięciu użytkownika z 2026-10-14 (D025). T10 jest `done` lokalnie: odbiór i poprawki opisano w raporcie. T11 jest blocked po przygotowaniu lokalnym: cele i dostęp usług wymagają odpowiedzi użytkownika. Fizyczny review użytkownika po Vercel należy do T10-R1. Git zainicjowano na gałęzi `main`; docelowe repozytorium: [gisupanalizy/training-plan-app](https://github.com/gisupanalizy/training-plan-app). Pierwszy commit obejmuje źródła i dokumentację, bez sekretów i prywatnych fixtures.
+
+T06-R1 poprawił odczyt tabel i ich kontekstu, zakresy i opcjonalność, AMRAP, superserie, pytania z kontekstem i stabilnymi celami, podgląd PDF.js/XLSX oraz wewnętrzny słownik PL/EN. Zastosowano lokalnie dwie migracje rozszerzające plan i nowe niezmienne snapshoty, z obsługą starszych szkiców. Najnowszy [handoff Git](handoffs/2026-10-14-T11-G1-pierwszy-commit.md) dokumentuje inicjalizację repo; [handoff T11](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md) pozostaje punktem wejścia do wdrożenia. [T10](handoffs/2026-10-14-T10-odbior-lokalny.md) dokumentuje lokalny odbiór; [T04-R1](handoffs/2026-10-13-T04-R1-czytelny-edytor.md) dokumentuje poprzednią przebudowę edytora. T04-R1 przebudował ręczny edytor: jeden trening, karty i okna edycji, zakresy oraz parametry dodatkowe na żądanie. Import zachowuje trzy kroki T07-R1; poprzednie handoffy dokumentują wcześniejsze zadania.
+
+## Następny krok
+
+T11: użytkownik wskazuje konto/zespół i projekt Vercel oraz dwa projekty Supabase (preview/production), a następnie zapewnia dostęp przez integracje lub CLI. Ustalane są także SMTP, region, koszty i operator. Nie podawać sekretów w chacie/repo. Po odblokowaniu wykonać [procedurę wdrożenia](T11_DEPLOYMENT.md), oficjalny manifest Vercel, migracje/sekrety/backup/cleanup i smoke dwóch kont po HTTPS. Link dopiero po rzeczywistym sukcesie. [Instrukcja testera](TESTER_GUIDE.md) jest gotowa bez adresu. T11 nie jest done. Telefon/Safari pozostają niesprawdzone; szersza beta czeka na T10-R1.
+
+## Przygotowanie i weryfikacja T11
+
+Sprawdzono brak lokalnych powiązań projektów, tokenów procesu i znanych plików logowania CLI. `supabase projects list` odmówiło z powodu braku tokenu, a Vercel 64.0.2 `deploy --dry --format=json` z odrębną konfiguracją z powodu braku poświadczeń. Obie integracje są dostępne do instalacji, ale nie są połączone. Zdalne listy projektów i ich ustawienia nie zostały odczytane. Nie tworzono usług, nie zmieniano kluczy i nie wykonywano uploadu.
+
+Nowa lista dozwolonych plików w `.vercelignore` i `scripts/prepare-t11-deploy.mjs` tworzą czystą kopię bez `.env`, fixtures, docs, testów i migracji. [Lokalny manifest](reports/2026-10-14-T11-release.json): 94 pliki, 767 227 B, 20 migracji w osobnym wykazie. To nie manifest faktycznej wysyłki dostawcy. Czyste `npm ci --offline --ignore-scripts --no-audit --no-fund`, build i typy przeszły na Node 26.4.0 bez `.env` i AI. `node scripts/verify-t11-package.mjs` potwierdziło zgodne hashe, ścieżki Git/Vercel i odrzucenie env/sekretu/dowiązania na syntetycznych kopiach. Nie ponawiano całej suite aplikacji; kod domenowy i API nie zmieniły się.
+
+Sprawdzono aktualne oficjalne dokumenty Vercel/Supabase/OpenAI; źródła przy konkretnych regułach w procedurze. Otwarte: SMTP zaproszeń, audio 5 MiB wobec 4,5 MB Vercel, automatyczne sprzątanie preview, backlog ponad 50 importów, rzeczywiste limity kosztów i test odtworzenia. Proponowane zmiany limitu audio/RPO/RTO nie są zatwierdzonym kontraktem. Bez płatnego AI, agentów, telefonu/Safari, hostingu i restore. D027 zapisuje przygotowanie i granice. Szczegóły błędów narzędzi i zasobów tymczasowych w handoffie.
+
+## Weryfikacja T10
+
+[Raport T10](T10_ACCEPTANCE.md) podaje polecenia, środowisko, wyniki i listę fizycznego review po Vercel. D025 rozstrzyga termin odbioru T09; D026 zamyka bezpośredni INSERT/UPDATE/DELETE klienta do katalogu i tabel planu. Lokalna migracja T10 zastosowana bez resetu danych. Cztery ręczne API korzystają ze wspólnego limitowanego czytnika JSON (400 dla niepoprawnego kształtu/rozmiaru); proxy prywatnego API bez sesji zwraca JSON 401. `.gitignore` i nowy `.vercelignore` wykluczają prywatne fixtures, lokalne sekrety i konfigurację .vercel.
+
+Rzeczywiste lokalne T03 (w tym Storage/Mailpit i 3 testy sesji), T04, T05, T06 (3/3, mock AI), T06-R1 i T10 (12 tabel, trzy operacje, A/B/anon) przeszły. `npm test` w runnerze: 159 przeszło, 6 pominięto, 23 aktywne pliki/4 pominięte; build i następujące po nim typy przeszły. HTTP T06/T07-R1, T08 i T09 oraz syntetyczny Chrome T04-R1 przeszły. Chrome T10 po poprawieniu selektorów/oczekiwania testu sprawdził logowanie UI, 1RM, start, serię z utratą odpowiedzi/retry, zero/null, pominięcie, dodatki i komentarz, koniec, ponowne logowanie/historię, 540 kg w postępie i A/B/anon. Brak błędów strony; mobilne zrzuty ocenione. Wszystkie sekcje zaliczone; nie był to jeden nieprzerwany udany przebieg całego runnera. `npm audit --omit=dev --audit-level=high`: 0 podatności po ponowieniu z dostępem sieciowym.
+
+Nie wykonano nowego płatnego AI, wdrożenia, telefonu/Safari ani obciążenia. Nowe konta i Chrome T10 są syntetyczne; istniejący audit źródła w suite czyta zachowane materiały lokalne. Prywatne dane nie były publikowane. Port 3006 bez nasłuchu po sprawdzeniach, lokalny Supabase pozostaje uruchomiony. Bez innych agentów i zmian sekretów.
+
+## Weryfikacja T04-R1
+
+Nowy i istniejący plan mają kompaktowy ręczny edytor jednego treningu, podgląd całego planu i modalną edycję ćwiczeń/bloków/serii. Zakresy i pola dodatkowe są otwierane na żądanie; użyte wartości, braki i uwagi są widoczne w kartach. Zapis publikuje całą wersję, retry zachowuje payload, a ukrycie pól nie usuwa danych. Bez migracji lub zmian API.
+
+`npm test`: 122 przeszło, 8 pominięto. Produkcyjny build i sekwencyjny `npm run typecheck` przeszły. Lokalne T04 potwierdziło A/B/anon, wersje, retry i 1RM. Chrome 1440×1000/390×844 na własnych syntetycznych danych sprawdził karty, dialog/cancel, katalog/przeniesienie, superserie, fokus, brak overflow i prawdziwą publikację z celową utratą odpowiedzi oraz retry bez duplikatu. Odczyt bazy potwierdził zachowanie wcześniejszych serii i snapshotów rozpoczętego treningu. HTTP T07-R1 z mockiem szkicu i syntetycznymi źródłami przeszedł; w tej sesji nie ponawiano klikalnego testu prywatnych źródeł importu. Pierwsze testy miały błędy oczekiwań/selektorów; poprawiono i powtórzono. Dostęp do Dockera wymagał powtórzenia poza sandboxem. Szczegóły w handoffie T04-R1.
+
+Bez innych agentów, płatnego AI, publikacji prywatnych fixtures i zmian sekretów. Fizyczne telefony, Safari/iPhone oraz hosting pozostały niesprawdzone w T04-R1. Bieżący status T09 określa ROADMAP i D025.
+
+## Weryfikacja T07-R1
+
+Import ma własny przegląd: Ćwiczenia → Serie i superserie → Podsumowanie. Krótkie karty pokazują 7–8 × 1, różne cele i jawne braki; edycja bloku/pojedynczej serii i grup jest otwierana na żądanie. Ankieta wyjaśnia jedno pytanie, z wyborem/zakresem/AMRAP, cytatem i podglądem zmiany. Źródło jest panelem lub pełnym dialogiem na telefonie. Krok i potwierdzenia są zapisane w opcjonalnym review_data; brak migracji planu/historii. W ramach T07-R1 ręczny edytor pozostał dotychczasowy; późniejszy T04-R1 opisano wyżej.
+
+`npm test`: 100 przeszło, 8 pominięto; typy i build przeszły. Lokalne T06 (3/3), T06-R1 API/snapshot/retry i HTTP A/B/anon przeszły, w tym trwały etap, niepoprawne metadata i starszy PATCH. Chrome na zachowanych wynikach trzech prawdziwych źródeł sprawdził karty, blok/cancel, ankiety, kolejność, krok/reload/potwierdzenia, fokus, widok mobilny, 6 stron PDF i wszystkie arkusze. UI test z mockiem sprawdził utratę odpowiedzi publikacji i retry tym samym ID bez PATCH już zatwierdzonego szkicu. Nie wykonano nowych płatnych prób AI ani publikacji prywatnych planów. Fizyczne urządzenia, Safari i hosting niesprawdzone. Szczegóły i granice w handoffie T07-R1.
+
+## Weryfikacja T06-R1
+
+Trzy źródła dołączono lokalnie za wyraźną zgodą użytkownika. Niezależny odczyt i baseline zachowano przed poprawkami. Końcowa rzeczywista ścieżka Auth/Storage/processImportJob przyjęła PDF (3 treningi/30 ćwiczeń/1 uzasadnione pytanie, 48,562 s), FBW (3 treningi/19 ćwiczeń/6 pytań, 92 ms) i Madzię (12 jednostek/17 pytań, 111 ms). Oba XLSX użyły czytnika struktury z 0 tokenów AI. Każde pytanie oceniono; jawne serie/powtórzenia/czas nie wywołują pytań. Niezależny audit porównuje wszystkie 30 pozycji PDF pod kątem serii, celu i grupy.
+
+Prawdziwy model: pełna seria syntetyczna v11 12/12 szkiców i 88/90 pól; 2 różnice nazw dni A/B. Po poprawce aplikacji celowane v12 2/2 i 17/17. Nie ponowiono pełnej serii v12. Znane metryki plików i obu serii syntetycznych sumują się do 0,058016 USD; 4 wcześniejsze próby mają niepełne tokeny, więc całkowity rachunek jest nieznany. Przed próbami sprawdzano pozostały zatwierdzony budżet T06 (5 USD); nie usuwano istniejących prób dla resetu limitu. Szczegóły i źródła taryfy: [T06_IMPORT](T06_IMPORT.md).
+
+`npm test`, typy i build oraz lokalne T04/T05/T06/T06-R1/T08 przeszły. HTTP T06 z produkcyjnym Next sprawdził A/B/anon, prywatny podgląd, korektę/reload, retry i stare szkice. Klikalny test Chrome na prawdziwych źródłach i zachowanych wynikach sprawdził 6 stron PDF, zoom, pełny ekran, skok do strony 4, mobilną szerokość, wszystkie arkusze, dolne wiersze/przekreślenie, zakres/AMRAP i zachowanie odpowiedzi po przestawieniu/reload. Dokładne liczniki i polecenia są w handoffie. Mock AI w regresji HTTP jest oddzielony od prawdziwych prób.
+
+## Ograniczenia
+
+Pozostałe pytania dotyczą daty Excela, podstawy ciężaru, alternatyw sprzętu, znaczenia zapisu przerwy i zakresu/protokołu bloków; nie uzupełniamy ich przez zgadywanie. Czytnik rozpoznaje określone układy, inne przechodzą do AI. PDF ma skok do strony i cytat, bez automatycznego zaznaczania prostokąta. Słownik EN ma 876 pozycji, tylko część ma zweryfikowane odpowiedniki PL; niepewne dopasowania są propozycjami. Prawdziwe próby nie gwarantują jakości dowolnego dokumentu. Hosting, obciążenie, fizyczne telefony i Safari/iPhone nadal niesprawdzone. Prywatne źródła i pełne wyniki pozostają wyłącznie lokalnie, klucz w ignorowanym `.env`; niczego nie wysłano do publicznego repo.
+
+## Weryfikacja T07
+
+`npm run typecheck`, `npm test` (51 aktywnych testów, 6 pominiętych) i `npm run build`: sukces. Po lokalnej migracji `DO_NOT_TRACK=1 npm run test:t06:local`: 3/3; rozszerzony `DO_NOT_TRACK=1 npm run test:t06:http`: sukces dla prywatnego źródła, korekty po odświeżeniu, A/B/anon, podpisanego uploadu, błędnego i niewspieranego pliku, anulowania, pytań i powtórzonego zatwierdzenia. Test komponentu symuluje odmowę aparatu i 55 pytań; nie jest testem prawdziwego urządzenia ani jakości AI. Wyniki i granice: [handoff T07](handoffs/2026-10-12-T07-ekran-importu.md).
+
+## Weryfikacja T08
+
+`npm run typecheck`, `npm test` (53 aktywne, 6 pominiętych) i `npm run build`: sukces. `DO_NOT_TRACK=1 npm run test:t05:local` potwierdził regresję T05. `T08_HTTP_BASE=http://localhost:3005 DO_NOT_TRACK=1 npm run test:t08:local` na lokalnym prawdziwym Auth/PostgREST i produkcyjnym Next: 940 kg przed i 1140 kg po poprawce historycznej serii, A/B/anon oraz filtr ćwiczenia i daty. Testy użyły danych syntetycznych, bez AI i mocka bazy. Nie wykonano testu fizycznego urządzenia, pełnego klikanego E2E ani hostingu.
+
+## Weryfikacja T09
+
+Po zatwierdzeniu limitu 0,50 USD wykonano cztery serie prawdziwego API na 20 polskich tekstach, jednym syntetycznym planie oraz czystym i zaszumionym nagraniu syntetycznym. Pierwsze próby wykryły nadmiernie dosłowne porównanie nazw/komentarzy, błąd zamiast doprecyzowania przy brakującej nazwie ćwiczenia i niestabilność skrótu „pięć po sto” oraz planu. Po korekcie walidatora, miary i promptu `voice-pl-v2` końcowa seria dała 20/20 tekstów, poprawny plan i 2/2 transkrypcji; p50/p95 tekstu 4,351/8,622 s, audio 0,552/0,552 s. Cztery serie kosztowały szacunkowo 0,010376 USD łącznie; [raport końcowy](reports/2026-10-12-T09-live.json), wcześniejsze v1–v3. `npm test` dał 65 aktywnych testów i 7 pominiętych, lokalne T09/T05 A/B/anon, typy po buildzie i build przeszły. Pierwszy równoległy `typecheck` trafił na przebudowę `.next` i został powtórzony sekwencyjnie z sukcesem.
+
+Kontynuacja 2026-10-13: dodano obsługę asynchronicznego błędu `MediaRecorder`, aby zatrzymać mikrofon i nie wysłać częściowego nagrania. Testy komponentu sprawdziły błąd na ścieżce MP4 oraz zmianę serii podczas opóźnionej interpretacji. `npm test`: 67 przeszło, 7 pominięto; `npm run build`, sekwencyjny `npm run typecheck`, `DO_NOT_TRACK=1 npm run test:t09:local`, jego wariant HTTP z `T09_HTTP_BASE=http://localhost:3005` i `DO_NOT_TRACK=1 npm run test:t05:local` przeszły. Pierwsza próba lokalnego T09 w sandboxie nie miała dostępu do socketu Dockera; powtórzenie z uprawnieniem przeszło. ADB pokazało wyłącznie emulator, USB nie wykazało telefonu, a użytkownik potwierdził jego brak. Nie ponowiono T06 przed 12:23 UTC; nie usuwano żadnych prób i nie wywołano płatnego API. Testy komponentowe są mockami, nie odbiorem telefonu.
+
+Odbiór emulatora 2026-10-13: użytkownik wyraźnie uznał emulator za wystarczający na ten etap i poprosił o status `done`. W Chrome Android przez `adb reverse` i tymczasową lokalną stronę sprawdzono dwa poziomy uprawnienia mikrofonu, rzeczywiste nagranie WebM/Opus (48 449 B), wymuszone audio/MP4 (31 685 B), anulowanie aktywnego nagrania (`discarded=true`) i zwolnienie ścieżki mikrofonu. Ponownie `npm test`: 67 przeszło, 7 pominięto. Nie była to pełna klikalna ścieżka aplikacji na emulatorze; opóźniony wynik i zmiana serii mają testy komponentów z mockiem oraz kontrolę rewizji. Fizyczny telefon, Safari/iPhone, hosting i realna sala treningowa nadal nie są zweryfikowane. T09 oznaczono `done` tylko lokalnie w uzgodnionym zakresie.
+
+Wcześniej `npm test`, `npm run typecheck` i `npm run build` przeszły po implementacji; `DO_NOT_TRACK=1 npm run test:t09:local` oraz wariant z `T09_HTTP_BASE=http://localhost:3005` przeszły na lokalnym Auth/PostgREST i produkcyjnym Next. Sprawdzono A/B/anon, obcą serię, starą rewizję, atomowe serie dodatkowe, retry, rezerwację kosztu i odmowę bez budżetu. `DO_NOT_TRACK=1 npm run test:t05:local` przeszedł po migracji. Testy komponentów z opóźnionym wynikiem pozostają mockami; prawdziwa ewaluacja syntetycznego audio nie zastępuje telefonu. `DO_NOT_TRACK=1 npm run test:t06:local` dał 1 błąd starego testu rezerwacji T06 (`daily_budget`) z powodu istniejących prób w globalnym oknie 24 h; nie zmieniano tych danych. Pozostałe 2 testy przeszły. Brak testu fizycznego urządzenia i hostingu.
+
+## Weryfikacja T06
+
+Końcowe RUN_T06_LIVE=true npm run evaluate:t06: 12/12 szkiców, 90/90 pól, zero opuszczeń i dopowiedzeń, p50 6,223 s, p95 32,102 s, 13 674/8 430 tokenów wejścia/wyjścia i szacunek 0,005582 USD. npm test: 49 przeszło, 6 pominięto; npm run typecheck i npm run build: sukces. Lokalne testy Auth/API/Storage A/B/anon: 3/3; test HTTP z produkcyjnym buildem, XLSX, pytaniami i zatwierdzeniem: sukces. npm audit: 0 podatności. Wyniki prywatnych plików oraz niewykonane kontrole są w handoffie.

@@ -1,0 +1,188 @@
+{
+  "date": "2026-10-12",
+  "kind": "real_openai_on_synthetic_sources",
+  "promptVersion": "voice-pl-v2",
+  "models": {
+    "transcription": "gpt-transcribe",
+    "interpretation": "gpt-6-luna"
+  },
+  "workout": {
+    "passed": 20,
+    "total": 20,
+    "p50Ms": 4351,
+    "p95Ms": 8622,
+    "measurements": [
+      {
+        "index": 1,
+        "ok": true,
+        "elapsedMs": 1792,
+        "inputTokens": 372,
+        "outputTokens": 72
+      },
+      {
+        "index": 2,
+        "ok": true,
+        "elapsedMs": 1790,
+        "inputTokens": 377,
+        "outputTokens": 75
+      },
+      {
+        "index": 3,
+        "ok": true,
+        "elapsedMs": 2077,
+        "inputTokens": 381,
+        "outputTokens": 110
+      },
+      {
+        "index": 4,
+        "ok": true,
+        "elapsedMs": 2277,
+        "inputTokens": 378,
+        "outputTokens": 135
+      },
+      {
+        "index": 5,
+        "ok": true,
+        "elapsedMs": 1967,
+        "inputTokens": 379,
+        "outputTokens": 101
+      },
+      {
+        "index": 6,
+        "ok": true,
+        "elapsedMs": 3918,
+        "inputTokens": 377,
+        "outputTokens": 82
+      },
+      {
+        "index": 7,
+        "ok": true,
+        "elapsedMs": 5841,
+        "inputTokens": 376,
+        "outputTokens": 110
+      },
+      {
+        "index": 8,
+        "ok": true,
+        "elapsedMs": 8052,
+        "inputTokens": 377,
+        "outputTokens": 124
+      },
+      {
+        "index": 9,
+        "ok": true,
+        "elapsedMs": 1890,
+        "inputTokens": 382,
+        "outputTokens": 95
+      },
+      {
+        "index": 10,
+        "ok": true,
+        "elapsedMs": 3999,
+        "inputTokens": 380,
+        "outputTokens": 91
+      },
+      {
+        "index": 11,
+        "ok": true,
+        "elapsedMs": 5777,
+        "inputTokens": 382,
+        "outputTokens": 96
+      },
+      {
+        "index": 12,
+        "ok": true,
+        "elapsedMs": 7327,
+        "inputTokens": 377,
+        "outputTokens": 77
+      },
+      {
+        "index": 13,
+        "ok": true,
+        "elapsedMs": 2589,
+        "inputTokens": 379,
+        "outputTokens": 188
+      },
+      {
+        "index": 14,
+        "ok": true,
+        "elapsedMs": 4395,
+        "inputTokens": 380,
+        "outputTokens": 91
+      },
+      {
+        "index": 15,
+        "ok": true,
+        "elapsedMs": 6131,
+        "inputTokens": 382,
+        "outputTokens": 109
+      },
+      {
+        "index": 16,
+        "ok": true,
+        "elapsedMs": 7852,
+        "inputTokens": 380,
+        "outputTokens": 83
+      },
+      {
+        "index": 17,
+        "ok": true,
+        "elapsedMs": 2015,
+        "inputTokens": 382,
+        "outputTokens": 77
+      },
+      {
+        "index": 18,
+        "ok": true,
+        "elapsedMs": 4351,
+        "inputTokens": 378,
+        "outputTokens": 130
+      },
+      {
+        "index": 19,
+        "ok": true,
+        "elapsedMs": 6236,
+        "inputTokens": 375,
+        "outputTokens": 111
+      },
+      {
+        "index": 20,
+        "ok": true,
+        "elapsedMs": 8622,
+        "inputTokens": 374,
+        "outputTokens": 118
+      }
+    ]
+  },
+  "plan": {
+    "ok": true,
+    "elapsedMs": 4827,
+    "error": null
+  },
+  "audio": {
+    "passed": 2,
+    "total": 2,
+    "p50Ms": 552,
+    "p95Ms": 552,
+    "measurements": [
+      {
+        "kind": "syntetyczny_czysty",
+        "ok": true,
+        "elapsedMs": 524,
+        "durationSeconds": 2.496
+      },
+      {
+        "kind": "syntetyczny_hałas",
+        "ok": true,
+        "elapsedMs": 552,
+        "durationSeconds": 2.496
+      }
+    ]
+  },
+  "usage": {
+    "inputTokens": 8164,
+    "outputTokens": 2808
+  },
+  "estimatedUsd": 0.002595,
+  "limitations": "Audio jest syntezą systemową, nie nagraniem z fizycznego mikrofonu; koszt jest oszacowaniem według taryfy, nie rachunkiem dostawcy."
+}

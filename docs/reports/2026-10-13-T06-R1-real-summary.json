@@ -1,0 +1,89 @@
+{
+  "task": "T06-R1",
+  "date": "2026-10-13",
+  "model": "gpt-6-luna",
+  "realFinalPrompt": "import-pl-v11",
+  "currentAdapterPrompt": "import-pl-v12",
+  "schemaVersion": 2,
+  "transport": "lokalny rzeczywisty Auth/Storage/processImportJob; bez publikacji",
+  "browser": "Chrome: rzeczywiste źródła i zachowane szkice, bez nowego AI",
+  "rows": [
+    {
+      "source": "PDF",
+      "before": {
+        "status": 200,
+        "questions": 10,
+        "elapsedMs": 69465
+      },
+      "after": {
+        "status": 200,
+        "sessions": 3,
+        "exercises": 30,
+        "questions": 1,
+        "allRemainingQuestionsJustified": true,
+        "elapsedMs": 48562,
+        "reader": "AI/PDF",
+        "inputTokens": 24329,
+        "outputTokens": 14012,
+        "estimatedCostUsd": 0.009439
+      }
+    },
+    {
+      "source": "FBW XLSX",
+      "before": {
+        "status": 200,
+        "questions": 3,
+        "elapsedMs": 71302
+      },
+      "after": {
+        "status": 200,
+        "sessions": 3,
+        "exercises": 19,
+        "questions": 6,
+        "allRemainingQuestionsJustified": true,
+        "elapsedMs": 92,
+        "reader": "xlsx-table-v1",
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    },
+    {
+      "source": "Tygodniowy XLSX",
+      "before": {
+        "status": 422,
+        "questions": null,
+        "elapsedMs": 120110
+      },
+      "after": {
+        "status": 200,
+        "sessions": 12,
+        "exercises": 97,
+        "questions": 17,
+        "allRemainingQuestionsJustified": true,
+        "elapsedMs": 111,
+        "reader": "xlsx-table-v1",
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "estimatedCostUsd": 0
+      }
+    }
+  ],
+  "pdfPositionAudit": {
+    "positions": 30,
+    "setCountsTargetsSupersetGroups": "30/30 zgodne z niezależnym odczytem",
+    "restSlash": "wymaga wyjaśnienia"
+  },
+  "knownRealFilesCostUsd": 0.050202,
+  "unknownCostAttempts": 4,
+  "syntheticFull": "2026-10-13-T06-R1-synthetic-v11.json",
+  "syntheticTargeted": "2026-10-13-T06-R1-synthetic-v12-targeted.json",
+  "knownSessionCostUsd": 0.058016,
+  "actualProviderBillUsd": null,
+  "limitations": [
+    "Brak hostingu, obciążenia i fizycznych telefonów.",
+    "Parser XLSX rozpoznaje określone struktury; inne używają AI.",
+    "PDF skacze do strony; brak automatycznego podświetlenia prostokąta.",
+    "Nie wszystkie referencyjne nazwy EN mają odpowiednik PL."
+  ]
+}

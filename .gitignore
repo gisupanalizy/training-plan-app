@@ -1,0 +1,16 @@
+node_modules/
+.next/
+coverage/
+.env*
+!.env.example
+*.tsbuildinfo
+supabase/.temp/
+supabase/.branches/
+.DS_Store
+
+# Generowany worker zależności PDF.js; tworzą go predev/prebuild.
+public/pdf.worker.min.mjs
+
+# Prywatne źródła i pełne wyniki prób; wyłącznie lokalnie.
+/fixtures/t06/real/
+/.vercel/

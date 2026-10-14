@@ -1,0 +1,32 @@
+# Wysyłamy tylko źródła potrzebne do builda; domyślnie wszystko wykluczone.
+/*
+!/src
+!/public
+!/scripts
+!/package.json
+!/package-lock.json
+!/next.config.ts
+!/next-env.d.ts
+!/tsconfig.json
+!/vercel.json
+!/.vercelignore
+
+# Z całego katalogu scripts build potrzebuje tylko odtworzenia workera PDF.js.
+/scripts/*
+!/scripts/copy-pdf-worker.mjs
+/src/**/*.test.*
+/src/**/__tests__
+/public/pdf.worker.min.mjs
+**/.env*
+**/*.pem
+**/*.key
+
+# Jawne zabezpieczenia także po przyszłej zmianie listy dozwolonych katalogów.
+/fixtures
+/docs
+/supabase
+/.vercel
+/node_modules
+/.next
+/coverage
+*.tsbuildinfo

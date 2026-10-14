@@ -1,0 +1,10 @@
+import { writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+const url = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json";
+const response = await fetch(url);
+if (!response.ok) throw new Error("Nie udało się pobrać bazy nazw ćwiczeń.");
+const text = await response.text();
+const rows = JSON.parse(text);
+const entries = rows.map(({ id, name, equipment }) => ({ id, name, equipment })).sort((a, b) => a.id.localeCompare(b.id));
+writeFileSync("src/lib/exercises/en-reference.json", JSON.stringify({ source: url, license: "Unlicense", downloadedAt: new Date().toISOString(), sha256: createHash("sha256").update(text).digest("hex"), entries }, null, 2));
+console.log(`Zapisano ${entries.length} angielskich nazw i sprzęt. Zdjęć/opisów nie pobierano.`);

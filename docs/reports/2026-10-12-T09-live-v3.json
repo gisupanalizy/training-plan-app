@@ -1,0 +1,202 @@
+{
+  "date": "2026-10-12",
+  "kind": "real_openai_on_synthetic_sources",
+  "promptVersion": "voice-pl-v1",
+  "models": {
+    "transcription": "gpt-transcribe",
+    "interpretation": "gpt-6-luna"
+  },
+  "workout": {
+    "passed": 19,
+    "total": 20,
+    "p50Ms": 4933,
+    "p95Ms": 9897,
+    "measurements": [
+      {
+        "index": 2,
+        "ok": true,
+        "elapsedMs": 1466,
+        "inputTokens": 293,
+        "outputTokens": 43
+      },
+      {
+        "index": 4,
+        "ok": true,
+        "elapsedMs": 1614,
+        "inputTokens": 294,
+        "outputTokens": 76
+      },
+      {
+        "index": 3,
+        "ok": true,
+        "elapsedMs": 2813,
+        "inputTokens": 297,
+        "outputTokens": 208
+      },
+      {
+        "index": 1,
+        "ok": false,
+        "elapsedMs": 4933,
+        "inputTokens": 288,
+        "outputTokens": 415,
+        "mismatches": [
+          "reps",
+          "kg"
+        ],
+        "actual": {
+          "intent": "clarify",
+          "reps": null,
+          "kg": null,
+          "series": null,
+          "name": null,
+          "variant": null,
+          "comment": null,
+          "question": "Czy chodzi o 5 powtórzeń ze 100 kg?"
+        }
+      },
+      {
+        "index": 5,
+        "ok": true,
+        "elapsedMs": 2049,
+        "inputTokens": 295,
+        "outputTokens": 111
+      },
+      {
+        "index": 6,
+        "ok": true,
+        "elapsedMs": 3872,
+        "inputTokens": 293,
+        "outputTokens": 75
+      },
+      {
+        "index": 7,
+        "ok": true,
+        "elapsedMs": 7012,
+        "inputTokens": 292,
+        "outputTokens": 91
+      },
+      {
+        "index": 8,
+        "ok": true,
+        "elapsedMs": 9897,
+        "inputTokens": 293,
+        "outputTokens": 178
+      },
+      {
+        "index": 9,
+        "ok": true,
+        "elapsedMs": 2026,
+        "inputTokens": 298,
+        "outputTokens": 96
+      },
+      {
+        "index": 10,
+        "ok": true,
+        "elapsedMs": 3643,
+        "inputTokens": 296,
+        "outputTokens": 99
+      },
+      {
+        "index": 11,
+        "ok": true,
+        "elapsedMs": 5344,
+        "inputTokens": 298,
+        "outputTokens": 90
+      },
+      {
+        "index": 12,
+        "ok": true,
+        "elapsedMs": 7157,
+        "inputTokens": 293,
+        "outputTokens": 77
+      },
+      {
+        "index": 13,
+        "ok": true,
+        "elapsedMs": 3255,
+        "inputTokens": 295,
+        "outputTokens": 103
+      },
+      {
+        "index": 14,
+        "ok": true,
+        "elapsedMs": 5133,
+        "inputTokens": 296,
+        "outputTokens": 94
+      },
+      {
+        "index": 15,
+        "ok": true,
+        "elapsedMs": 6972,
+        "inputTokens": 298,
+        "outputTokens": 90
+      },
+      {
+        "index": 16,
+        "ok": true,
+        "elapsedMs": 8810,
+        "inputTokens": 296,
+        "outputTokens": 94
+      },
+      {
+        "index": 17,
+        "ok": true,
+        "elapsedMs": 1741,
+        "inputTokens": 298,
+        "outputTokens": 94
+      },
+      {
+        "index": 18,
+        "ok": true,
+        "elapsedMs": 3883,
+        "inputTokens": 294,
+        "outputTokens": 126
+      },
+      {
+        "index": 19,
+        "ok": true,
+        "elapsedMs": 6874,
+        "inputTokens": 291,
+        "outputTokens": 225
+      },
+      {
+        "index": 20,
+        "ok": true,
+        "elapsedMs": 9545,
+        "inputTokens": 290,
+        "outputTokens": 146
+      }
+    ]
+  },
+  "plan": {
+    "ok": true,
+    "elapsedMs": 12585,
+    "error": null
+  },
+  "audio": {
+    "passed": 2,
+    "total": 2,
+    "p50Ms": 731,
+    "p95Ms": 731,
+    "measurements": [
+      {
+        "kind": "syntetyczny_czysty",
+        "ok": true,
+        "elapsedMs": 650,
+        "durationSeconds": 2.496
+      },
+      {
+        "kind": "syntetyczny_hałas",
+        "ok": true,
+        "elapsedMs": 731,
+        "durationSeconds": 2.496
+      }
+    ]
+  },
+  "usage": {
+    "inputTokens": 6428,
+    "outputTokens": 3046
+  },
+  "estimatedUsd": 0.00254,
+  "limitations": "Audio jest syntezą systemową, nie nagraniem z fizycznego mikrofonu; koszt jest oszacowaniem według taryfy, nie rachunkiem dostawcy."
+}

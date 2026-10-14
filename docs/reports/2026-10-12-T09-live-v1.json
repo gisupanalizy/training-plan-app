@@ -1,0 +1,294 @@
+{
+  "date": "2026-10-12",
+  "kind": "real_openai_on_synthetic_sources",
+  "promptVersion": "voice-pl-v1",
+  "models": {
+    "transcription": "gpt-transcribe",
+    "interpretation": "gpt-6-luna"
+  },
+  "workout": {
+    "passed": 11,
+    "total": 20,
+    "p50Ms": 4664,
+    "p95Ms": 14106,
+    "measurements": [
+      {
+        "index": 4,
+        "ok": true,
+        "elapsedMs": 3691,
+        "inputTokens": 294,
+        "outputTokens": 87
+      },
+      {
+        "index": 3,
+        "ok": true,
+        "elapsedMs": 3797,
+        "inputTokens": 297,
+        "outputTokens": 93
+      },
+      {
+        "index": 2,
+        "ok": true,
+        "elapsedMs": 3809,
+        "inputTokens": 293,
+        "outputTokens": 78
+      },
+      {
+        "index": 1,
+        "ok": true,
+        "elapsedMs": 4588,
+        "inputTokens": 288,
+        "outputTokens": 129
+      },
+      {
+        "index": 5,
+        "ok": true,
+        "elapsedMs": 2980,
+        "inputTokens": 295,
+        "outputTokens": 147
+      },
+      {
+        "index": 6,
+        "ok": true,
+        "elapsedMs": 5322,
+        "inputTokens": 293,
+        "outputTokens": 78
+      },
+      {
+        "index": 7,
+        "ok": true,
+        "elapsedMs": 8278,
+        "inputTokens": 292,
+        "outputTokens": 99
+      },
+      {
+        "index": 8,
+        "ok": true,
+        "elapsedMs": 14106,
+        "inputTokens": 293,
+        "outputTokens": 410
+      },
+      {
+        "index": 9,
+        "ok": false,
+        "elapsedMs": 2654,
+        "inputTokens": 290,
+        "outputTokens": 127,
+        "mismatches": [
+          "reps",
+          "kg"
+        ],
+        "actual": {
+          "intent": "clarify",
+          "reps": null,
+          "kg": null,
+          "series": null,
+          "name": null,
+          "variant": null,
+          "comment": null,
+          "question": "Czy możesz powtórzyć wyraźnie, jaki wynik serii mam zapisać?"
+        }
+      },
+      {
+        "index": 10,
+        "ok": true,
+        "elapsedMs": 4664,
+        "inputTokens": 296,
+        "outputTokens": 107
+      },
+      {
+        "index": 11,
+        "ok": false,
+        "elapsedMs": 6509,
+        "inputTokens": 298,
+        "outputTokens": 104,
+        "mismatches": [
+          "comment"
+        ],
+        "actual": {
+          "intent": "comment",
+          "reps": null,
+          "kg": null,
+          "series": null,
+          "name": null,
+          "variant": null,
+          "comment": "dzisiaj słabszy chwyt",
+          "question": null
+        }
+      },
+      {
+        "index": 12,
+        "ok": false,
+        "elapsedMs": 8333,
+        "inputTokens": 293,
+        "outputTokens": 79,
+        "mismatches": [
+          "comment"
+        ],
+        "actual": {
+          "intent": "comment",
+          "reps": null,
+          "kg": null,
+          "series": null,
+          "name": null,
+          "variant": null,
+          "comment": "Bolało prawe ramię.",
+          "question": null
+        }
+      },
+      {
+        "index": 13,
+        "ok": false,
+        "elapsedMs": 2565,
+        "inputTokens": 295,
+        "outputTokens": 183,
+        "mismatches": [
+          "comment"
+        ],
+        "actual": {
+          "intent": "comment",
+          "reps": null,
+          "kg": null,
+          "series": null,
+          "name": null,
+          "variant": null,
+          "comment": "dłuższe przerwy",
+          "question": null
+        }
+      },
+      {
+        "index": 14,
+        "ok": false,
+        "elapsedMs": 3787,
+        "inputTokens": 296,
+        "outputTokens": 46,
+        "mismatches": [
+          "name"
+        ],
+        "actual": {
+          "intent": "exercise",
+          "reps": 8,
+          "kg": null,
+          "series": 3,
+          "name": "podciąganie",
+          "variant": null,
+          "comment": null,
+          "question": null
+        }
+      },
+      {
+        "index": 15,
+        "ok": false,
+        "elapsedMs": 6383,
+        "inputTokens": 298,
+        "outputTokens": 118,
+        "mismatches": [
+          "name"
+        ],
+        "actual": {
+          "intent": "exercise",
+          "reps": 10,
+          "kg": null,
+          "series": 2,
+          "name": "wykroki",
+          "variant": null,
+          "comment": null,
+          "question": null
+        }
+      },
+      {
+        "index": 16,
+        "ok": false,
+        "elapsedMs": 8984,
+        "inputTokens": 296,
+        "outputTokens": 86,
+        "mismatches": [
+          "name"
+        ],
+        "actual": {
+          "intent": "exercise",
+          "reps": 12,
+          "kg": null,
+          "series": 4,
+          "name": "pompki",
+          "variant": null,
+          "comment": null,
+          "question": null
+        }
+      },
+      {
+        "index": 17,
+        "ok": false,
+        "elapsedMs": 2046,
+        "inputTokens": 298,
+        "outputTokens": 76,
+        "mismatches": [
+          "name"
+        ],
+        "actual": {
+          "intent": "exercise",
+          "reps": 8,
+          "kg": 40,
+          "series": 3,
+          "name": "wiosłowanie",
+          "variant": null,
+          "comment": null,
+          "question": null
+        }
+      },
+      {
+        "index": 18,
+        "ok": true,
+        "elapsedMs": 3918,
+        "inputTokens": 294,
+        "outputTokens": 104
+      },
+      {
+        "index": 19,
+        "ok": false,
+        "elapsedMs": 6554,
+        "inputTokens": 291,
+        "outputTokens": 116,
+        "error": "Doprecyzuj nazwę, liczbę serii i powtórzenia."
+      },
+      {
+        "index": 20,
+        "ok": true,
+        "elapsedMs": 9960,
+        "inputTokens": 290,
+        "outputTokens": 160
+      }
+    ]
+  },
+  "plan": {
+    "ok": true,
+    "elapsedMs": 3614,
+    "error": null
+  },
+  "audio": {
+    "passed": 2,
+    "total": 2,
+    "p50Ms": 608,
+    "p95Ms": 608,
+    "measurements": [
+      {
+        "kind": "syntetyczny_czysty",
+        "ok": true,
+        "elapsedMs": 580,
+        "durationSeconds": 2.496
+      },
+      {
+        "kind": "syntetyczny_hałas",
+        "ok": true,
+        "elapsedMs": 608,
+        "durationSeconds": 2.496
+      }
+    ]
+  },
+  "usage": {
+    "inputTokens": 6420,
+    "outputTokens": 3162
+  },
+  "estimatedUsd": 0.002597,
+  "limitations": "Audio jest syntezą systemową, nie nagraniem z fizycznego mikrofonu; koszt jest oszacowaniem według taryfy, nie rachunkiem dostawcy."
+}

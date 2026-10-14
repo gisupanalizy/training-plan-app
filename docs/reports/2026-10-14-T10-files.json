@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-14",
+  "task": "T10",
+  "git": false,
+  "files": [
+    {
+      "path": ".gitignore",
+      "sha256": "fce17d47513922d17840be9ad4e8f3d64287cd31c0905ca72d537319b6dc60a4"
+    },
+    {
+      "path": ".vercelignore",
+      "sha256": "40cebce25842f8d11f1d09c17f8dea0c6c8f4def598f5364278c3bb253d758a6"
+    },
+    {
+      "path": "package.json",
+      "sha256": "b4fe118f79cbbd612afd9dcceb986c23cfcd0f8ae4d3775503543044bb20006f"
+    },
+    {
+      "path": "src/lib/http/json.ts",
+      "sha256": "fcad3fb0857acbc4fa100b2583d525441bef0b651213c34612a1906917f64619"
+    },
+    {
+      "path": "src/lib/http/json.test.ts",
+      "sha256": "3f1f5cc2891f5432155d86e5ae6460a4b63765674fdf05b2896ac2955c86c3d1"
+    },
+    {
+      "path": "src/lib/imports/http.ts",
+      "sha256": "32c20aec95295f92936ebfb65ec0f6955127861c76f9d44a91816a3ce149ccc0"
+    },
+    {
+      "path": "src/lib/supabase/proxy.ts",
+      "sha256": "71ff58b186cba8117648a534a7422fa6c7fe590dbe69c5d5f01f6efa9924cef7"
+    },
+    {
+      "path": "src/lib/supabase/proxy.integration.test.ts",
+      "sha256": "db85805b573e753323a18f8c1c72fbae832c9ee65d6ef40c626f89ac9a054613"
+    },
+    {
+      "path": "src/app/api/plans/route.ts",
+      "sha256": "a5a86ad67d5649f93895683ce37c223fbbcba46f087355afd75609824e94def5"
+    },
+    {
+      "path": "src/app/api/workouts/route.ts",
+      "sha256": "fa71d5cf5fd9593247cda491730b3b9db3ad354c0142ab85373d3e27b8ef9224"
+    },
+    {
+      "path": "src/app/api/one-rep-max/route.ts",
+      "sha256": "fee4bedc3fed861e86ab3b5e1f9fa6f6190a733639884d97ad3ff399346d1370"
+    },
+    {
+      "path": "src/app/api/profile/rounding/route.ts",
+      "sha256": "f2ebab04a76216b086ea44e7cb702fa08835db6886697a564afccf0f0d43df12"
+    },
+    {
+      "path": "supabase/migrations/20261014100000_t10_plan_write_boundary.sql",
+      "sha256": "f09425637efeef5601850bb2f27c3fb337efd8dafe9ad025a9bd2fb258c4c62a"
+    },
+    {
+      "path": "scripts/run-local-t10.mjs",
+      "sha256": "e24e308d324ead3c7b00c98afbe061c8efe43d4d8b31aeb8102c251c261ea3ea"
+    },
+    {
+      "path": "scripts/test-t10-api.mjs",
+      "sha256": "e9a7515840aadcc0db40f9b3a36af161b05822dcf0cd672933e14943bba6b70a"
+    },
+    {
+      "path": "scripts/test-t10-browser.mjs",
+      "sha256": "c0f8b9ef12dd85b871553ce5ced859a80f3f935a0de7b65b80cc4b831b34f830"
+    },
+    {
+      "path": "scripts/test-t03-api.mjs",
+      "sha256": "4feaf924fc471636dd028ed3a71dae80416f11dcbc7ca974f8a36fd027bbe5f4"
+    },
+    {
+      "path": "scripts/test-t06-http.mjs",
+      "sha256": "c5c305997ccd01b4aca51f7dfec6a8b461ad1b6ec498bf488770f5c97e9b1c68"
+    },
+    {
+      "path": "scripts/test-t04r1-browser.mjs",
+      "sha256": "5b01a90b3b99e7074da9cc74cca0431289c18b873467c28b993bcfba6183299f"
+    }
+  ]
+}

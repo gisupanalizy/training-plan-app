@@ -1,0 +1,47 @@
+import { createClient } from "@supabase/supabase-js";
+import { randomUUID } from "node:crypto";
+import assert from "node:assert/strict";
+const url=process.env.SUPABASE_URL, anonKey=process.env.SUPABASE_ANON_KEY;
+const opts={auth:{persistSession:false,autoRefreshToken:false}};
+const admin=createClient(url,process.env.SUPABASE_SERVICE_ROLE_KEY,opts);
+const users=[];
+const ok=(result)=>{if(result.error)throw new Error(result.error.message);return result.data;};
+async function tester(){const email=`t06r1-${randomUUID()}@example.invalid`, password=randomUUID();const {user}=ok(await admin.auth.admin.createUser({email,password,email_confirm:true}));users.push(user.id);const client=createClient(url,anonKey,opts);ok(await client.auth.signInWithPassword({email,password}));ok(await client.from('profiles').insert({id:user.id}));return {client,id:user.id};}
+const set=(position,optional=false)=>({position,kind:'work',repsMin:1,repsMax:null,isAmrap:false,loadType:'absolute',targetKg:24,targetKgMax:30,targetPercent:null,bodyweightAdjustment:null,bodyweightDeltaKg:null,dumbbellBasis:'per_hand',durationSeconds:null,durationSecondsMax:null,distanceMeters:null,restSeconds:60,restSecondsMax:120,tempo:null,targetRpe:null,targetRir:null,note:null,isOptional:optional});
+try{
+ const a=await tester(),b=await tester();
+ const document={schemaVersion:2,name:'Syntetyczny zakres',sessions:[{weekNumber:1,dayLabel:'A',note:null,exercises:[{exerciseId:null,name:'Nauka stania na rękach',originalName:'handstand nauka',variant:null,equipment:null,supersetGroup:'SS1',note:null,setCountMin:7,setCountMax:8,sets:Array.from({length:8},(_,i)=>set(i+1,i===7))}]}]};
+ const op=randomUUID();
+ const published=ok(await a.client.rpc('save_manual_plan',{p_operation_id:op,p_plan_id:null,p_expected_version_id:null,p_document:document}));
+ assert.deepEqual(ok(await a.client.rpc('save_manual_plan',{p_operation_id:op,p_plan_id:null,p_expected_version_id:null,p_document:document})),published);
+ const pe=ok(await a.client.from('planned_exercises').select('*').eq('plan_session_id',ok(await a.client.from('plan_sessions').select('id').eq('plan_version_id',published.versionId).single()).id).single());
+ assert.equal(pe.original_name,'handstand nauka');assert.equal(pe.display_name,'Nauka stania na rękach');assert.equal(pe.set_count_min,7);
+ const ps=ok(await a.client.from('planned_sets').select('*').eq('planned_exercise_id',pe.id).order('position'));
+ assert.equal(ps.length,8);assert.equal(ps.filter(s=>s.is_optional).length,1);assert.equal(ps[0].target_kg_max,30);assert.equal(ps[0].rest_seconds_max,120);
+ const startOp=randomUUID();const payload={planSessionId:pe.plan_session_id,performedOn:'2026-10-13'};
+ const started=ok(await a.client.rpc('apply_workout_command',{p_operation_id:startOp,p_workout_id:null,p_expected_revision:0,p_action:'start',p_payload:payload}));
+ assert.deepEqual(ok(await a.client.rpc('apply_workout_command',{p_operation_id:startOp,p_workout_id:null,p_expected_revision:0,p_action:'start',p_payload:payload})),started);
+ const performed=ok(await a.client.from('performed_exercises').select('*').eq('workout_session_id',started.workoutId).single());
+ assert.equal(performed.target_name_snapshot,'Nauka stania na rękach');assert.equal(performed.target_original_name_snapshot,'handstand nauka');
+ const snapshot=ok(await a.client.from('performed_sets').select('*').eq('performed_exercise_id',performed.id).order('position'));
+ assert.equal(snapshot[7].target_optional_snapshot,true);assert.equal(snapshot[0].target_kg_max_snapshot,30);assert.equal(snapshot[0].target_rest_seconds_max_snapshot,120);
+ const next=structuredClone(document);next.sessions[0].exercises[0].sets=Array.from({length:6},(_,i)=>set(i+1,i>=4));next.sessions[0].exercises[0].setCountMin=4;next.sessions[0].exercises[0].setCountMax=6;
+ ok(await a.client.rpc('save_manual_plan',{p_operation_id:randomUUID(),p_plan_id:published.planId,p_expected_version_id:published.versionId,p_document:next}));
+ assert.deepEqual(ok(await a.client.from('performed_sets').select('*').eq('performed_exercise_id',performed.id).order('position')),snapshot);
+ assert.ok((await admin.from('performed_sets').update({target_kg_max_snapshot:40}).eq('id',snapshot[0].id)).error);
+ assert.ok((await admin.from('performed_exercises').update({target_original_name_snapshot:'zmieniona'}).eq('id',performed.id)).error);
+ assert.deepEqual(ok(await b.client.from('planned_sets').select('*').eq('planned_exercise_id',pe.id)),[]);
+ assert.deepEqual(ok(await b.client.from('performed_sets').select('*').eq('performed_exercise_id',performed.id)),[]);
+ assert.ok((await b.client.rpc('apply_workout_command',{p_operation_id:randomUUID(),p_workout_id:started.workoutId,p_expected_revision:1,p_action:'finish',p_payload:{}})).error);
+ const invalid=structuredClone(document);invalid.sessions[0].exercises[0].setCountMin=null;
+ assert.ok((await a.client.rpc('save_manual_plan',{p_operation_id:randomUUID(),p_plan_id:null,p_expected_version_id:null,p_document:invalid})).error);
+ const optional=structuredClone(document);optional.sessions[0].exercises[0].isOptional=true;optional.sessions[0].exercises[0].sets.forEach(s=>{s.isOptional=true;});
+ const optionalPlan=ok(await a.client.rpc('save_manual_plan',{p_operation_id:randomUUID(),p_plan_id:null,p_expected_version_id:null,p_document:optional}));
+ const optionalSession=ok(await a.client.from('plan_sessions').select('id').eq('plan_version_id',optionalPlan.versionId).single());
+ const optionalExercise=ok(await a.client.from('planned_exercises').select('id,is_optional').eq('plan_session_id',optionalSession.id).single());
+ assert.equal(optionalExercise.is_optional,true);
+ assert.ok(ok(await a.client.from('planned_sets').select('is_optional').eq('planned_exercise_id',optionalExercise.id)).every(s=>s.is_optional));
+ const compound=structuredClone(document);const item=compound.sessions[0].exercises[0];item.setCountMin=3;item.setCountMax=4;item.sets=[6,6,3,3].map((reps,i)=>({...set(i+1,i===3),repsMin:reps}));
+ ok(await a.client.rpc('save_manual_plan',{p_operation_id:randomUUID(),p_plan_id:null,p_expected_version_id:null,p_document:compound}));
+ console.log('T06-R1 API: PASS — zakresy, oryginał, opcjonalność, retry, snapshot, edycja wersji, A/B.');
+}finally{for(const id of users)ok(await admin.auth.admin.deleteUser(id));}
