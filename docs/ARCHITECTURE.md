@@ -57,3 +57,5 @@ T03 dodał sprawdzanie powiązania `APP_ENV`, URL i referencji projektu Supabase
 - [Next.js na Vercel](https://vercel.com/docs/frameworks/full-stack/nextjs).
 - [Supabase Database](https://supabase.com/docs/guides/database/overview) i [RLS](https://supabase.com/docs/guides/database/postgres/row-level-security).
 - Integracje OpenAI i źródła zweryfikowane 2026-10-11: [AI_AND_VOICE](AI_AND_VOICE.md).
+
+T11-E1 (2026-10-16): źródło konfiguracji publicznej wybierane jako pełna rodzina STORAGE (Marketplace) lub standardowa (lokalna/ręczna). Pierwszeństwo ma integracja, a niepełna para nie jest uzupełniana innym źródłem. Oddzielny `src/lib/supabase/admin.ts` wybiera serwerowy secret/service_role tej samej rodziny; proxy korzysta wyłącznie z publicznej konfiguracji. Izolacja refów i APP_ENV/VERCEL_ENV pozostaje obowiązkowa. Nie jest to zmiana RLS, schematu ani uprawnień modelu.

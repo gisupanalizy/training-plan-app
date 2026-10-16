@@ -14,3 +14,6 @@ public/pdf.worker.min.mjs
 # Prywatne źródła i pełne wyniki prób; wyłącznie lokalnie.
 /fixtures/t06/real/
 /.vercel/
+
+# Lokalny plik konfiguracji Vercel użytkownika.
+/env.vercel

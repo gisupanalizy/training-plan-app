@@ -1,8 +1,18 @@
 type SupabaseConfig = { url: string; key: string };
 
+export function usesStorageSupabase(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_STORAGE_SUPABASE_URL?.trim()
+    || process.env.NEXT_PUBLIC_STORAGE_SUPABASE_PUBLISHABLE_KEY?.trim()
+    || process.env.NEXT_PUBLIC_STORAGE_SUPABASE_ANON_KEY?.trim());
+}
+
 export function getSupabaseConfig(): SupabaseConfig | null {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // Cała para pochodzi z jednego źródła. Nie uzupełniamy części integracji ręcznym duplikatem.
+  const storage = usesStorageSupabase();
+  const url = (storage ? process.env.NEXT_PUBLIC_STORAGE_SUPABASE_URL : process.env.NEXT_PUBLIC_SUPABASE_URL)?.trim();
+  const key = storage
+    ? process.env.NEXT_PUBLIC_STORAGE_SUPABASE_PUBLISHABLE_KEY?.trim() || process.env.NEXT_PUBLIC_STORAGE_SUPABASE_ANON_KEY?.trim()
+    : process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.trim();
   if (!url && !key && !process.env.VERCEL_ENV) return null;
   if (!url || !key) throw new Error("Brak pełnej konfiguracji Supabase.");
   if (key.startsWith("sb_secret_")) throw new Error("Klucz administracyjny nie może trafić do przeglądarki.");

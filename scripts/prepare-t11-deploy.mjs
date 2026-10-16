@@ -51,6 +51,6 @@ if (args[0] === "--stage") {
 const manifest = { schema: 1, kind: "local-release-candidate", uploaded: false, stage,
   fileCount: files.length, totalBytes: files.reduce((sum, file) => sum + file.bytes, 0),
   filesSha256: hash(JSON.stringify(files)), files, migrations };
-const output = join(root, "docs/reports/2026-10-14-T11-release.json");
+const output = join(root, "docs/reports/2026-10-16-T11-E1-release.json");
 writeFileSync(output, `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(JSON.stringify({ manifest: relative(root, output), fileCount: manifest.fileCount, filesSha256: manifest.filesSha256, stage, uploaded: false }));

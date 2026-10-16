@@ -13,6 +13,7 @@ Lokalny Supabase Auth, PostgREST i Storage przeszły testy A/B/anon w T03 i pono
 
 ## Środowiska zdalne
 
+- Przy Marketplace z prefiksem STORAGE aplikacja używa automatycznych `NEXT_PUBLIC_STORAGE_SUPABASE_URL` i `NEXT_PUBLIC_STORAGE_SUPABASE_PUBLISHABLE_KEY` oraz serwerowego `STORAGE_SUPABASE_SECRET_KEY` (fallback service_role). Nie kopiuj ich do ręcznych duplikatów. Pełna lista i reguły pierwszeństwa w [T11_DEPLOYMENT](T11_DEPLOYMENT.md).
 - Ustaw `APP_ENV=preview` albo `production`, URL i **publiczny** klucz właściwego projektu oraz `SUPABASE_EXPECTED_PROJECT_REF` i `SUPABASE_PRODUCTION_PROJECT_REF`. Konfiguracja odrzuca projekt produkcyjny w preview, zły URL, HTTP i klucz administracyjny w zmiennej publicznej. `APP_ENV` musi zgadzać się z `VERCEL_ENV`, jeśli istnieje.
 - Preview i produkcja wymagają osobnych projektów Supabase. W obu ustaw wyłączoną publiczną rejestrację i anonimowe logowanie, włączony dostawca e-mail, URL strony oraz dozwolony redirect. Skonfiguruj szablon zaproszenia z `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite`. Zaproszenia wysyłaj z panelu Auth lub z zaufanego Admin API tylko po jawnym zleceniu ich wysłania. Klucz administracyjny jest od T06 wymagany wyłącznie na serwerze importu/cleanup, nigdy w kodzie klienta ani zmiennej publicznej. SMTP i faktyczne środowiska wymagają odbioru T11.
 - Migracje zastosuj osobno do właściwych projektów. Sam test konfiguracji lokalnej nie dowodzi ustawień hostowanych; ich uruchomienie należy do T11.

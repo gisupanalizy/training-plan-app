@@ -1,6 +1,6 @@
-import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
+import { type SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
-import { getSupabaseConfig } from "@/lib/supabase/config";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { validateDraft, validateSource, type ImportIssue, type SourceKind } from "./domain";
 import { MODEL, PROMPT_VERSION, openaiImport, type ImportAdapter } from "./openai";
 import { importQuestions } from "./questions";
@@ -18,10 +18,7 @@ export async function authContext() {
   return { userClient, user, admin: adminClient() };
 }
 export function adminClient(): SupabaseClient {
-  const config = getSupabaseConfig();
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!config || !key) throw new Error("Brak konfiguracji serwera importu.");
-  return createSupabaseClient(config.url, key, { auth: { autoRefreshToken: false, persistSession: false } });
+  return createAdminClient();
 }
 export async function ownedJob(admin: SupabaseClient, owner: string, id: string): Promise<Job | null> {
   const { data, error } = await admin.from("imports").select("*").eq("id", id).eq("owner_id", owner).maybeSingle();

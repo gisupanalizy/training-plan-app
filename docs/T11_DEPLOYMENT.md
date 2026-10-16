@@ -1,6 +1,6 @@
 # T11 — przygotowanie wdrożenia i procedura operatorska
 
-Stan: 2026-10-14, **przygotowanie lokalne; wdrożenie niewykonane**. T09/T10 są done lokalnie (D025/D026). T11 wymaga rzeczywistego HTTPS i smoke testu dwóch kont; szersza beta dodatkowo T10-R1. [Instrukcja testera](TESTER_GUIDE.md) nie zawiera jeszcze adresu aplikacji. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md) podaje wyniki tej sesji.
+Aktualizacja: 2026-10-16, **kod konfiguracji przygotowany; wdrożenie nieodebrane**. T09/T10 są done lokalnie (D025/D026). T11 wymaga rzeczywistego HTTPS i smoke testu dwóch kont; szersza beta dodatkowo T10-R1. [Instrukcja testera](TESTER_GUIDE.md) nie zawiera jeszcze adresu aplikacji. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md) podaje wyniki tej sesji.
 
 ## 1. Dostęp i wybór celów — wymagane przed zmianą usług
 
@@ -13,22 +13,38 @@ Użytkownik musi wskazać bez sekretów:
 - Sposób dostępu: połączone integracje lub zalogowane CLI. Tokenów, hasła DB i kluczy nie wklejać do chatu/repo. Osoba konfigurująca przechowuje je w menedżerze sekretów lub zmiennych bezpiecznej sesji.
 - Dostawcę SMTP i nadawcę do zaproszeń, operatora awarii/backupów, limit kosztów hostingu i osobno ewentualny budżet AI. Brak ustalonego AI oznacza wyłączone import/głos; dawnych 5 USD T06 i 0,50 USD T09 nie przenosimy na hosting.
 
-Pierwszy krok po uzyskaniu dostępu to odczyt organizacji/projektów, planu usług i regionów oraz zapis potwierdzonych identyfikatorów w tym dokumencie. Obecnie wszystkie cele są **nieustalone**. Nie utworzono projektu, nie skonfigurowano sekretów i nie wywołano płatnego AI.
+Pierwszy krok po uzyskaniu dostępu to odczyt organizacji/projektów, planu usług i regionów oraz zapis potwierdzonych identyfikatorów w tym dokumencie. Aktualizacja 2026-10-16: projekt Vercel i produkcyjny ref Supabase zostały ustalone (sekcja 2). Cel preview pozostaje nieustalony. Nie utworzono projektu, nie skonfigurowano sekretów i nie wywołano płatnego AI.
 
-## 2. Izolacja środowisk i konfiguracja
+## 2. Izolacja środowisk i konfiguracja — T11-E1, 2026-10-16
 
-Użyć jednego wskazanego projektu Vercel z osobnymi zakresami Preview/Production i dwóch projektów Supabase, zgodnie z istniejącym walidatorem `src/lib/supabase/config.ts`. Preview zawiera wyłącznie syntetyczne dane. Nie kopiować produkcyjnych użytkowników/plików do preview.
+Potwierdzone z bieżącej karty Chrome: Vercel `gisupanalizy-gmailcoms-projects/training-plan-app`; Supabase `supabase-violet-cable`, ref produkcyjny `kwmyosnerwvtwxtszzka`. Integracja Marketplace ma Custom Prefix `STORAGE` i zakres Production. To dowód podłączenia i nazw zmiennych, nie gotowego schematu, jakości kluczy ani udanego wdrożenia. Preview nadal wymaga drugiego projektu Supabase; nie łączyć go z produkcją.
 
-W każdym zakresie Vercel ustawić osobno:
+Od T11-E1 aplikacja wybiera **całą rodzinę integracji** przed dawnymi ręcznymi nazwami:
 
-- `APP_ENV=preview` lub `production` zgodnie z `VERCEL_ENV`; nie ustawiać ręcznie systemowego `VERCEL_ENV`.
-- `NEXT_PUBLIC_SUPABASE_URL` i `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` właściwego projektu. To jedyne publiczne dane dostępu; lokalny fallback anon nie jest kluczem administracyjnym.
-- `SUPABASE_EXPECTED_PROJECT_REF`: ref bieżącego środowiska. `SUPABASE_PRODUCTION_PROJECT_REF`: ref produkcyjny w obu zakresach. Preview musi się od niego różnić; production musi być równe.
-- `SUPABASE_SERVICE_ROLE_KEY`: serwerowy klucz **tego samego projektu**, potrzebny istniejącemu serwerowi importu i cleanup. Nigdy w `NEXT_PUBLIC_*`, przeglądarce lub logu. Weryfikować zgodność przez kontrolowany odczyt właściwych bucketów, bez drukowania klucza. Nie używać tokenu Management API ani hasła PostgreSQL zamiast tego klucza.
-- `CRON_SECRET`: różny w obu środowiskach, losowy, minimum 32 bajty losowości, bez zapisywania wartości w raporcie.
-- Początkowo `OPENAI_IMPORT_ENABLED=false`, `OPENAI_VOICE_ENABLED=false`; obydwa budżety `0`, bez `OPENAI_API_KEY`. Nie kopiować lokalnego `.env`. Ręczny dziennik musi działać, a płatne ścieżki odmawiać bez kosztu.
+- Publiczny URL: `NEXT_PUBLIC_STORAGE_SUPABASE_URL`.
+- Publiczny klucz: `NEXT_PUBLIC_STORAGE_SUPABASE_PUBLISHABLE_KEY`, a gdy pusty/brak — starszy `NEXT_PUBLIC_STORAGE_SUPABASE_ANON_KEY`.
+- Wyłącznie serwer: `STORAGE_SUPABASE_SECRET_KEY`, a gdy pusty/brak — starszy `STORAGE_SUPABASE_SERVICE_ROLE_KEY`. Nowe secret keys mają uprawnienia service_role i są obsługiwane przez SDK. [Klucze Supabase](https://supabase.com/docs/guides/getting-started/api-keys).
 
-Publiczne zmienne Next trafiają do builda: po zmianie środowiska budować ponownie. Nie promować gotowego builda preview z refem preview do produkcji. Dla produkcji wykonać nowy build z zakresem Production. W Vercel wybrać Next.js, Node 24.x, `npm ci`, `npm run build`, domyślne wyjście Next oraz Fluid Compute. Node 24 nie był uruchamiany w tej sesji; czysty pakiet sprawdzono na Node 26.4.0. Wybrać dostępny region funkcji blisko uzgodnionego Supabase. Sprawdzić rzeczywiste ustawienia i `maxDuration=150` importu oraz 60 s głosu; limity dokumentacji nie dowodzą konfiguracji konta. [Czas funkcji Vercel](https://vercel.com/docs/functions/configuring-functions/duration).
+Nie należy przepisywać tych wartości ręcznie. Gdy istnieje choć jeden publiczny element rodziny STORAGE, niepełna para URL/klucz jest błędem — aplikacja nie dobiera brakującego pola z ręcznej konfiguracji. Sekret serwerowy też musi pochodzić z rodziny STORAGE. Ręczne duplikaty mogą zawierać stare wartości; nie mają pierwszeństwa nad integracją. Publiczna konfiguracja nadal odrzuca klucz administracyjny, HTTP, złą referencję i bazę produkcyjną w preview. Wybranie źródła nie dowodzi, że dostawca wydał klucz dla tego samego projektu; to wymaga zdalnego smoke.
+
+Bez rodziny STORAGE zachowane są lokalne/standardowe `NEXT_PUBLIC_SUPABASE_URL` i `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (fallback `NEXT_PUBLIC_SUPABASE_ANON_KEY`), oraz serwerowe `SUPABASE_SECRET_KEY`/`SUPABASE_SERVICE_ROLE_KEY`. Lokalnego .env nie zmieniano. Nie udostępniać żadnego sekretu pod `NEXT_PUBLIC_*`. Integracja synchronizuje swoje zmienne; zostawić wszystkie jej wpisy, również nieużywane `STORAGE_POSTGRES_*` i `STORAGE_SUPABASE_JWT_SECRET`. [Marketplace Supabase](https://supabase.com/docs/guides/integrations/vercel-marketplace).
+
+Po dostępności nowego kodu zbędne w **Vercel** są trzy ręczne duplikaty bez ikonki integracji: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`. Usunięcie wpisów nie unieważnia kluczy w Supabase i nie usuwa wpisów STORAGE. Stary build może jeszcze odczytywać stare nazwy — nie przedstawiać nowego kodu lokalnego jako wdrożonego. Stan faktycznego usunięcia opisuje najnowszy handoff/STATUS.
+
+Ręcznie w Vercel pozostaje osiem ustawień aplikacji, każde w zakresie **Production**:
+
+- `APP_ENV=production` (systemowego `VERCEL_ENV` nie ustawiać ręcznie; pozostawić włączony dostęp do System Environment Variables).
+- `SUPABASE_EXPECTED_PROJECT_REF=kwmyosnerwvtwxtszzka`.
+- `SUPABASE_PRODUCTION_PROJECT_REF=kwmyosnerwvtwxtszzka`.
+- `CRON_SECRET`: istniejący losowy sekret, co najmniej 32 bajty losowości, typ Secret. W tej sesji zachowywana jest wartość i ograniczany zakres; bez ujawniania, obracania i bez deklarowania jakości niewidocznego sekretu. W razie wcześniejszego wklejenia tekstowego placeholdera operator musi sam ustawić rzeczywisty losowy sekret bez przesyłania go przez chat.
+- `OPENAI_IMPORT_ENABLED=false`, `OPENAI_IMPORT_BUDGET_USD=0`.
+- `OPENAI_VOICE_ENABLED=false`, `OPENAI_VOICE_BUDGET_USD=0`.
+
+Dwa powyższe wiersze AI reprezentują cztery osobne zmienne. Klucza OpenAI nie dodawać bez nowego zlecenia/budżetu. Niesekretne ustawienia można tworzyć jako Config; już zapisane jako Secret zachowują swój typ. Typ Secret nie zwalnia publicznego publishable z publikacji przez bundler — to przeznaczony do klienta klucz, podczas gdy klucz administratora pozostaje w serwerowym module.
+
+W Preview ustawić osobne `APP_ENV=preview`, oczekiwany ref innego projektu i jego integrację; ref produkcji pozostaje taki jak wyżej. Nie kopiować danych/sekretów produkcji do preview. Obecnie nie przygotowano drugiej bazy.
+
+Publiczne zmienne Next trafiają do builda: po zmianie środowiska budować ponownie. Nie promować gotowego builda preview z refem preview do produkcji. W Vercel wybrać Next.js, Node 24.x, `npm ci`, `npm run build`, domyślne wyjście Next oraz Fluid Compute. Sprawdzić rzeczywiste ustawienia i maxDuration importu 150 s/głosu 60 s. Build T11-E1 sprawdzono na Node 26.4.0 z syntetycznymi zmiennymi STORAGE i VERCEL_ENV=production; nie jest to test usług hostowanych. [Czas funkccji Vercel](https://vercel.com/docs/functions/configuring-functions/duration).
 
 ## 3. Manifest i bezpieczna wysyłka
 
@@ -38,7 +54,7 @@ Aktualizacja T11-G1: użytkownik utworzył publiczne repo `gisupanalizy/training
 node scripts/prepare-t11-deploy.mjs --stage
 ```
 
-Polecenie tworzy nowy katalog tymczasowy i [lokalny manifest SHA-256](reports/2026-10-14-T11-release.json): 94 pliki oraz osobny wykaz 20 migracji. Zwraca dokładną ścieżkę kopii. Nie czyta `.env`, nie kopiuje fixtures, nie wysyła danych; odrzuca dowiązania, zagnieżdżone `.env`, pliki kluczy i rozpoznane formaty sekretów. Kontrola formatów nie jest pełnym skanerem sekretów. Migracje są w wykazie, **nie w paczce Vercel**. Worker PDF.js odtwarza prebuild z zablokowanej wersji zależności.
+Polecenie tworzy nowy katalog tymczasowy i [lokalny manifest SHA-256 T11-E1](reports/2026-10-16-T11-E1-release.json): 95 plików oraz osobny wykaz 20 migracji. Zwraca dokładną ścieżkę kopii. Nie czyta `.env`, nie kopiuje fixtures, nie wysyła danych; odrzuca dowiązania, zagnieżdżone `.env`, pliki kluczy i rozpoznane formaty sekretów. Kontrola formatów nie jest pełnym skanerem sekretów. Migracje są w wykazie, **nie w paczce Vercel**. Worker PDF.js odtwarza prebuild z zablokowanej wersji zależności.
 
 Zalogowane CLI należy powiązać z **istniejącym, wskazanym** projektem w kopii tymczasowej. Nie uruchamiać deploy z katalogu roboczego zawierającego prywatne pliki. Po powiązaniu, z wnętrza kopii:
 
