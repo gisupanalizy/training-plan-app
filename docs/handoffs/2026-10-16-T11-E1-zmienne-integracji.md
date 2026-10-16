@@ -2,7 +2,7 @@
 
 - Data/autor: 2026-10-16, Codex. Bez innych agentów.
 - Zadanie/status: T11-E1 review, kod i lokalna weryfikacja gotowe; trwałe usunięcie trzech ręcznych duplikatów Vercel czeka na potwierdzenie w pytaniu asynchronicznym. T11 in_progress, T10-R1 nadal todo użytkownika.
-- Git: main, baza d30025c; pliki sesji przygotowane do commita/push. SHA zmian odczytać z git log — handoff jest częścią commita. Nie zmieniano globalnego autora ani remote.
+- Git: main, baza d30025c; kod i dokumentacja wysłane w commicie 82b9eb7. SHA końcowego uzupełnienia dokumentacji odczytać z git log — handoff jest częścią tego uzupełnienia. Nie zmieniano globalnego autora ani remote.
 - Poprzednie handoffy: [T11-G1](2026-10-14-T11-G1-pierwszy-commit.md), [T11](2026-10-14-T11-przygotowanie-wdrozenia.md).
 
 ## Cel i wykonana praca
@@ -40,7 +40,7 @@ macOS, Node 26.4.0, Next 16.4.0, Supabase CLI 2.120.0. Aktualne oficjalne dokume
 - `node scripts/prepare-t11-deploy.mjs --stage`, `node scripts/verify-t11-package.mjs`: sukces, 95 plików, 20 migracji, hashe i odmowa prywatnych ścieżek/dowiązania/formatu sekretu. `git diff --check` przeszedł; env.vercel, .env i prywatne fixtures są ignorowane.
 - UI Vercel: osiem ręcznych nazw odczytano oddzielnymi wyszukaniami i potwierdzono wyłącznie zakres Production. Wartości kluczy pozostawały ukryte. Dla jawnych wartości dowodem jest wprowadzenie i zapis z komunikatem sukcesu; dla CRON_SECRET tylko zachowanie istniejącej wartości i zmiana zakresu.
 
-Błędy/ograniczenia przebiegu: początkowo próba Add dla sześciu ustawień została odrzucona, bo wpisy istniały poza widoczną pierwszą częścią listy. Formularz odrzucono bez zapisu; istniejące wpisy wyszukano i poprawiono przez Edit. Jedna próba wyszukania searchbox po nazwie nie znalazła pola przy otwartym dialogu Discard Changes; po odrzuceniu użyto właściwej wyszukiwarki. Nie obie próby Add były zmianami danych. CLI status raportował opcjonalne imgproxy/pooler jako zatrzymane i dostępną aktualizację; nie aktualizowano CLI ani nie resetowano bazy. Żaden krok nie zastąpił hosted smoke lub testu urządzeń.
+Błędy/ograniczenia przebiegu: początkowo próba Add dla sześciu ustawień została odrzucona, bo wpisy istniały poza widoczną pierwszą częścią listy. Formularz odrzucono bez zapisu; istniejące wpisy wyszukano i poprawiono przez Edit. Jedna próba wyszukania searchbox po nazwie nie znalazła pola przy otwartym dialogu Discard Changes; po odrzuceniu użyto właściwej wyszukiwarki. Próba Add nie zapisała żadnych danych. CLI status raportował opcjonalne imgproxy/pooler jako zatrzymane i dostępną aktualizację; nie aktualizowano CLI ani nie resetowano bazy. Skan formatów sekretów początkowo błędnie rozpoznał końcówkę polskiego sluga linku README jako sk-. Polecenie powłoki mimo statusu skanera kontynuowało commit/push; sprawdzono to i powtórzono skan z granicą tokenu dla wszystkich 250 śledzonych plików oraz porównanie z lokalnymi sekretami — zero trafień, bez publikacji wartości w logu. Nie uznano nieudanego pierwszego skanu za sukces. Żaden krok nie zastąpił hosted smoke lub testu urządzeń.
 
 Nie wykonano hostowanych migracji/restore, zdalnego Auth/Storage/smoke A/B/anon, telefonu/Safari, obciążenia, płatnego AI ani pracy agentów. Nie weryfikowano wartości automatycznych kluczy (są Secret). Nie należy oznaczać T11 done na podstawie testów lokalnych.
 
