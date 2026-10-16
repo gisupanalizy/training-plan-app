@@ -2,6 +2,16 @@
 
 Aktualizacja: 2026-10-16, **produkcyjny build Ready i 21 migracji; smoke HTTP zaliczony, pozostały odbiór w toku**. T09/T10 są done lokalnie (D025/D026). T11 wymaga rzeczywistego HTTPS i smoke testu dwóch kont; szersza beta dodatkowo T10-R1. [Instrukcja testera](TESTER_GUIDE.md) nie zawiera jeszcze adresu aplikacji. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md) podaje wyniki tej sesji.
 
+## Aktualizacja po D031 — testy prototypu i AI
+
+Priorytetem użytkownika jest teraz używanie prototypu. [Forma](https://training-plan-app-seven.vercel.app) działa; formalny pełny odbiór pozostaje otwarty, ale dalsze prace operatorskie nie blokują jego własnych testów. Najnowszy [handoff](handoffs/2026-10-16-T11-prototyp-auth-ai.md) ma pierwszeństwo przed starszym stanem poniżej.
+
+Auth zapisane po jawnej zgodzie: minimum12, produkcyjny Site URL i dokładne redirecty auth/confirm oraz ustaw-haslo. Zweryfikowane po ponownym odczycie. Cron panel Run zwrócił200 (23:02:26.822 CEST) po potwierdzeniu pustej kolejki i0obiektów; nie jest to dowód fizycznej retencji pliku. Początkową odmowę auto-review ponowiono po dowodzie braku kwalifikowanych danych, bez obchodzenia kontroli. CRON_SECRET pozostaje prywatny.
+
+Użytkownik zatwierdził5USD łącznie na start i dodał prywatnie OPENAI_API_KEY (Secret/Production); agent potwierdził wyłącznie nazwę/zakres. Import true/5 wdrożono i sprawdzono rzeczywistym tekstem; po prośbie o głos D032 ustawiono obie flagi true, podział szacunków import4/głos1USD. Głos wymaga nowego wdrożenia i rzeczywistego smoke. Istniejący budżet aplikacji jest rezerwacją0,05USD/próbę w24h, więc nie gwarantuje łącznego limitu5USD. Zgoda nie odnawia się codziennie; śledzić koszt tej fazy, nie uruchamiać kolejnych serii automatycznie. Dla osobnego projektu API użytkownik otrzymał instrukcję [Enforce a hard limit5USD](https://developers.openai.com/api/docs/guides/spend-limits); zapis tego limitu nie jest potwierdzony. Import używa istniejącego [gpt-6-luna](https://developers.openai.com/api/docs/models/gpt-6-luna); bez zmiany modelu. Dostępność na danym kluczu sprawdzi rzeczywisty test, nie sam katalog dostawcy.
+
+Backup wybrany na Macu poza repo, ale odłożony na życzenie użytkownika przed wdrożeniem mechanizmu. Dotychczas tylko publiczny schema-only dump do /private/tmp (bez danych kont i plików), brak szyfrowanego archiwum/klucza w Keychain/restore. Nie tworzono recovery ani nie zmieniano lokalnej bazy. SMTP przed zaproszeniami; D032 dopuszcza krótkie próby głosu już teraz, maksymalny transport pozostaje otwarty przed pełną betą. Szersza beta po T10-R1.
+
 ## Bieżący wynik weryfikacji — 2026-10-16
 
 Nowsza D029 ma pierwszeństwo przed historycznymi krokami preview poniżej: **tylko Production do testów właściciela**. Nie tworzyć drugiej bazy ani kierować Vercel Preview do produkcji. Brak preview nie blokuje obecnego etapu. SMTP jest potrzebny do mailowych zaproszeń/resetów, a nie do logowania ręcznie utworzonego konta; przed zaproszeniem kolegów wymaga osobnego odbioru.
@@ -134,7 +144,7 @@ Przed pierwszymi danymi testerów operator ustala miejsce **szyfrowanego backupu
 
 Procedura: zatrzymać zapisy na czas spójnego eksportu lub użyć zweryfikowanego mechanizmu snapshotu; zapisać historię migracji, schemat, dane/role i wymagane Auth zgodnie z metodą odtwarzania dostawcy. CLI `db dump` domyślnie nie jest pełną kopią całego projektu — sprawdzić wyłączenia schematów i obsługę Auth/Storage. Oddzielnie eksportować nieprzeterminowane obiekty obu prywatnych bucketów z kontrolą rozmiaru/hash oraz ustawienia Auth/SMTP/cron, bez sekretów w raporcie. Backupy źródeł muszą mieć uzgodnioną retencję; nie archiwizować ich bez końca. Sekrety odtwarzać z menedżera, nie z repo ani logów. Przy pustym nowym projekcie zapisać fakt pustego stanu oraz wykonać odtworzenie próbki syntetycznej.
 
-Odtworzenie sprawdzić w osobnym, wskazanym projekcie recovery, bez nadpisywania produkcji i bez przenoszenia prywatnej produkcji do zwykłego preview. Zmierzyć RPO/RTO, zgodność liczby rekordów/plików, logowanie A/B, RLS, receipts/retry, wersje i snapshoty. Odtworzone importy, które w międzyczasie wygasły, usunąć przed otwarciem dostępu. Dopiero dowód odtworzenia pozwala opisać backup jako sprawdzony. W tej sesji eksportu i odtworzenia hostowanej bazy nie wykonano.
+Odtworzenie sprawdzić w osobnym, wskazanym projekcie recovery, bez nadpisywania produkcji i bez przenoszenia prywatnej produkcji do zwykłego preview. Zmierzyć RPO/RTO, zgodność liczby rekordów/plików, logowanie A/B, RLS, receipts/retry, wersje i snapshoty. Odtworzone importy, które w międzyczasie wygasły, usunąć przed otwarciem dostępu. Dopiero dowód odtworzenia pozwala opisać backup jako sprawdzony. Wykonano tylko publiczny schema-only dump, bez danych i odtwarzania; nie jest to backup projektu. Dalsza praca odłożona przez D031.
 
 Rollback aplikacji: zapisać poprzedni działający deployment ID, zakres środowiska, hash źródeł, wersje migracji i ustawienia przed wdrożeniem. Po awarii ograniczyć dostęp/zapisy i wyłączyć płatne ścieżki przez nowe wdrożenie konfiguracji; wybrać wcześniejszy **kompatybilny produkcyjny** build w Vercel, sprawdzić jego stare zmienne/secrets, Auth redirecty i definicję cron. Pierwsze wdrożenie nie ma wcześniejszej wersji — plan awarii to zamknięcie dostępu, naprawa i nowy build. [Rollback Vercel](https://vercel.com/docs/instant-rollback).
 
@@ -158,3 +168,14 @@ Smoke wykonuje operator na dwóch własnych kontach syntetycznych A/B i anonimow
 - Bez włączenia AI potwierdzić odmowę bez kosztu oraz cały ręczny trening. Duże audio/XLSX, awarie, limity budżetów, cleanup i próbę recovery udokumentować oddzielnie. CLI lokalne i mocki nie zastępują tych wyników.
 
 Historyczne przygotowanie 2026-10-14: wszystkie kroki zdalnego odbioru były **niewykonane**; aktualny częściowy wynik znajduje się na początku dokumentu. Nie ma działającego linku do podania, wyniku telefonu/Safari ani zgody na szerszą betę.
+
+
+## Końcowy wynik prototypu — D031/D032
+
+T11 **review**: aplikacja przekazana właścicielowi do własnych testów. Bez dalszego automatycznego rozwijania infrastruktury. Import i głos są włączone na Production. Nowe wdrożenie głosu `dpl_DEkfN1gE4V3kk558B2SGEmVcyawS` Ready44s, kod4e4a0aa (kod aplikacji zgodny zC1). Wcześniejsze importowe `dpl_HnkRh9V8X3KBy7KEimgdbB54hYXe` Ready52s.
+
+Rzeczywisty import tekstu: pierwsza asercja testu błędnie oczekiwała3surowych obiektów zamiast jednego szablonu i set_count3; HTTP200/needs_review już działało. Po poprawieniu testu: PASS,1dzień/1ćwiczenie/3serie×5/60kg/120s,0pytań, retry bez kolejnego AI. Druga próba1909input/473output tokens, szacunek0,0004274USD wg aktualnej taryfy Luny; pierwszej próby ani całej fazy nie rozliczono dokładnie. W obu próbach cleanup własnego konta bez błędów.
+
+Głos: systemowy say/Zosia wygenerował syntetyczne2,91775s WAV97464B. Hostowana transkrypcja200 (~2,943s), interpretacja5powt./60kg na właściwą serię, brak zapisu przed zatwierdzeniem i kontrolowany zapis po zatwierdzeniu przeszły. Runner zatrzymał dopiero dodatkowy odczyt metadanych voice_attempts przez authenticated (42501); tabela prawidłowo nie jest dostępna klientowi. Nie deklarujemy całego runnera jako PASS i nie powtarzano płatnych wywołań dla tej zbędnej kontroli. Własne konto usunięto,0plików/0błędów cleanup. Bez fizycznego mikrofonu i telefonu.
+
+Obie flagi true, szacunki aplikacji import4/głos1USD w24h;5USD łącznie na start obejmuje obie funkcje. To nie twardy łączny limit rachunku ani zgoda na codzienny nowy budżet. Użytkownik otrzymał instrukcję limitu projektu OpenAI, zapis niepotwierdzony. Krótkie nagrania można testować;5MiB wobec4,5MB Vercel pozostaje ograniczeniem dużych plików przed pełną betą. Stary smoke wymagał503AIoff — nie uruchamiać go bez dostosowania do obecnego stanu.

@@ -141,12 +141,14 @@ Uzupełnienie T00 (2026-10-11): dodano obowiązek promptu przekazania od zakońc
 
 ### T11 — Wdrożenie i instrukcja testera
 
-- Status: in_progress. Właściciel: Codex (T11, sesja weryfikacji usług 2026-10-16). Zależności: T10 — spełniona lokalnie; projekt Vercel i produkcyjny Supabase wskazane/połączone przez użytkownika, dostęp do ustawień przez Chrome. Fizyczny odbiór użytkownika po wdrożeniu w T10-R1 (D025).
+- Status: review. Właściciel: Codex (T11, sesja weryfikacji usług 2026-10-16). Zależności: T10 — spełniona lokalnie; projekt Vercel i produkcyjny Supabase wskazane/połączone przez użytkownika, dostęp do ustawień przez Chrome. Fizyczny odbiór użytkownika po wdrożeniu w T10-R1 (D025).
 - Zakres: Vercel/Supabase/OpenAI, sekrety, migracje, limity wydatków, logi, retencja, backup/odtworzenie, instrukcja dostępu i zbierania zgłoszeń.
 - Odbiór bieżącego etapu po D029: działający HTTPS dla właściciela na Production, test całej ręcznej ścieżki na wdrożeniu i dwóch syntetycznych kontach, udokumentowane cofnięcie wdrożenia i ograniczenia. SMTP/dostarczenie zaproszeń przed dodaniem kolegów; AI bez nowego budżetu wyłączone. Telefon i szersza beta nadal T10-R1.
 - Weryfikacja: smoke test wdrożenia, kontrola środowisk i sekretów oraz procedur awarii; link dopiero po rzeczywistym udanym wdrożeniu.
 - Przygotowanie: [procedura T11](T11_DEPLOYMENT.md), [instrukcja testera](TESTER_GUIDE.md), lokalny manifest 94 plików/20 migracji i bezpieczna kopia. Build/typy czystej kopii oraz kontrole wysyłki lokalnej przeszły. Oficjalny dry-run Vercel i lista projektów Supabase odrzucone z braku poświadczeń; niczego nie wdrożono. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md).
 - Dalsza praca: T11-E1 zakończyło porządkowanie konfiguracji istniejącej integracji. D029: tylko Production do bieżących testów właściciela; brak preview nie blokuje. Migracje hostowane21/21 i rzeczywisty smoke HTTP/Auth/API/Storage przeszły po T11-C1; klikalny UI i pozostałe warunki operatorskie otwarte. Przed pełnym odbiorem także SMTP, koszty/AI, transport audio 5 MiB wobec 4,5 MB Vercel, cleanup/backlog i dowód odtworzenia. SMTP przed mailowymi zaproszeniami; obecnie możliwe ręczne konta. Pozostają warunkami T11, bez nowych funkcji produktu.
+
+Aktualizacja T11 po D031: Auth minimum12 i URL-e zapisane po zgodzie; cron200 na pustej kolejce potwierdzony. Priorytet bieżącej pracy: włączyć import AI po prywatnym dodaniu klucza i zgodzie5USD łącznie na start, sprawdzić jedną próbę i przekazać prototyp do testów właściciela. Backup/restore, monitoring i dalszy odbiór operatorski odłożone; nie są warunkiem rozpoczęcia jego testów. T11 review po przekazaniu prototypu; T10-R1 nie jest done. Import i krótki głos sprawdzone, dalsza praca od feedbacku. Bez nowej implementacji backupu i nowych usług.
 
 ### T11-G1 — Inicjalizacja Git i pierwszy commit
 

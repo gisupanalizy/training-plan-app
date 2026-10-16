@@ -313,5 +313,124 @@
     ]
   },
   "c1MigrationApplied": true,
-  "c1CodeCommit": "ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5"
+  "c1CodeCommit": "ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5",
+  "prototypeFollowup": {
+    "auth": {
+      "minimumPasswordLength": 12,
+      "siteUrl": "https://training-plan-app-seven.vercel.app",
+      "redirectPaths": [
+        "/auth/confirm",
+        "/ustaw-haslo"
+      ],
+      "savedAndReopened": true
+    },
+    "cron": {
+      "status": 200,
+      "localTime": "2026-10-16 23:02:26.822 CEST",
+      "eligibleImports": 0,
+      "eligibleVoice": 0,
+      "storageObjects": 0,
+      "actualExpiredFileDeletionTested": false
+    },
+    "budget": {
+      "approvedStartTotalUsd": 5,
+      "importRollingEstimateUsd": 4,
+      "voiceRollingEstimateUsd": 1,
+      "providerHardCapVerified": false,
+      "actualCombinedInvoiceKnown": false
+    },
+    "importDeployment": {
+      "id": "dpl_HnkRh9V8X3KBy7KEimgdbB54hYXe",
+      "commit": "4e4a0aadfd42617bfec6765c7b181449dcaae7e2",
+      "ready": true,
+      "durationSeconds": 52
+    },
+    "voiceDeployment": {
+      "id": "dpl_DEkfN1gE4V3kk558B2SGEmVcyawS",
+      "commit": "4e4a0aadfd42617bfec6765c7b181449dcaae7e2",
+      "ready": true,
+      "durationSeconds": 44
+    },
+    "importAttempts": [
+      {
+        "check": "T11 real hosted AI text import",
+        "startedAt": "2026-10-16T21:15:58.622Z",
+        "paidProviderCallsExpected": 1,
+        "synthetic": true,
+        "passed": false,
+        "elapsedMs": 10489,
+        "error": "Expected values to be strictly equal:\n\n1 !== 3\n",
+        "cleanup": {
+          "accounts": 1,
+          "files": 0,
+          "errors": 0
+        },
+        "finishedAt": "2026-10-16T21:16:13.629Z"
+      },
+      {
+        "check": "T11 real hosted AI text import",
+        "startedAt": "2026-10-16T21:16:35.268Z",
+        "paidProviderCallsExpected": 1,
+        "synthetic": true,
+        "passed": true,
+        "elapsedMs": 6748,
+        "usage": {
+          "model": "gpt-6-luna",
+          "input_tokens": 1909,
+          "output_tokens": 473
+        },
+        "estimatedUsd": 0.0004274,
+        "result": {
+          "sessions": 1,
+          "exercises": 1,
+          "sets": 3,
+          "rawTemplates": 1,
+          "reps": 5,
+          "kg": 60,
+          "restSeconds": 120,
+          "questions": 0,
+          "retryDidNotCallAI": true
+        },
+        "cleanup": {
+          "accounts": 1,
+          "files": 0,
+          "errors": 0
+        },
+        "finishedAt": "2026-10-16T21:16:45.819Z"
+      }
+    ],
+    "voiceAttempt": {
+      "check": "T11 real hosted voice",
+      "startedAt": "2026-10-16T21:20:35.748Z",
+      "synthetic": true,
+      "paidProviderCallsExpected": 2,
+      "passed": false,
+      "transcriptionMs": 2943,
+      "error": "reservations: 42501",
+      "cleanup": {
+        "accounts": 1,
+        "files": 0,
+        "errors": 0
+      },
+      "finishedAt": "2026-10-16T21:20:49.399Z"
+    },
+    "voiceInterpretation": {
+      "applicationChecksCompletedBeforeHarnessFailure": [
+        "transcription200",
+        "proposal5reps60kg",
+        "correctOwnedTarget",
+        "noWriteBeforeConfirmation",
+        "confirmedWrite5reps60kg"
+      ],
+      "optionalMetadataReadFailed": "42501 on voice_attempts for authenticated user; not an application failure",
+      "repeatedPaidCall": false
+    },
+    "backup": {
+      "chosenLocation": "Mac outside repository",
+      "onlyPublicSchemaExported": true,
+      "encryptedBackupCreated": false,
+      "restoreTested": false,
+      "furtherWorkDeferredByUser": true
+    }
+  }
 }

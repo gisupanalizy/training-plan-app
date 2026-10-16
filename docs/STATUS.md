@@ -2,17 +2,23 @@
 
 Aktualizacja: 2026-10-16.
 
-## T11 — bieżący wynik Production
+## T11 — prototyp gotowy do testów właściciela
 
-Najnowszy [handoff](handoffs/2026-10-16-T11-produkcja-migracje.md). **T11 nadal in_progress; T11-C1 done.** Użytkownik wybrał tylko Production do własnych testów (D029); nie tworzyć preview. Po zatwierdzeniach zastosowano 21/21 migracji, z T10 i poprawką PT409. Vercel Production Ready `dpl_AzhtfUHBRouX92RRhbTA5F19r5jX`, kod `ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5`. [Raport](reports/2026-10-16-T11-production-audit.json) rozdziela błędne próby i udany smoke.
+Najnowszy [handoff](handoffs/2026-10-16-T11-prototyp-auth-ai.md). **T11 review; T11-E1/T11-C1 done.** Po D029 tylko Production. D031: użytkownik chce teraz testować prototyp i używać AI; dalsze prace operatorskie odkładamy, bez uzależniania jego testów od pełnego odbioru infrastruktury.
 
-**Zweryfikowany adres do ręcznych testów właściciela: [Forma](https://training-plan-app-seven.vercel.app).** Rzeczywisty HTTP/Auth/API/Storage smoke A/B/anon przeszedł: plan, 1RM 120 →90kg, brak maksimum/null, trening/historia, retry/409, wersje/snapshoty, zero/null, postęp 540 kg i oba prywatne buckety. AI odmawia 503; nie wykonywano płatnego AI. Dwa konta i dwa pliki ostatniej próby usunięto bez błędów. RLS 17/17 i brak DML do 12 tabel potwierdzono po 21 migracjach. Klikalny zalogowany UI pozostaje do odbioru; HTTP HTML nie jest testem urządzenia.
+**Aplikacja: [Forma](https://training-plan-app-seven.vercel.app).** 21/21 migracji z T10/C1; rzeczywisty smoke HTTPS/Auth/API/Storage A/B/anon przeszedł, PT409/409 i retry działają. Sprawdzony kod ddaceb3, ostatni dotychczasowy commit dokumentacji 4e4a0aa. [Raport](reports/2026-10-16-T11-production-audit.json) zachowuje także niezaliczone próby. Nie powtarzać szerokiej regresji bez zmiany kodu lub nowego błędu.
 
-Smoke wykrył biznesowy 40001 powodujący timeout na hostingu; D030/T11-C1 zmieniło 5 RAISE na PT409 bez zmiany danych/grantów. Nowa migracja, kod, lokalne T04/T05, 171 testów, build/typy i manifest 95 źródeł/21 migracji przeszły; commit poprawki wypchnięty. Historyczny E1 zachowany. Końcowy commit dokumentacji odczytać z git log.
+Auth po jawnej zgodzie zapisane i ponownie odczytane: minimum hasła12, Site URL produkcji, dokładne redirecty `/auth/confirm` i `/ustaw-haslo`. Rejestracja/anonymous off, refresh rotation on. Odczyt wyłącznie liczników potwierdził jedno konto i profil; agent nie zna danych logowania właściciela. SMTP nie jest potrzebny do obecnych ręcznych kont; dopiero przed mailowymi zaproszeniami/resetami.
 
-Pozostałe: zgoda na minimum hasła 12, produkcyjny Site URL i dokładne redirecty (obecnie localhost/brak); CRON_SECRET użytkownik potwierdza/wprowadza prywatnie; Run crona/retencja/backlog i backup/restore/RPO/RTO. Auto-review odrzucił minimum hasła i Run crona jako trwałą zmianę/wykonanie produkcji bez wyraźnej zgody; nie obchodzono odmowy. Zgody na pierwsze20 migracji, pamięciowe klucze/smoke i następnie21 migrację+commit/push uzyskano i wykonano. Publiczna rejestracja i anonymous wyłączone, refresh rotation włączone. SMTP odłożony dla ręcznych kont, wymagany przed mailowymi zaproszeniami.
+Cron: Enabled `0 3 * * *`, ręczne wywołanie z panelu dało HTTP200 na pustej kolejce (23:02:26.822 CEST). Przed wywołaniem eligible imports/voice i wszystkie obiekty Storage0. Nie dowodzi to usuwania rzeczywistych wygasłych plików; CRON_SECRET bez odczytu/rotacji, jakość potwierdza użytkownik prywatnie. Przejściowe timeouty Node/Chrome nie były błędem HTTP aplikacji: curl z walidacją TLS potwierdził /logowanie200, root307, API401.
 
-W Chrome otwarto pusty Supabase Auth → Create a new user, Auto confirm włączone; użytkownik musi sam prywatnie wpisać e-mail i hasło oraz utworzyć własne konto. Konto właściciela nie zostało utworzone przez agenta. Telefon/Safari i szersza beta nadal T10-R1. Bez nowych usług, zakupów i rotacji sekretów. Sekcje niżej są historią wcześniejszych sesji.
+AI i głos są włączone i sprawdzone w rzeczywistym HTTPS. Użytkownik zatwierdził5USD łącznie na start i prywatnie dodał klucz. Production `dpl_DEkfN1gE4V3kk558B2SGEmVcyawS` Ready44s, kod4e4a0aa/C1. Import:3serie×5/60kg/120s, retry bez nowego AI. Głos: syntetyczne2,9s → transkrypcja → propozycja5/60 → zapis dopiero po zatwierdzeniu. Dodatkowy odczyt prywatnej tabeli budżetowej w runnerze dał42501; same kontrole aplikacji wcześniej przeszły, bez kolejnej płatnej próby. Raport zachowuje ten błąd testu. Limity szacunków import4/głos1 w24h nie są twardym limitem5USD łącznie; niepotwierdzony limit projektu OpenAI. Duże audio pozostaje otwarte, krótkie próby dopuszcza D032.
+
+Backup: użytkownik wskazał Mac poza repo, ale przed zmianą priorytetu wykonano tylko eksport publicznego schematu do /private/tmp, bez danych Auth/Storage. Brak szyfrowanego backupu i restore. Odłożone: dalszy backup/restore/monitoring i próba fizycznego cleanup; bez deklaracji wykonania. Telefon/Safari i szersza beta nadal wymagają formalnego T10-R1; właściciel może już testować dostępną aplikację.
+
+## Następny krok
+
+Właściciel testuje aplikację, import i krótkie nagrania. Dalsza praca agenta dopiero od konkretnego feedbacku, bez automatycznego monitorowania lub rozwijania infrastruktury. Szczegóły i prompt w najnowszym handoffie. Historyczne sekcje niżej opisują wcześniejsze stany.
 
 ## Co istnieje
 

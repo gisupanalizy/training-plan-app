@@ -164,3 +164,23 @@ Rzeczywisty smoke ujawnił HTTP 400 zamiast 409 i timeout30s przy biznesowym 400
 Końcowa kontrola sesji T11: git diff --check, składnia smoke, verify package, 109 linków lokalnych, zgodność raportu 21 migracji/17 RLS i identyczny prompt w handoffie/pliku odpowiedzi — sukces. T11-C1 done, T11 nadal in_progress. Dokumentacja i poprawiony runner są publikowane osobnym commitem po commicie kodu; źródła builda pozostają zgodne z manifestem C1. Użytkownik otrzymuje link do ręcznych testów i pusty formularz konta do prywatnego wypełnienia.
 
 Końcowy skaner dokumentacji miał fałszywe trafienie w kotwicy Markdown słowa „środowisk”; skrypt powłoki kontynuował commit/push po asercji. Trafienie zweryfikowano, a opublikowane pliki ponownie sprawdzono z granicą tokenu — bez wykrytych sekretów. verify package nadal PASS, źródła builda bez zmian. Fakt zapisano w handoffie.
+
+
+## 2026-10-16 — T11: Auth i priorytet testów prototypu
+
+Po zgodzie zapisano Auth minimum12, Site URL i dwa redirecty, potwierdzone po ponownym odczycie. Cron Run200 na pustej kolejce po dowodzie0eligible, bez odczytu/rotacji sekretu. Aktualny build dokumentacji4e4a0aa wcześniejReady; curl potwierdził HTTPS mimo timeoutów Node i blokady klienta Chrome. Właściciel ma1konto/profil według samych liczników. Wykonano tylko publiczny schema-only dump do tmp, bez danych i restore.
+
+Użytkownik uznał dalszy odbiór za nadmierny dla prototypu. D031 zmienia kolejność: obecny cel to oddanie aplikacji do testów i uruchomienie importu AI; dalszy backup/restore/monitoring odłożony, nie jest warunkiem jego testów. PełnyT11 pozostaje in_progress, T10-R1 i beta nie są deklarowane jako odebrane. Przyznano5USD łącznie na start; klucz użytkownik dodał prywatnie. Ustawienia importu true/5 wymagają nowego Production i jednej rzeczywistej próby. Nie przyznano odnawialnych5USD/dobę. Głos nadal wyłączony. Bez nowych agentów/usług, migracji i implementacji backupu.
+
+
+## Końcowy wynik prototypu — D031/D032
+
+T11 **review**: aplikacja przekazana właścicielowi do własnych testów. Bez dalszego automatycznego rozwijania infrastruktury. Import i głos są włączone na Production. Nowe wdrożenie głosu `dpl_DEkfN1gE4V3kk558B2SGEmVcyawS` Ready44s, kod4e4a0aa (kod aplikacji zgodny zC1). Wcześniejsze importowe `dpl_HnkRh9V8X3KBy7KEimgdbB54hYXe` Ready52s.
+
+Rzeczywisty import tekstu: pierwsza asercja testu błędnie oczekiwała3surowych obiektów zamiast jednego szablonu i set_count3; HTTP200/needs_review już działało. Po poprawieniu testu: PASS,1dzień/1ćwiczenie/3serie×5/60kg/120s,0pytań, retry bez kolejnego AI. Druga próba1909input/473output tokens, szacunek0,0004274USD wg aktualnej taryfy Luny; pierwszej próby ani całej fazy nie rozliczono dokładnie. W obu próbach cleanup własnego konta bez błędów.
+
+Głos: systemowy say/Zosia wygenerował syntetyczne2,91775s WAV97464B. Hostowana transkrypcja200 (~2,943s), interpretacja5powt./60kg na właściwą serię, brak zapisu przed zatwierdzeniem i kontrolowany zapis po zatwierdzeniu przeszły. Runner zatrzymał dopiero dodatkowy odczyt metadanych voice_attempts przez authenticated (42501); tabela prawidłowo nie jest dostępna klientowi. Nie deklarujemy całego runnera jako PASS i nie powtarzano płatnych wywołań dla tej zbędnej kontroli. Własne konto usunięto,0plików/0błędów cleanup. Bez fizycznego mikrofonu i telefonu.
+
+Obie flagi true, szacunki aplikacji import4/głos1USD w24h;5USD łącznie na start obejmuje obie funkcje. To nie twardy łączny limit rachunku ani zgoda na codzienny nowy budżet. Użytkownik otrzymał instrukcję limitu projektu OpenAI, zapis niepotwierdzony. Krótkie nagrania można testować;5MiB wobec4,5MB Vercel pozostaje ograniczeniem dużych plików przed pełną betą. Stary smoke wymagał503AIoff — nie uruchamiać go bez dostosowania do obecnego stanu.
+
+Kontrole końcowe dotyczą tylko dokumentacji i niezmienionego manifestu C1; bez ponawiania szerokiej regresji aplikacji.

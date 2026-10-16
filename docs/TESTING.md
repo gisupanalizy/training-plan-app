@@ -152,3 +152,25 @@ Runner otrzymał timeouty, postęp i oddzielne asercje obu bucketów/anulowania 
 Po „Tak, zastosuj i wdróż poprawkę”: produkcyjny dry-run wskazał tylko migrację21; push --linked --skip-vault i migration list dały21/21. Ponowny audit SQL potwierdził niezmienione RLS/granty/buckety. Kod commit ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5 wypchnięty; Vercel deployment dpl_AzhtfUHBRouX92RRhbTA5F19r5jX Ready 53 s. Pierwsza próba na C1 przeszła konflikt, trening, wersje, oba buckety i odmowęAI, ale błędna asercja oczekiwała nazwy planu w historii (UI pokazuje datę/status/komentarz). Poprawiono wyłącznie test; nie zmieniano aplikacji. Konta 2 i pliki 2 usunięto,0 błędów.
 
 Końcowe `node scripts/test-t11-production.mjs --run-approved-smoke` na produkcyjnymHTTPS: PASS. Auth A/B, anonim 401; błędny JSON 400; plan/1RM 120/start/seria przez API; retry publikacji/startu/serii; stara rewizja bezpośrednio PT409 i w API409;90 kg/null snapshoty; pominięcie, dodatki, komentarz i koniec; wersja i 150kg nie zmieniają starego 90; 12 tabel bez odczytuB/anon i UPDATE42501;A nie czyta planuB. Oba buckety: własny upload/source, odmowa B/anon, signed/public i cudza ścieżka training-private; signed upload importu, no-store źródła i cancel 410. Strony ręczne200, ponowne logowanie/historia, postęp 540 kg, zero/null. Process importu i głos503 z AI wyłączonym, bez płatnego żądania. Finally:2 własne konta/2 pliki, 0 błędów. To HTTP/Auth/API/Storage; nie klikalny UI, SMTP ani telefon/Safari. Cron 200/retencja/restore nadal niewykonane.
+
+
+### T11 — Auth, cron i zmiana priorytetu D031
+
+Po jawnej zgodzie użytkownika zapisano minimum hasła12, produkcyjny Site URL i dwa dokładne redirecty. Ponowne otwarcie Email pokazało12 na screenshot; DOM redaguje to pole jako password-policy, dlatego wcześniejsza asercja porównująca DOM value do12 zwróciła false — nie była dowodem nieudanego zapisu. URL-e potwierdzono po reload. Bez odczytu haseł użytkowników i bez wiadomości.
+
+Panel crona: po odczycie0eligible importów/voice i0obiektów Run zwróciło200, 23:02:26.822 CEST, na deployment66bkx8iqf, /api/imports/cleanup. Brak testu usuwania wygasłego pliku. Później odczyt liczników: Auth1/profiles1/imports0/Storage0; bez odczytu danych konta. Przejściowo Node UND_ERR_CONNECT_TIMEOUT, a Chrome net::ERR_BLOCKED_BY_CLIENT; bez obchodzenia zabezpieczeń. curl przy normalnej walidacjiTLS potwierdził /logowanie200, root307 i /api/plans401. Nie wnioskować o awarii produkcji z błędu jednego transportu.
+
+`DO_NOT_TRACK=1 npx --no-install supabase db dump --linked --schema public --file /private/tmp/t11-public-schema.sql` przeszło po pobraniu oficjalnego obrazu postgres17.11.0.003. To tylko schemat, nie kopia danych/Storage/Auth. Szyfrowania i restore nie wdrożono; dalszy zakres odłożony przez użytkownika. Brak zapisu do istniejącej lokalnej bazy.
+
+D031 dopuszcza pojedynczy płatny test importu w5USD na start po prywatnym dodaniu klucza, bez głosu. Wynik dopisujemy po rzeczywistym wywołaniu. Nie powtarzano testów/builda kodu: zmieniano tylko ustawienia usług i dokumentację, kod wydania pozostaje zgodny z manifestem C1.
+
+
+## Końcowy wynik prototypu — D031/D032
+
+T11 **review**: aplikacja przekazana właścicielowi do własnych testów. Bez dalszego automatycznego rozwijania infrastruktury. Import i głos są włączone na Production. Nowe wdrożenie głosu `dpl_DEkfN1gE4V3kk558B2SGEmVcyawS` Ready44s, kod4e4a0aa (kod aplikacji zgodny zC1). Wcześniejsze importowe `dpl_HnkRh9V8X3KBy7KEimgdbB54hYXe` Ready52s.
+
+Rzeczywisty import tekstu: pierwsza asercja testu błędnie oczekiwała3surowych obiektów zamiast jednego szablonu i set_count3; HTTP200/needs_review już działało. Po poprawieniu testu: PASS,1dzień/1ćwiczenie/3serie×5/60kg/120s,0pytań, retry bez kolejnego AI. Druga próba1909input/473output tokens, szacunek0,0004274USD wg aktualnej taryfy Luny; pierwszej próby ani całej fazy nie rozliczono dokładnie. W obu próbach cleanup własnego konta bez błędów.
+
+Głos: systemowy say/Zosia wygenerował syntetyczne2,91775s WAV97464B. Hostowana transkrypcja200 (~2,943s), interpretacja5powt./60kg na właściwą serię, brak zapisu przed zatwierdzeniem i kontrolowany zapis po zatwierdzeniu przeszły. Runner zatrzymał dopiero dodatkowy odczyt metadanych voice_attempts przez authenticated (42501); tabela prawidłowo nie jest dostępna klientowi. Nie deklarujemy całego runnera jako PASS i nie powtarzano płatnych wywołań dla tej zbędnej kontroli. Własne konto usunięto,0plików/0błędów cleanup. Bez fizycznego mikrofonu i telefonu.
+
+Obie flagi true, szacunki aplikacji import4/głos1USD w24h;5USD łącznie na start obejmuje obie funkcje. To nie twardy łączny limit rachunku ani zgoda na codzienny nowy budżet. Użytkownik otrzymał instrukcję limitu projektu OpenAI, zapis niepotwierdzony. Krótkie nagrania można testować;5MiB wobec4,5MB Vercel pozostaje ograniczeniem dużych plików przed pełną betą. Stary smoke wymagał503AIoff — nie uruchamiać go bez dostosowania do obecnego stanu.

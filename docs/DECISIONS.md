@@ -226,3 +226,20 @@ Uzupełnienie D026 po odbiorze: `.gitignore` i `.vercelignore` jawnie wykluczaj�
 - Problem: ręczne funkcje używały SQLSTATE 40001 dla starej rewizji i sprzecznego payloadu. Hostowane HTTP zwróciło po oczekiwaniu 400 zamiast 409, a bezpośredni RPC przekroczył 30 s. To zgodne z opisanym przez dostawcę zapętlaniem błędów serializacji PostgREST 14; nie ustalono numeru wersji hostowanego PostgREST. Po próbach nie pozostał aktywny backend authenticator.
 - Wybór: nowa kompatybilna migracja zastępuje dokładnie 1+4 biznesowe RAISE przez PT409 w dwóch funkcjach, z kontrolą oczekiwanej liczby wystąpień. Zachowuje definicję funkcji, sygnatury, SECURITY DEFINER, search_path i granty; nie zmienia danych/historycznych hashy ani wcześniejszych migracji. API rozpoznaje PT409 jako 409; obsługa rzeczywistych 40001/23505 pozostaje.
 - Dowody: [oficjalna diagnoza i rekomendacja PT409](https://supabase.com/docs/guides/troubleshooting/high-cpu-and-infinite-transaction-retries-when-using-custom-error-codes-in-rpc-functions-77326b), sprawdzona 2026-10-16; lokalna migracja, T04/T05 z asercjami PT409, 171 testów, build/typy przeszły. Zestaw wydania ma teraz 21 migracji i nowy manifest C1, bez zmiany historycznego E1. Po zatwierdzeniu migracja21 i kod ddaceb3 wdrożone; rzeczywisty RPC PT409 i HTTP 409/retry oraz końcowy smoke potwierdzone.
+
+
+## D031 — Najpierw testy prototypu i import AI
+
+- Data: 2026-10-16. Status: confirmed — użytkownik uznał dalszy odbiór za nadmierny dla prototypu i poprosił o możliwość testów oraz AI. Następnie zatwierdził5USD łącznie na start i prywatnie dodał OPENAI_API_KEY.
+- Wybór: udostępnić istniejący działający Production do własnych testów, dokończyć włączenie importu i jedną małą rzeczywistą próbę. Odłożyć dalsze prace backup/restore/monitoring, bez uzależniania testów od pełnego odbioru operacyjnego. Zachować D029, RLS, serwerowe sekrety i zatwierdzanie propozycji AI. SMTP nie blokuje ręcznych kont; głos czeka na rozwiązanie transportu.
+- Granice:5USD jest budżetem początkowej fazy, nie nowym budżetem dziennym/miesięcznym. Istniejąca rezerwacja aplikacji liczy0,05USD/próbę w24h, więc ustawienie5 nie gwarantuje łącznego rachunku5. Użytkownik otrzymał instrukcję osobnego limitu projektu OpenAI z Enforce a hard limit; nie potwierdzono jego ustawienia. Nie zmieniać limitu wspólnej organizacji, nie uruchamiać kolejnych serii płatnych testów ani kupować usług. Aktualne [limity dostawcy](https://developers.openai.com/api/docs/guides/spend-limits) sprawdzono; nawet ich egzekwowanie może mieć opóźnienie.
+- Wynik: Auth minimum12 i URL-e zapisane po osobnej zgodzie; cron200 na pustej kolejce potwierdzony. Pełny T11 pozostaje in_progress, fizyczny odbiór i szersza beta wT10-R1. Nie deklarować wykonanego backupu/restore. Formalnego zakresu pełnej bety nie zmieniono.
+
+
+## D032 — Krótkie nagrania głosowe w testach prototypu
+
+- Data: 2026-10-16. Status: confirmed dla testów — użytkownik: „Glos chcialbym też testować. Mogę już?”.
+- Wybór: włączyć istniejący głos do własnych prób krótkich nagrań w ramach tych samych5USD łącznie; nie blokować wszystkich takich prób problemem maksymalnego pliku. Podział istniejących szacunków aplikacji: import4/głos1USD w24h; nie jest to nowy odnawialny budżet ani twardy limit rachunku. Klucz pozostaje serwerowy, propozycja wymaga zatwierdzenia, brak zmian kodu/migracji i trwałego zapisu audio.
+- Granice: istniejący limit produktu30s/5MiB nie został zmieniony. Vercel4,5MB nadal odrzuci duży multipart przed aplikacją; na początek kilka sekund, bez deklarowania odbioru maksymalnej wielkości. Q06 pozostaje do naprawy przed pełną betą. Odbiór prawdziwego mikrofonu/telefonu nadal po stronie użytkownika/T10-R1. Wymagane sprawdzenie hostowanych transkrypcji i interpretacji, nie sama flaga.
+
+Uzupełnienie D031/D032 po sprawdzeniu: rzeczywisty import i krótki głos działają, aktualne Production Ready. T11 review — użytkownik testuje prototyp; pełny odbiór operatorski odłożony, brak automatycznych dalszych prac. Wyniki i błędy samego runnera zapisane w raporcie/handoffie.

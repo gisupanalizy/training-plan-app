@@ -1,6 +1,8 @@
 # Otwarte pytania i założenia
 
-Aktualizacja: 2026-10-14. Nie wszystkie pytania blokują rozpoczęcie pracy.
+Aktualizacja: 2026-10-16. Nie wszystkie pytania blokują rozpoczęcie pracy.
+
+D031: testy właściciela i uruchomienie importu AI mają pierwszeństwo.5USD łącznie na start zatwierdzone, klucz dodany prywatnie do Vercel Production. Auth URL/minimum12 zapisane, cron200 na pustej kolejce. Backup wskazany na Macu poza repo, wykonanie odłożone. Poniższe pełne wymagania operatorskie nie blokują rozpoczęcia własnych testów prototypu. Q04 rozwiązane dla Production przez D029; Q05 SMTP dopiero przed zaproszeniami. Brak potwierdzenia twardego limitu projektu OpenAI; istniejący limit aplikacji to szacunki w24h.
 
 ## Potrzebne do konkretnych integracji
 
@@ -9,7 +11,7 @@ Aktualizacja: 2026-10-14. Nie wszystkie pytania blokują rozpoczęcie pracy.
 - **Q03 — budżet:** limit wydatków API i hostingu. Blokuje udostępnienie płatnych integracji bez limitów, nie dokumentację/prototyp.
 - **Q04 — dostęp do usług (bloker T11):** użytkownik ma wskazać konto/zespół/projekt Vercel oraz dwa refy Supabase i zapewnić dostęp przez integracje lub zalogowane CLI. Brak poświadczeń potwierdzony lokalnymi próbami; nie odczytano zdalnych list projektów. Nie przesyłać sekretów w dokumentach, handoffach ani chacie.
 - **Q05 — SMTP i operacje T11:** dostawca/nadawca zaproszeń, regiony, limit kosztów usług, operator i kanał zgłoszeń/awarii oraz backup/retencja/RPO/RTO wymagają ustalenia. Domyślna poczta Supabase nie wystarcza do zapraszania kolegów spoza zespołu; szczegóły i aktualne źródła w T11_DEPLOYMENT.
-- **Q06 — transport głosu T11:** istniejące 5 MiB plus multipart przekracza 4,5 MB Vercel. Rozwiązanie przed aktywacją głosu: propozycja limitu UI/API z zapasem albo prywatny upload. Nie zmieniono wymagań ani implementacji.
+- **Q06 — transport głosu T11:** istniejące 5 MiB plus multipart przekracza 4,5 MB Vercel. D032 dopuszcza obecnie krótkie próby głosu właściciela; rozwiązanie pełnego zakresu przed betą: propozycja limitu UI/API z zapasem albo prywatny upload. Nie zmieniono wymagań ani implementacji.
 - **Q07 — retencja preview T11 (odłożone przez D029):** bieżący etap ma tylko Production; nie tworzyć preview. Jeśli wróci: produkcyjny cron Vercel nie sprząta projektu Supabase preview. Potrzebny uzgodniony osobny scheduler lub kontrolowany cykl syntetycznych testów z opróżnianiem danych. Backlog ponad 50 importów wymaga powtórzeń i kontroli najstarszego rekordu; brak wdrożonego monitoringu.
 
 ## Założenia robocze, które agent może stosować
