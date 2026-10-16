@@ -141,12 +141,12 @@ Uzupełnienie T00 (2026-10-11): dodano obowiązek promptu przekazania od zakońc
 
 ### T11 — Wdrożenie i instrukcja testera
 
-- Status: in_progress. Właściciel: Codex (T11, aktualizacja 2026-10-16). Zależności: T10 — spełniona lokalnie; projekt Vercel i produkcyjny Supabase wskazane/połączone przez użytkownika, dostęp do ustawień przez Chrome. Fizyczny odbiór użytkownika po wdrożeniu w T10-R1 (D025).
+- Status: in_progress. Właściciel: Codex (T11, sesja weryfikacji usług 2026-10-16). Zależności: T10 — spełniona lokalnie; projekt Vercel i produkcyjny Supabase wskazane/połączone przez użytkownika, dostęp do ustawień przez Chrome. Fizyczny odbiór użytkownika po wdrożeniu w T10-R1 (D025).
 - Zakres: Vercel/Supabase/OpenAI, sekrety, migracje, limity wydatków, logi, retencja, backup/odtworzenie, instrukcja dostępu i zbierania zgłoszeń.
-- Odbiór: działający HTTPS dla zaproszonych osób, test całej ścieżki na wdrożeniu i dwóch kontach, udokumentowane cofnięcie wdrożenia i ograniczenia.
+- Odbiór bieżącego etapu po D029: działający HTTPS dla właściciela na Production, test całej ręcznej ścieżki na wdrożeniu i dwóch syntetycznych kontach, udokumentowane cofnięcie wdrożenia i ograniczenia. SMTP/dostarczenie zaproszeń przed dodaniem kolegów; AI bez nowego budżetu wyłączone. Telefon i szersza beta nadal T10-R1.
 - Weryfikacja: smoke test wdrożenia, kontrola środowisk i sekretów oraz procedur awarii; link dopiero po rzeczywistym udanym wdrożeniu.
 - Przygotowanie: [procedura T11](T11_DEPLOYMENT.md), [instrukcja testera](TESTER_GUIDE.md), lokalny manifest 94 plików/20 migracji i bezpieczna kopia. Build/typy czystej kopii oraz kontrole wysyłki lokalnej przeszły. Oficjalny dry-run Vercel i lista projektów Supabase odrzucone z braku poświadczeń; niczego nie wdrożono. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md).
-- Dalsza praca: T11-E1 zakończyło porządkowanie konfiguracji istniejącej integracji. Preview i hostowane migracje/odbiór nadal wymagają wykonania. Przed pełnym odbiorem także SMTP, koszty/AI, transport audio 5 MiB wobec 4,5 MB Vercel, cleanup preview/backlogu i dowód odtworzenia. Pozostają warunkami T11, bez nowych funkcji produktu.
+- Dalsza praca: T11-E1 zakończyło porządkowanie konfiguracji istniejącej integracji. D029: tylko Production do bieżących testów właściciela; brak preview nie blokuje. Migracje hostowane21/21 i rzeczywisty smoke HTTP/Auth/API/Storage przeszły po T11-C1; klikalny UI i pozostałe warunki operatorskie otwarte. Przed pełnym odbiorem także SMTP, koszty/AI, transport audio 5 MiB wobec 4,5 MB Vercel, cleanup/backlog i dowód odtworzenia. SMTP przed mailowymi zaproszeniami; obecnie możliwe ręczne konta. Pozostają warunkami T11, bez nowych funkcji produktu.
 
 ### T11-G1 — Inicjalizacja Git i pierwszy commit
 
@@ -161,6 +161,13 @@ Uzupełnienie T00 (2026-10-11): dodano obowiązek promptu przekazania od zakońc
 - Zakres: odczyt automatycznych zmiennych STORAGE_, zgodność lokalna, rozdział sekretów i środowisk, usunięcie ręcznych duplikatów w Vercel i uzupełnienie ustawień aplikacji.
 - Odbiór: konfiguracja działa bez kopiowania kluczy; błędne/mieszane środowisko jest odrzucane; sekrety pozostają serwerowe; jawny stan zmian Vercel i wymaganych migracji/odbioru T11.
 - Wynik: kod i testy lokalne gotowe (171 passed/9 skipped, build/typy, lokalne HTTP A/B/anon). W Vercel osiem ręcznych ustawień tylko Production; po jawnym potwierdzeniu usunięto trzy ręczne duplikaty i potwierdzono zachowanie integracji. Odbiór hostingu pozostaje w T11. [Handoff](handoffs/2026-10-16-T11-E1-usuniecie-duplikatow.md).
+
+### T11-C1 — Konflikty biznesowe bez zapętlenia PostgREST
+
+- Status: done. Właściciel: Codex (2026-10-16). Zależności: T10, T11-E1 — spełnione; wykryte podczas rzeczywistego smoke T11.
+- Zakres: kompatybilna migracja zmieniająca pięć biznesowych RAISE 40001 na PT409 w dwóch funkcjach, mapowanie API na 409, kontrole lokalne, nowy manifest i po zatwierdzeniu migracja/nowy build produkcji.
+- Odbiór: rzeczywisty stary revision i sprzeczny payload wracają szybko jako 409; poprawny retry nadal idempotentny, bez zmiany danych, snapshotów i grantów.
+- Wynik: migracja21 zastosowana po zgodzie użytkownika, kod ddaceb3 wypchnięty i Ready. Lokalnie T04/T05, 171 testów, build/typy; poHTTPS rzeczywisty stary revision daje PT409/409, retry idempotentny i pełny ręczny smoke przeszedł. Dwie pierwsze próby wykazały400/timeout; trzecią zatrzymało błędne oczekiwanie testu historii, po jego poprawie sukces. T11 pozostaje w toku z powodu UI/Auth/cron/restore.
 
 ## Po testach bety
 

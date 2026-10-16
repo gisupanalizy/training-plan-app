@@ -10,7 +10,7 @@ Aktualizacja: 2026-10-14. Nie wszystkie pytania blokują rozpoczęcie pracy.
 - **Q04 — dostęp do usług (bloker T11):** użytkownik ma wskazać konto/zespół/projekt Vercel oraz dwa refy Supabase i zapewnić dostęp przez integracje lub zalogowane CLI. Brak poświadczeń potwierdzony lokalnymi próbami; nie odczytano zdalnych list projektów. Nie przesyłać sekretów w dokumentach, handoffach ani chacie.
 - **Q05 — SMTP i operacje T11:** dostawca/nadawca zaproszeń, regiony, limit kosztów usług, operator i kanał zgłoszeń/awarii oraz backup/retencja/RPO/RTO wymagają ustalenia. Domyślna poczta Supabase nie wystarcza do zapraszania kolegów spoza zespołu; szczegóły i aktualne źródła w T11_DEPLOYMENT.
 - **Q06 — transport głosu T11:** istniejące 5 MiB plus multipart przekracza 4,5 MB Vercel. Rozwiązanie przed aktywacją głosu: propozycja limitu UI/API z zapasem albo prywatny upload. Nie zmieniono wymagań ani implementacji.
-- **Q07 — retencja preview T11:** produkcyjny cron Vercel nie sprząta projektu Supabase preview. Potrzebny uzgodniony osobny scheduler lub kontrolowany cykl syntetycznych testów z opróżnianiem danych. Backlog ponad 50 importów wymaga powtórzeń i kontroli najstarszego rekordu; brak wdrożonego monitoringu.
+- **Q07 — retencja preview T11 (odłożone przez D029):** bieżący etap ma tylko Production; nie tworzyć preview. Jeśli wróci: produkcyjny cron Vercel nie sprząta projektu Supabase preview. Potrzebny uzgodniony osobny scheduler lub kontrolowany cykl syntetycznych testów z opróżnianiem danych. Backlog ponad 50 importów wymaga powtórzeń i kontroli najstarszego rekordu; brak wdrożonego monitoringu.
 
 ## Założenia robocze, które agent może stosować
 

@@ -36,7 +36,7 @@ UI lub interpretator głosu → propozycja komendy → kontrola właściciela i 
 
 Komendy mają `client_operation_id` i `expected_revision`. Unikalność operacji jest ograniczona do użytkownika; ta sama operacja z innymi danymi jest konfliktem. Ręczne wpisy i głos korzystają z tych samych funkcji domenowych. Model nie wykonuje SQL i nie dostaje uprawnień administracyjnych.
 
-W T05 funkcja SQL blokuje identyfikator operacji i wiersz treningu, porównuje hash pełnej komendy przed rewizją, zapisuje wynik i potwierdzenie w tej samej transakcji. Retry zwraca tę samą odpowiedź; stara rewizja odrębnej operacji kończy się konfliktem. Bezpośredni DML do wykonania pozostaje cofnięty roli `authenticated`. Start wykonuje snapshot planu i 1RM według `performed_on`; kolejny odczyt treningu nie przelicza celów.
+W T05 funkcja SQL blokuje identyfikator operacji i wiersz treningu, porównuje hash pełnej komendy przed rewizją, zapisuje wynik i potwierdzenie w tej samej transakcji. Retry zwraca tę samą odpowiedź; stara rewizja odrębnej operacji kończy się konfliktem. D030/T11-C1 przygotowuje PT409 dla błędów biznesowych zamiast 40001, który na hostingu może zapętlać ponowienia PostgREST; poprawka jest wdrożona po osobnej zgodzie i potwierdzona po HTTPS. Bezpośredni DML do wykonania pozostaje cofnięty roli `authenticated`. Start wykonuje snapshot planu i 1RM według `performed_on`; kolejny odczyt treningu nie przelicza celów.
 
 ## Prywatność i niezawodność
 
@@ -50,7 +50,7 @@ W T05 funkcja SQL blokuje identyfikator operacji i wiersz treningu, porównuje h
 
 ## Konfiguracja i wdrożenie
 
-T03 dodał sprawdzanie powiązania `APP_ENV`, URL i referencji projektu Supabase oraz wymóg odrębnego projektu preview i produkcji. `.env.example` zawiera wyłącznie nazwy zmiennych. [T11_DEPLOYMENT](T11_DEPLOYMENT.md) opisuje przygotowaną procedurę środowisk, migracji, sekretów, backup/odtworzenia, rollbacku i HTTPS; usługi pozostają nieustalone i niewdrożone. Paczka źródeł ma listę dozwolonych plików oraz lokalny manifest, lecz oficjalny dry-run Vercel wymaga zalogowania. Odkryte ograniczenia do zamknięcia: audio 5 MiB wobec 4,5 MB transportu Vercel, SMTP zaproszeń, osobny cleanup preview i opróżnianie partii większych niż 50 importów. Nie uznano ich za sprawdzone funkcje hostingu.
+T03 dodał sprawdzanie powiązania `APP_ENV`, URL i referencji projektu Supabase. D029: bieżący etap ma tylko Production do testów właściciela. Jeżeli preview powróci, nadal wymaga osobnej bazy; obecnie go nie tworzymy. `.env.example` zawiera wyłącznie nazwy zmiennych. [T11_DEPLOYMENT](T11_DEPLOYMENT.md) opisuje przygotowaną procedurę środowisk, migracji, sekretów, backup/odtworzenia, rollbacku i HTTPS; produkcyjny build jest Ready, 21 migracji zastosowano, smoke HTTP dwóch kont przeszedł; pozostały odbiór T11 trwa. Paczka źródeł ma listę dozwolonych plików oraz lokalny manifest, lecz oficjalny dry-run Vercel wymaga zalogowania. Odkryte ograniczenia do zamknięcia: audio 5 MiB wobec 4,5 MB transportu Vercel, SMTP przed zaproszeniami i opróżnianie partii większych niż 50 importów. Nie uznano ich za sprawdzone funkcje hostingu.
 
 ## Źródła techniczne
 

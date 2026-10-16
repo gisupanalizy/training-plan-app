@@ -1,10 +1,10 @@
 # Instrukcja testera
 
-Status 2026-10-14: instrukcja przygotowana, środowisko nie zostało wdrożone. **Adres nie jest jeszcze dostępny.** Operator poda link dopiero po udanym wdrożeniu HTTPS i sprawdzeniu dwóch kont. Nie jest to zaproszenie do szerszej bety; najpierw właściciel projektu wykonuje T10-R1.
+Status 2026-10-16: build produkcyjny Ready i 21 migracji zastosowane; smoke HTTPS dwóch kont przeszedł. **Adres do ręcznych testów właściciela: [Forma](https://training-plan-app-seven.vercel.app).** Pozostały odbiór T11 w toku (Auth URL, cron/retencja i backup/restore, klikalny UI). Nie jest to zaproszenie do szerszej bety; najpierw właściciel projektu wykonuje T10-R1.
 
 ## Dostęp i prywatność
 
-Konto jest indywidualne, udostępniane przez operatora. Nie ma publicznej rejestracji. Po otrzymaniu zaproszenia otwórz link, ustaw hasło (minimum 12 znaków) i zaloguj się. Nie przesyłaj hasła, linku zaproszenia ani kluczy w zgłoszeniu. W razie wygaśnięcia zaproszenia poproś operatora o nowe. Jeśli pojawi się dodatkowa bramka Vercel, operator musi nadać dostęp; sama bramka nie zastępuje konta aplikacji.
+Na bieżący etap D029 właściciel testuje tylko Production. Ręcznie utworzone konto działa bez SMTP; mailowe zaproszenia i reset hasła wymagają osobnego odbioru przed dodaniem kolegów. Konto jest indywidualne, udostępniane przez operatora. Nie ma publicznej rejestracji. Po otrzymaniu zaproszenia otwórz link, ustaw hasło (minimum 12 znaków) i zaloguj się. Nie przesyłaj hasła, linku zaproszenia ani kluczy w zgłoszeniu. W razie wygaśnięcia zaproszenia poproś operatora o nowe. Jeśli pojawi się dodatkowa bramka Vercel, operator musi nadać dostęp; sama bramka nie zastępuje konta aplikacji.
 
 Na początek używaj wymyślonego planu i komentarzy. Twoje plany, wyniki i źródła są prywatne dla Twojego konta. Podczas odbioru izolacji używa się wyłącznie wskazanych kont testowych i ich syntetycznych danych. Nie próbuj uzyskiwać dostępu do danych innych testerów.
 

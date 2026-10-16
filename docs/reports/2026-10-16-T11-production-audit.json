@@ -1,0 +1,317 @@
+{
+  "date": "2026-10-16",
+  "kind": "hosted-metadata-audit",
+  "projectRef": "kwmyosnerwvtwxtszzka",
+  "deploymentId": "dpl_AzhtfUHBRouX92RRhbTA5F19r5jX",
+  "commit": "ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5",
+  "before": {
+    "public_tables": 0,
+    "auth_users": 0,
+    "storage_buckets": 0,
+    "storage_objects": 0
+  },
+  "after": {
+    "buckets": [
+      {
+        "allowed_mime_types": null,
+        "file_size_limit": null,
+        "id": "training-private",
+        "public": false
+      },
+      {
+        "allowed_mime_types": [
+          "application/pdf",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "image/png",
+          "image/jpeg"
+        ],
+        "file_size_limit": 2097152,
+        "id": "training-imports",
+        "public": false
+      }
+    ],
+    "dml_grants": [],
+    "migrations": [
+      "20261011160000",
+      "20261011170000",
+      "20261011180000",
+      "20261011181000",
+      "20261011190000",
+      "20261011210000",
+      "20261011211000",
+      "20261011212000",
+      "20261011213000",
+      "20261011214000",
+      "20261012100000",
+      "20261012101000",
+      "20261012102000",
+      "20261012110000",
+      "20261012120000",
+      "20261012203000",
+      "20261012204000",
+      "20261013100000",
+      "20261013102000",
+      "20261014100000",
+      "20261016210000"
+    ],
+    "tables": [
+      {
+        "name": "exercises",
+        "rls": true
+      },
+      {
+        "name": "import_attempts",
+        "rls": true
+      },
+      {
+        "name": "imports",
+        "rls": true
+      },
+      {
+        "name": "mutation_receipts",
+        "rls": true
+      },
+      {
+        "name": "one_rep_max_records",
+        "rls": true
+      },
+      {
+        "name": "performed_exercises",
+        "rls": true
+      },
+      {
+        "name": "performed_sets",
+        "rls": true
+      },
+      {
+        "name": "plan_save_receipts",
+        "rls": true
+      },
+      {
+        "name": "plan_sessions",
+        "rls": true
+      },
+      {
+        "name": "plan_versions",
+        "rls": true
+      },
+      {
+        "name": "planned_exercises",
+        "rls": true
+      },
+      {
+        "name": "planned_sets",
+        "rls": true
+      },
+      {
+        "name": "plans",
+        "rls": true
+      },
+      {
+        "name": "profiles",
+        "rls": true
+      },
+      {
+        "name": "voice_attempts",
+        "rls": true
+      },
+      {
+        "name": "workout_revisions",
+        "rls": true
+      },
+      {
+        "name": "workout_sessions",
+        "rls": true
+      }
+    ]
+  },
+  "httpsAnon": {
+    "root": 307,
+    "plansApi": 401,
+    "plansCacheControl": "no-store",
+    "cleanupWithoutAuthorization": 401
+  },
+  "authenticatedSmoke": {
+    "status": "passed",
+    "attempts": [
+      {
+        "result": "HTTP400 zamiast409 dla starej rewizji",
+        "cleanup": "2 konta, 0 plików — usunięte"
+      },
+      {
+        "result": "bezpośredni RPC timeout30s dla SQLSTATE40001",
+        "cleanup": "2 konta, 0 plików — usunięte"
+      },
+      {
+        "result": "po C1 cała ścieżka do historii przeszła; błędna asercja nazwy planu na liście historii",
+        "cleanup": "2 konta i 2 pliki, 0 błędów"
+      },
+      {
+        "result": "PASS po poprawie wyłącznie asercji testu historii",
+        "cleanup": "2 konta i 2 pliki, 0 błędów"
+      }
+    ],
+    "passedBeforeFailure": [
+      "Auth A/B",
+      "publikacja i retry planu po HTTPS",
+      "1RM120",
+      "start i retry treningu",
+      "cel90kg przy75%",
+      "null bez1RM",
+      "zapis i retry serii",
+      "błędny JSON400",
+      "anon401"
+    ],
+    "remaining": [
+      "klikalny UI zalogowanego właściciela",
+      "SMTP przed zaproszeniami",
+      "cron200 i retencja",
+      "backup/restore",
+      "T10-R1 telefon/Safari"
+    ],
+    "passed": [
+      "rzeczywisty HTTPS/Auth/API A/B/anon",
+      "plan/retry i 1RM120",
+      "start/retry,90kg przy75%,null bez1RM",
+      "save/retry i PT409/HTTP409 starej rewizji",
+      "pominięcie,dodatkowa seria/ćwiczenie,komentarz,koniec",
+      "wersje/1RM nie zmieniają snapshotu90",
+      "12 tabel: B/anon bez odczytu i UPDATE42501; A nie czyta planu B",
+      "prywatne training-private:upload/download/public/signed/cudza ścieżka",
+      "training-imports:signed upload,source właściciela/no-store,B404/anon401,cancel410",
+      "ręczne strony200,logout/relogin i historia",
+      "postęp540kg i zero/null",
+      "import process503 i voice503 z wyłączonym AI"
+    ]
+  },
+  "restore": "not performed",
+  "sourceManifest": "2026-10-16-T11-C1-release.json",
+  "sourceManifestVerified": true,
+  "activeAuthenticatorQueriesAfterFailures": 0,
+  "pendingMigration": null,
+  "localFixChecks": {
+    "t04": "pass",
+    "t05": "pass",
+    "testsPassed": 171,
+    "testsSkipped": 9,
+    "build": "pass",
+    "typecheck": "pass",
+    "manifest": "2026-10-16-T11-C1-release.json"
+  },
+  "afterInitialMigrations": {
+    "buckets": [
+      {
+        "allowed_mime_types": null,
+        "file_size_limit": null,
+        "id": "training-private",
+        "public": false
+      },
+      {
+        "allowed_mime_types": [
+          "application/pdf",
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          "image/png",
+          "image/jpeg"
+        ],
+        "file_size_limit": 2097152,
+        "id": "training-imports",
+        "public": false
+      }
+    ],
+    "dml_grants": [],
+    "migrations": [
+      "20261011160000",
+      "20261011170000",
+      "20261011180000",
+      "20261011181000",
+      "20261011190000",
+      "20261011210000",
+      "20261011211000",
+      "20261011212000",
+      "20261011213000",
+      "20261011214000",
+      "20261012100000",
+      "20261012101000",
+      "20261012102000",
+      "20261012110000",
+      "20261012120000",
+      "20261012203000",
+      "20261012204000",
+      "20261013100000",
+      "20261013102000",
+      "20261014100000"
+    ],
+    "tables": [
+      {
+        "name": "exercises",
+        "rls": true
+      },
+      {
+        "name": "import_attempts",
+        "rls": true
+      },
+      {
+        "name": "imports",
+        "rls": true
+      },
+      {
+        "name": "mutation_receipts",
+        "rls": true
+      },
+      {
+        "name": "one_rep_max_records",
+        "rls": true
+      },
+      {
+        "name": "performed_exercises",
+        "rls": true
+      },
+      {
+        "name": "performed_sets",
+        "rls": true
+      },
+      {
+        "name": "plan_save_receipts",
+        "rls": true
+      },
+      {
+        "name": "plan_sessions",
+        "rls": true
+      },
+      {
+        "name": "plan_versions",
+        "rls": true
+      },
+      {
+        "name": "planned_exercises",
+        "rls": true
+      },
+      {
+        "name": "planned_sets",
+        "rls": true
+      },
+      {
+        "name": "plans",
+        "rls": true
+      },
+      {
+        "name": "profiles",
+        "rls": true
+      },
+      {
+        "name": "voice_attempts",
+        "rls": true
+      },
+      {
+        "name": "workout_revisions",
+        "rls": true
+      },
+      {
+        "name": "workout_sessions",
+        "rls": true
+      }
+    ]
+  },
+  "c1MigrationApplied": true,
+  "c1CodeCommit": "ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5"
+}

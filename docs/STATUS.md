@@ -2,15 +2,27 @@
 
 Aktualizacja: 2026-10-16.
 
+## T11 — bieżący wynik Production
+
+Najnowszy [handoff](handoffs/2026-10-16-T11-produkcja-migracje.md). **T11 nadal in_progress; T11-C1 done.** Użytkownik wybrał tylko Production do własnych testów (D029); nie tworzyć preview. Po zatwierdzeniach zastosowano 21/21 migracji, z T10 i poprawką PT409. Vercel Production Ready `dpl_AzhtfUHBRouX92RRhbTA5F19r5jX`, kod `ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5`. [Raport](reports/2026-10-16-T11-production-audit.json) rozdziela błędne próby i udany smoke.
+
+**Zweryfikowany adres do ręcznych testów właściciela: [Forma](https://training-plan-app-seven.vercel.app).** Rzeczywisty HTTP/Auth/API/Storage smoke A/B/anon przeszedł: plan, 1RM 120 →90kg, brak maksimum/null, trening/historia, retry/409, wersje/snapshoty, zero/null, postęp 540 kg i oba prywatne buckety. AI odmawia 503; nie wykonywano płatnego AI. Dwa konta i dwa pliki ostatniej próby usunięto bez błędów. RLS 17/17 i brak DML do 12 tabel potwierdzono po 21 migracjach. Klikalny zalogowany UI pozostaje do odbioru; HTTP HTML nie jest testem urządzenia.
+
+Smoke wykrył biznesowy 40001 powodujący timeout na hostingu; D030/T11-C1 zmieniło 5 RAISE na PT409 bez zmiany danych/grantów. Nowa migracja, kod, lokalne T04/T05, 171 testów, build/typy i manifest 95 źródeł/21 migracji przeszły; commit poprawki wypchnięty. Historyczny E1 zachowany. Końcowy commit dokumentacji odczytać z git log.
+
+Pozostałe: zgoda na minimum hasła 12, produkcyjny Site URL i dokładne redirecty (obecnie localhost/brak); CRON_SECRET użytkownik potwierdza/wprowadza prywatnie; Run crona/retencja/backlog i backup/restore/RPO/RTO. Auto-review odrzucił minimum hasła i Run crona jako trwałą zmianę/wykonanie produkcji bez wyraźnej zgody; nie obchodzono odmowy. Zgody na pierwsze20 migracji, pamięciowe klucze/smoke i następnie21 migrację+commit/push uzyskano i wykonano. Publiczna rejestracja i anonymous wyłączone, refresh rotation włączone. SMTP odłożony dla ręcznych kont, wymagany przed mailowymi zaproszeniami.
+
+W Chrome otwarto pusty Supabase Auth → Create a new user, Auto confirm włączone; użytkownik musi sam prywatnie wpisać e-mail i hasło oraz utworzyć własne konto. Konto właściciela nie zostało utworzone przez agenta. Telefon/Safari i szersza beta nadal T10-R1. Bez nowych usług, zakupów i rotacji sekretów. Sekcje niżej są historią wcześniejszych sesji.
+
 ## Co istnieje
 
-T01–T08, T06-R1, T07-R1 i T04-R1 są ukończone lokalnie. T09 jest `done` lokalnie po rozstrzygnięciu użytkownika z 2026-10-14 (D025). T10 jest `done` lokalnie: odbiór i poprawki opisano w raporcie. T11 jest in_progress: użytkownik utworzył projekt Vercel i podłączył produkcyjny Supabase. T11-E1 zakończyło uproszczenie konfiguracji. Hosting i migracje nadal nie mają odbioru. Fizyczny review użytkownika po Vercel należy do T10-R1. Git zainicjowano na gałęzi `main`; docelowe repozytorium: [gisupanalizy/training-plan-app](https://github.com/gisupanalizy/training-plan-app). Pierwszy commit obejmuje źródła i dokumentację, bez sekretów i prywatnych fixtures.
+T01–T08, T06-R1, T07-R1 i T04-R1 są ukończone lokalnie. T09 jest `done` lokalnie po rozstrzygnięciu użytkownika z 2026-10-14 (D025). T10 jest `done` lokalnie: odbiór i poprawki opisano w raporcie. T11 jest in_progress: użytkownik utworzył projekt Vercel i podłączył produkcyjny Supabase. T11-E1 zakończyło uproszczenie konfiguracji. Hosting nie ma pełnego odbioru; migracje produkcji zastosowano w bieżącej sesji. Fizyczny review użytkownika po Vercel należy do T10-R1. Git zainicjowano na gałęzi `main`; docelowe repozytorium: [gisupanalizy/training-plan-app](https://github.com/gisupanalizy/training-plan-app). Pierwszy commit obejmuje źródła i dokumentację, bez sekretów i prywatnych fixtures.
 
 T06-R1 poprawił odczyt tabel i ich kontekstu, zakresy i opcjonalność, AMRAP, superserie, pytania z kontekstem i stabilnymi celami, podgląd PDF.js/XLSX oraz wewnętrzny słownik PL/EN. Zastosowano lokalnie dwie migracje rozszerzające plan i nowe niezmienne snapshoty, z obsługą starszych szkiców. Najnowszy [handoff T11-E1](handoffs/2026-10-16-T11-E1-usuniecie-duplikatow.md) jest punktem wejścia do konfiguracji. [Handoff Git](handoffs/2026-10-14-T11-G1-pierwszy-commit.md) dokumentuje inicjalizację repo, a [pierwszy T11](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md) przygotowanie procedury. [T10](handoffs/2026-10-14-T10-odbior-lokalny.md) dokumentuje lokalny odbiór; [T04-R1](handoffs/2026-10-13-T04-R1-czytelny-edytor.md) dokumentuje poprzednią przebudowę edytora. T04-R1 przebudował ręczny edytor: jeden trening, karty i okna edycji, zakresy oraz parametry dodatkowe na żądanie. Import zachowuje trzy kroki T07-R1; poprzednie handoffy dokumentują wcześniejsze zadania.
 
 ## Następny krok
 
-T11-E1 jest done: nowy kod odczytuje integrację STORAGE, osiem ręcznych ustawień ograniczono do Production, a trzy ręczne duplikaty usunięto po jawnym potwierdzeniu użytkownika. Szczegóły i prompt w handoffie. Następnie T11 wymaga migracji produkcyjnej bazy, konfiguracji Auth/SMTP, drugiego projektu preview, kosztów, cleanup/backup i zdalnego smoke A/B/anon po HTTPS. Nie deklarować samego połączenia integracji jako wdrożenia. Telefon/Safari i szersza beta pozostają T10-R1.
+T11-E1 jest done: nowy kod odczytuje integrację STORAGE, osiem ręcznych ustawień ograniczono do Production, a trzy ręczne duplikaty usunięto po jawnym potwierdzeniu użytkownika. Szczegóły i prompt w handoffie. Bieżąca sesja zastosowała migracje; dalsze T11 wymaga Auth, kosztów, cleanup/backup i zdalnego smoke A/B/anon po HTTPS. D029 usuwa wymóg preview na teraz; SMTP przed mailowymi zaproszeniami. Nie deklarować samego połączenia integracji jako wdrożenia. Telefon/Safari i szersza beta pozostają T10-R1.
 
 ## Konfiguracja T11-E1 (2026-10-16)
 

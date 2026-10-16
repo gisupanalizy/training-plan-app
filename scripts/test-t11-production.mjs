@@ -113,7 +113,11 @@ try {
  await http(a,'/api/voice/interpret',{scope:'plan',text:'Syntetyczny test'},503);
  for(const path of ['/plany','/historia','/postep','/profil']){const html=await http(a,path);assert.equal(typeof html,'string');}
  await a.client.auth.signOut();ok(await a.client.auth.signInWithPassword({email:a.email,password}),'ponowne logowanie');
- const past=await http(a,'/historia');assert.match(past,/Syntetyczny smoke T11/);
+ const past=await http(a,'/historia');
+ assert.ok(past.includes(`/trening/${started.workoutId}`)&&past.includes('Zakończony')&&past.includes('Syntetyczny smoke'),'zakończony trening i komentarz po ponownym logowaniu');
+ const progress=await http(a,`/postep?exercise=${pe[0].exercise_id}&from=2026-10-16&to=2026-10-16`);
+ const volume=progress.match(/class="progress-volume">([\s\S]*?)<\/p>/)?.[1]?.replace(/<[^>]*>/g,'');
+ assert.ok(volume?.includes('540 kg'),'postęp: 6 × 90 = 540 kg');
  const zero=ok(await a.client.from('performed_sets').select('actual_reps,actual_kg').eq('id',extra.setId).single(),'zero/null');assert.equal(zero.actual_reps,0);assert.equal(zero.actual_kg,null);
  console.log('PASS: HTTPS/Auth/API A/B/anon; ręczny plan/1RM/trening/historia; retry/konflikt/wersje/snapshoty/zero/null; 12 tabel DML UPDATE; Storage obu bucketów; import i głos bez AI (503). Bez testu UI i SMTP.');
 } catch(error){failure=error;console.error(`FAIL: ${error.message}`);}

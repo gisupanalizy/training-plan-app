@@ -1,6 +1,30 @@
 # T11 — przygotowanie wdrożenia i procedura operatorska
 
-Aktualizacja: 2026-10-16, **kod konfiguracji przygotowany; wdrożenie nieodebrane**. T09/T10 są done lokalnie (D025/D026). T11 wymaga rzeczywistego HTTPS i smoke testu dwóch kont; szersza beta dodatkowo T10-R1. [Instrukcja testera](TESTER_GUIDE.md) nie zawiera jeszcze adresu aplikacji. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md) podaje wyniki tej sesji.
+Aktualizacja: 2026-10-16, **produkcyjny build Ready i 21 migracji; smoke HTTP zaliczony, pozostały odbiór w toku**. T09/T10 są done lokalnie (D025/D026). T11 wymaga rzeczywistego HTTPS i smoke testu dwóch kont; szersza beta dodatkowo T10-R1. [Instrukcja testera](TESTER_GUIDE.md) nie zawiera jeszcze adresu aplikacji. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md) podaje wyniki tej sesji.
+
+## Bieżący wynik weryfikacji — 2026-10-16
+
+Nowsza D029 ma pierwszeństwo przed historycznymi krokami preview poniżej: **tylko Production do testów właściciela**. Nie tworzyć drugiej bazy ani kierować Vercel Preview do produkcji. Brak preview nie blokuje obecnego etapu. SMTP jest potrzebny do mailowych zaproszeń/resetów, a nie do logowania ręcznie utworzonego konta; przed zaproszeniem kolegów wymaga osobnego odbioru.
+
+- Vercel: Production/Current/Ready `dpl_AzhtfUHBRouX92RRhbTA5F19r5jX`, kod commit `ddaceb3e7c438bc81d02a55e0fede9bbf2d31ff5`, build 53 s, Node 24.x, Fluid Compute Enabled, Standard Protection. Poprzednie Ready: `rNEeBVuupz5KxbsxRKNphVRN9XvH` (`ca4be88`) i `GDAvtKTbBianiPZAfLYrPjuqnTRJ` (`82b9eb7`); nie są jeszcze sprawdzonymi punktami rollbacku.
+- Supabase: Free, Healthy, Frankfurt/eu-central-1, nano. Zalogowane przez użytkownika CLI 2.120.0 zostało powiązane z właściwym refem. Przed migracjami odczytano 0 tabel publicznych, 0 kont Auth, 0 bucketów i 0 obiektów Storage. Po jawnym „Tak, zastosuj 20 migracji” wykonano `db push --linked --skip-vault`, bez seedów, ról, resetu i Vault. Historia pierwszych20/20 zgodna, zT10; później po osobnej zgodzie zastosowano21. migracjęC1. RLS/granty/buckety po 21 nadal zgodne.
+- [Raport metadanych](reports/2026-10-16-T11-production-audit.json): wszystkie 17 tabel publicznych ma RLS; brak grantów INSERT/UPDATE/DELETE dla anon/authenticated do 12 tabel chronionych T05/T10. Oba buckety prywatne, training-imports ma limit 2 MiB i cztery dozwolone MIME. Sam odczyt metadanych nie zastępuje A/B/anon.
+- HTTPS: przeglądarka pokazuje polskie logowanie; bez cookies `/` daje 307 na logowanie, `/api/plans` JSON 401 z no-store, cleanup bez Authorization JSON 401. To częściowy smoke anonimowy. Późniejsze dwie próby A/B zapisały plan/1RM/start/serię i potwierdziły retry, 90 kg oraz null bez maksimum, ale nie zaliczyły konfliktu: HTTP 400 zamiast 409, następnie bezpośredni RPC timeout30s. Obie próby usunęły swoje 2 konta i nie utworzyły plików. PoC1 pełny smoke HTTP przeszedł; trzecia próba miała błędną asercję nazwy planu w historii, czwarta po poprawie samego testu przeszła. Ostatnie2 konta i 2 pliki posprzątane,0 błędów. Klikalny UI i SMTP nieodebrane. Zweryfikowany adres do ręcznych testów właściciela: [Forma](https://training-plan-app-seven.vercel.app).
+- Auth: wyłączono publiczne rejestracje i potwierdzono zapis po reload; anonymous sign-in był i pozostaje wyłączony, Email oraz Confirm email włączone. Rotacja/wykrywanie ponowienia refresh tokenów włączone, reuse 10 s, JWT 3600 s. Site URL nadal localhost:3000, redirectów brak; minimum 12 znaków i URL-e czekają na zgodę po odrzuceniu zapisu przez automatyczny przegląd uprawnień. Custom SMTP wyłączony. Nie wysyłano zaproszeń i nie zmieniano haseł/kluczy.
+- Cron: panel Enabled, GET `/api/imports/cleanup`, `0 3 * * *`. Ręczne Run odrzucone przez automatyczny przegląd jako produkcyjne wykonanie usuwania danych bez osobnej zgody. Nie odczytywano/rotowano CRON_SECRET; jakość wartości nadal do prywatnego potwierdzenia przez użytkownika. Brak dowodu 200, cleanup wygasłego importu i restore.
+- Manifest lokalny 95 źródeł/20 migracji przechodzi ponowną weryfikację SHA-256. Faktyczny Source automatycznego deploymentu Git jest szerszy niż kopia CLI: zawiera docs, supabase oraz tylko syntetyczne fixtures/t06/generated i cases.json. Nie utożsamiać tego widoku z paczką 95 plików; nie ma oficjalnego manifestu uploadu CLI. Indeks i cała lokalna historia Git nie zawierają `.env`, env.vercel ani fixtures/t06/real; `.env.example` to dozwolony pusty przykład. Nie wykonano nowego uploadu ani Redeploy.
+
+### T11-C1 — poprawka po niezaliczonym smoke
+
+Nowy problem: biznesowy SQLSTATE 40001 jest zgodny z [opisaną przez Supabase pętlą ponowień PostgREST](https://supabase.com/docs/guides/troubleshooting/high-cpu-and-infinite-transaction-retries-when-using-custom-error-codes-in-rpc-functions-77326b). Nie potwierdzono wersji hostowanego PostgREST; dowodem problemu są rzeczywiste timeouty przy poprawnej starej rewizji. Po próbach odczyt pg_stat_activity wykazał 0 aktywnych authenticator; nie zatrzymywano backendów ani projektu.
+
+Lokalna poprawka D030: `20261016210000_t11_business_conflicts.sql` zastępuje dokładnie 5 kodów 40001 przez PT409 w dwóch funkcjach, API plans/workouts mapuje PT409 na 409. Nie zmienia danych, snapshotów, receipts, grantów i starych migracji. Lokalna migracja, T04/T05 z asercjami PT409, 171 testów (9 skipped), build i sekwencyjny typecheck przeszły. Nowy [manifest C1](reports/2026-10-16-T11-C1-release.json): 95 źródeł, 21 migracji, bez uploadu; historycznego E1 nie nadpisano. Dry-run wskazał tylko nową migrację; użytkownik zatwierdził jej zastosowanie i wdrożenie. Migracja21 zastosowana, historia 21/21, kod ddaceb3 wypchnięty i Ready. Ponowiony `node scripts/test-t11-production.mjs --run-approved-smoke` przeszedł na Production: PT409/409 bez timeoutu, ręczny trening/historia/postęp 540 kg, oba prywatne buckety, A/B/anon, zero/null, odmowaAI503.
+
+Użytkownik zatwierdził klucze wyłącznie w pamięci, dwa konta syntetyczne i sprzątanie własnych danych, więc te czynności wykonano. Nie oznacza to zatwierdzenia nowej migracji, Auth ani Run crona. Skrypt smoke ma osobny stały ref/adres, limity30s i cleanup własnych kont/plików; obejmuje HTTP/Auth/API/Storage, bez klikalnego UI/SMTP i płatnego AI. Pierwsze dwa wyniki błędne i późniejszy błąd asercji testu pozostają zapisane w raporcie obok końcowego sukcesu.
+
+Aktualne dokumenty sprawdzono 2026-10-16: [migracje](https://supabase.com/docs/guides/deployment/database-migrations), [CLI db push](https://supabase.com/docs/reference/cli/supabase-db-push), [SMTP](https://supabase.com/docs/guides/auth/auth-smtp), [backup](https://supabase.com/docs/guides/platform/backups), [cennik Supabase](https://supabase.com/pricing), [Hobby Vercel](https://vercel.com/docs/plans/hobby), [cron](https://vercel.com/docs/cron-jobs/usage-and-pricing), [limity funkcji](https://vercel.com/docs/functions/limitations), [rollback](https://vercel.com/docs/instant-rollback). Supabase Free: 500 MB DB, 1 GB Storage, 5 GB egress, 2 aktywne projekty, pauza po tygodniu bezczynności; brak automatycznego backupu/PITR. Te limity nie są skonfigurowanym alarmem ani uzgodnionym RPO/RTO. Backup bazy nie zawiera bajtów Storage. Vercel Hobby cron najwyżej raz dziennie z oknem godzinnym; limit payloadu 4,5 MB nadal blokuje włączenie głosu 5 MiB. Bez zakupu, zmiany planu i płatnego AI.
+
+Poniższe sekcje zachowują procedurę przygotowaną wcześniej. Wymogi preview dotyczą dopiero ewentualnego ponownego uruchomienia tego środowiska; nie są zleceniem jego tworzenia w bieżącym T11.
 
 ## 1. Dostęp i wybór celów — wymagane przed zmianą usług
 
@@ -54,7 +78,7 @@ Aktualizacja T11-G1: użytkownik utworzył publiczne repo `gisupanalizy/training
 node scripts/prepare-t11-deploy.mjs --stage
 ```
 
-Polecenie tworzy nowy katalog tymczasowy i [lokalny manifest SHA-256 T11-E1](reports/2026-10-16-T11-E1-release.json): 95 plików oraz osobny wykaz 20 migracji. Zwraca dokładną ścieżkę kopii. Nie czyta `.env`, nie kopiuje fixtures, nie wysyła danych; odrzuca dowiązania, zagnieżdżone `.env`, pliki kluczy i rozpoznane formaty sekretów. Kontrola formatów nie jest pełnym skanerem sekretów. Migracje są w wykazie, **nie w paczce Vercel**. Worker PDF.js odtwarza prebuild z zablokowanej wersji zależności.
+Polecenie tworzy nowy katalog tymczasowy i [lokalny manifest SHA-256 T11-C1](reports/2026-10-16-T11-C1-release.json): 95 plików oraz osobny wykaz 21 migracji. Zwraca dokładną ścieżkę kopii. Nie czyta `.env`, nie kopiuje fixtures, nie wysyła danych; odrzuca dowiązania, zagnieżdżone `.env`, pliki kluczy i rozpoznane formaty sekretów. Kontrola formatów nie jest pełnym skanerem sekretów. Migracje są w wykazie, **nie w paczce Vercel**. Worker PDF.js odtwarza prebuild z zablokowanej wersji zależności.
 
 Zalogowane CLI należy powiązać z **istniejącym, wskazanym** projektem w kopii tymczasowej. Nie uruchamiać deploy z katalogu roboczego zawierającego prywatne pliki. Po powiązaniu, z wnętrza kopii:
 
@@ -66,7 +90,7 @@ Sprawdzić pełną listę plików dostawcy, ich skróty/rozmiary, wykryty Next.j
 
 ## 4. Migracje i Auth
 
-Zastosować wszystkie 20 plików `supabase/migrations/*.sql` rosnąco, niezależnie w preview, następnie production. Zestaw i skróty w manifeście; ostatni plik `20261014100000_t10_plan_write_boundary.sql` jest obowiązkowy. Nie przenosić lokalnej bazy, seedów, prób AI ani prywatnych danych. `supabase/config.toml` opisuje lokalny stack i **nie konfiguruje automatycznie hostowanego Auth/SMTP**.
+Zestaw ma 21 plików `supabase/migrations/*.sql`; stosować rosnąco do potwierdzonego celu. D029: obecnie tylko Production. Pierwsze 20 z T10 zastosowano; 21. `20261016210000_t11_business_conflicts.sql` należy do C1 i została zastosowana po osobnym zatwierdzeniu. Zestaw i skróty w manifeście; T10 pozostaje obowiązkowy. Nie przenosić lokalnej bazy, seedów, prób AI ani prywatnych danych. `supabase/config.toml` opisuje lokalny stack i **nie konfiguruje automatycznie hostowanego Auth/SMTP**.
 
 W źródłowym projekcie, po bezpiecznym zalogowaniu do CLI i ustawieniu potwierdzonego refa, operować kolejno na jednym środowisku:
 
@@ -80,7 +104,7 @@ DO_NOT_TRACK=1 npx supabase migration list
 
 `T11_PROJECT_REF` to wyłącznie wcześniej potwierdzone ID, nie sekret. Hasło przekazać bezpiecznie, bez argumentu CLI/śladu w historii. Każdorazowo porównać powiązanie z zamierzonym środowiskiem. `--skip-vault` zapobiega ubocznemu wysyłaniu konfiguracji Vault; brak `--include-seed`/`--include-roles`. Przy istniejącej bazie najpierw backup i porównanie historii. Nie używać resetu zdalnego, automatycznego `migration repair` ani `--include-all` do maskowania rozbieżności. Częściową awarię rozpoznać po historii; naprawa kompatybilna do przodu. [Migracje Supabase](https://supabase.com/docs/guides/deployment/database-migrations).
 
-Po migracjach odczytać i zapisać dowody: wszystkie tabele prywatne mają RLS, klient nie ma DML do 12 tabel planu/wykonania (D026/T05), funkcje publikacji i komend działają przez sesję właściciela. Buckety `training-private` i `training-imports` muszą mieć `public=false` i poprawne polityki właściciela; sprawdzić ograniczenia MIME/wielkości importu. Rewizje, receipts i snapshoty T06-R1 nie mogą być pominięte. Potwierdzić zgodność historii z **całą** listą 20 migracji, a nie tylko istnienie ostatniej tabeli.
+Po migracjach odczytać i zapisać dowody: wszystkie tabele prywatne mają RLS, klient nie ma DML do 12 tabel planu/wykonania (D026/T05), funkcje publikacji i komend działają przez sesję właściciela. Buckety `training-private` i `training-imports` muszą mieć `public=false` i poprawne polityki właściciela; sprawdzić ograniczenia MIME/wielkości importu. Rewizje, receipts i snapshoty T06-R1 nie mogą być pominięte. Potwierdzić zgodność historii z **całą** listą 21 migracji, a nie tylko istnienie ostatniej tabeli.
 
 W obu projektach Auth wyłączyć publiczne rejestracje i anonymous sign-in, włączyć e-mail/hasło, rotację refresh tokenów, hasło minimum 12 znaków. Ustawić Site URL na stabilny HTTPS danego środowiska i dokładne redirecty dla `/auth/confirm` oraz `/ustaw-haslo`. Szablon zaproszenia z `supabase/templates/invite.html`: `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite`. Nie dodawać szerokich wildcardów całego `vercel.app`. Odbiór: wygenerowanie zaproszenia i ustawienie hasła, ponowne logowanie, wylogowanie oraz wygasła sesja. Dwa syntetyczne konta admin-create nie dowodzą dostarczania zaproszeń.
 
@@ -118,11 +142,11 @@ Cofnięcie aplikacji nie cofa SQL ani danych. Nie odkręcać migracji T10 i nie 
 
 ## 8. Sekwencja wdrożenia i odbiór
 
-1. Potwierdzić cele/dostęp/koszty i SMTP; wykonać preflight środowisk, manifest, backup i migracje preview.
-2. Skonfigurować Preview, ustawić stabilny URL/Auth i dostęp testera przez ewentualną ochronę Vercel. Wdrożyć sprawdzoną kopię; odczekać terminalny status Ready i rzeczywisty udany build. URL z samego CLI przed zakończeniem nie jest wynikiem odbioru.
-3. Przejść niżej opisany smoke preview. Rozwiązać ograniczenia transportu/retencji i ewentualne błędy; nie włączać AI bez nowej zgody/budżetu. Bez AI sprawdzenia AI mają status niewykonane, nie passed.
-4. Oddzielnie backup/migracje production, zakres Production, nowy build tego samego zestawu źródeł. Przed udostępnieniem potwierdzić HTTPS, Auth, cleanup i smoke dwóch kont na **produkcyjnym** URL. Nie wystarczy wynik preview.
-5. Dopiero po sukcesie podać użytkownikowi zweryfikowany adres i ograniczenia, deployment ID/hash oraz instrukcję. T11 done dopiero po spełnieniu całego uzgodnionego odbioru. Przekazać T10-R1 użytkownikowi; szersza beta czeka na jego wynik. Nie wysyłać zaproszeń innym osobom bez ich jawnego zlecenia.
+1. Potwierdzić wskazany cel Production, dostęp/koszty, bezpieczne źródła i manifest. D029: obecnie nie tworzyć Preview. Przed nowymi prywatnymi danymi uzgodnić backup/odtworzenie.
+2. Stosować migracje rosnąco z dry-run i odczytem historii; nie zmieniać zdalnego schematu poza migracjami. Dla C1 uzyskano osobne zatwierdzenie i potwierdzono 21/21.
+3. Wdrożyć te same sprawdzone źródła przez zatwierdzony push do istniejącego repo. Odczekać Ready i potwierdzić commit oraz domenę Production. Nie promować builda innej bazy.
+4. Sprawdzić rzeczywisty HTTPS/Auth/API/Storage A/B/anon, jawnie rozdzielić klikalny UI i niewykonane scenariusze. Obecny smoke HTTP przeszedł; Auth URL, cleanup i restore pozostają do odbioru. AI wyłączone bez nowej zgody/budżetu.
+5. Po sukcesie HTTP podać właścicielowi zweryfikowany adres i ograniczenia oraz instrukcję prywatnego utworzenia konta. T11 done dopiero po spełnieniu całości obecnego odbioru. Szersza beta czeka na T10-R1; SMTP/dostarczenie zaproszeń przed kolegami. Nie wysyłać wiadomości bez jawnego zlecenia.
 
 Smoke wykonuje operator na dwóch własnych kontach syntetycznych A/B i anonimowym kontekście, przez realne HTTPS, UI i Auth/API/Storage. W raporcie zapisać datę, środowisko/refy, deployment ID, hash, narzędzie/przeglądarkę, każdy wynik i sprzątnięte ID. Haseł/cookies/nagrań nie zapisywać.
 
@@ -133,4 +157,4 @@ Smoke wykonuje operator na dwóch własnych kontach syntetycznych A/B i anonimow
 - Import na własnym syntetycznym tekście/PDF/XLSX/obrazie: upload, korekta/reload, trzy kroki, braki, jawna publikacja i retry, anulowanie. Głos: propozycja i cel/revizja, odmowa mikrofonu, anulowanie i spóźniony wynik bez samoczynnego zapisu. To żądania płatne tylko po osobnym zleceniu/budżecie; nie wstawiać do produkcji mockowej furtki.
 - Bez włączenia AI potwierdzić odmowę bez kosztu oraz cały ręczny trening. Duże audio/XLSX, awarie, limity budżetów, cleanup i próbę recovery udokumentować oddzielnie. CLI lokalne i mocki nie zastępują tych wyników.
 
-W tej sesji wszystkie kroki zdalnego odbioru są **niewykonane**. Nie ma działającego linku do podania, wyniku telefonu/Safari ani zgody na szerszą betę.
+Historyczne przygotowanie 2026-10-14: wszystkie kroki zdalnego odbioru były **niewykonane**; aktualny częściowy wynik znajduje się na początku dokumentu. Nie ma działającego linku do podania, wyniku telefonu/Safari ani zgody na szerszą betę.
