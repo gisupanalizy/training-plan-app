@@ -146,7 +146,7 @@ Uzupełnienie T00 (2026-10-11): dodano obowiązek promptu przekazania od zakońc
 - Odbiór: działający HTTPS dla zaproszonych osób, test całej ścieżki na wdrożeniu i dwóch kontach, udokumentowane cofnięcie wdrożenia i ograniczenia.
 - Weryfikacja: smoke test wdrożenia, kontrola środowisk i sekretów oraz procedur awarii; link dopiero po rzeczywistym udanym wdrożeniu.
 - Przygotowanie: [procedura T11](T11_DEPLOYMENT.md), [instrukcja testera](TESTER_GUIDE.md), lokalny manifest 94 plików/20 migracji i bezpieczna kopia. Build/typy czystej kopii oraz kontrole wysyłki lokalnej przeszły. Oficjalny dry-run Vercel i lista projektów Supabase odrzucone z braku poświadczeń; niczego nie wdrożono. [Handoff](handoffs/2026-10-14-T11-przygotowanie-wdrozenia.md).
-- Dalsza praca: T11-E1 upraszcza konfigurację istniejącej integracji. Preview i hostowane migracje/odbiór nadal wymagają wykonania. Przed pełnym odbiorem także SMTP, koszty/AI, transport audio 5 MiB wobec 4,5 MB Vercel, cleanup preview/backlogu i dowód odtworzenia. Pozostają warunkami T11, bez nowych funkcji produktu.
+- Dalsza praca: T11-E1 zakończyło porządkowanie konfiguracji istniejącej integracji. Preview i hostowane migracje/odbiór nadal wymagają wykonania. Przed pełnym odbiorem także SMTP, koszty/AI, transport audio 5 MiB wobec 4,5 MB Vercel, cleanup preview/backlogu i dowód odtworzenia. Pozostają warunkami T11, bez nowych funkcji produktu.
 
 ### T11-G1 — Inicjalizacja Git i pierwszy commit
 
@@ -157,10 +157,10 @@ Uzupełnienie T00 (2026-10-11): dodano obowiązek promptu przekazania od zakońc
 
 ### T11-E1 — Zmienne integracji Supabase
 
-- Status: review. Właściciel: Codex (2026-10-16). Zależności: T03/T06 i jawne zlecenie uporządkowania konfiguracji — spełnione.
+- Status: done. Właściciel: Codex (2026-10-16). Zależności: T03/T06 i jawne zlecenie uporządkowania konfiguracji — spełnione.
 - Zakres: odczyt automatycznych zmiennych STORAGE_, zgodność lokalna, rozdział sekretów i środowisk, usunięcie ręcznych duplikatów w Vercel i uzupełnienie ustawień aplikacji.
 - Odbiór: konfiguracja działa bez kopiowania kluczy; błędne/mieszane środowisko jest odrzucane; sekrety pozostają serwerowe; jawny stan zmian Vercel i wymaganych migracji/odbioru T11.
-- Wynik: kod i testy lokalne gotowe (171 passed/9 skipped, build/typy, lokalne HTTP A/B/anon). W Vercel osiem ręcznych ustawień tylko Production; trzy duplikaty czekają na potwierdzenie trwałego usunięcia. [Handoff](handoffs/2026-10-16-T11-E1-zmienne-integracji.md).
+- Wynik: kod i testy lokalne gotowe (171 passed/9 skipped, build/typy, lokalne HTTP A/B/anon). W Vercel osiem ręcznych ustawień tylko Production; po jawnym potwierdzeniu usunięto trzy ręczne duplikaty i potwierdzono zachowanie integracji. Odbiór hostingu pozostaje w T11. [Handoff](handoffs/2026-10-16-T11-E1-usuniecie-duplikatow.md).
 
 ## Po testach bety
 
