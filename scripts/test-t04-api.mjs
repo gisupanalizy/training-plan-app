@@ -69,7 +69,7 @@ async function run() {
   const next = ok(await a.client.rpc("save_manual_plan", { p_operation_id: randomUUID(), p_plan_id: created.planId, p_expected_version_id: created.versionId, p_document: updated }), "edycja");
   assert.notEqual(next.versionId, created.versionId);
   assert.equal(ok(await a.client.from("plan_versions").select("id").eq("plan_id", created.planId), "wersje").length, 2);
-  assert.ok((await a.client.rpc("save_manual_plan", { p_operation_id: randomUUID(), p_plan_id: created.planId, p_expected_version_id: created.versionId, p_document: updated })).error, "stara rewizja konfliktuje");
+  assert.equal((await a.client.rpc("save_manual_plan", { p_operation_id: randomUUID(), p_plan_id: created.planId, p_expected_version_id: created.versionId, p_document: updated })).error?.code, "PT409", "stara rewizja konfliktuje bez pętli serializacji");
   const oldSet = ok(await a.client.from("planned_sets").select("target_percent").eq("planned_exercise_id", exercises[0].id).order("position"), "stare serie");
   assert.deepEqual(oldSet.map((item) => item.target_percent), [60, 75]);
   console.log("T04 API: A/B, rampa, superseria, retry, wersje, historia 1RM i izolacja A/B/anon — OK");

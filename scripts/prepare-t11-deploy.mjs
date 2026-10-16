@@ -36,8 +36,9 @@ const args = process.argv.slice(2);
 if (args.length > 1 || (args.length === 1 && args[0] !== "--stage")) throw new Error("Użycie: node scripts/prepare-t11-deploy.mjs [--stage]");
 const files = collect(root, roots);
 const migrations = collect(root, ["supabase/migrations"]);
-if (migrations.length !== 20 || !migrations.some((file) => file.path.endsWith("20261014100000_t10_plan_write_boundary.sql")))
-  throw new Error("Sprawdź zmianę zestawu 20 migracji T02–T10 przed wydaniem.");
+if (migrations.length !== 21 || !migrations.some((file) => file.path.endsWith("20261014100000_t10_plan_write_boundary.sql"))
+  || !migrations.some((file) => file.path.endsWith("20261016210000_t11_business_conflicts.sql")))
+  throw new Error("Sprawdź zmianę zestawu 21 migracji T02–T11 przed wydaniem.");
 let stage = null;
 if (args[0] === "--stage") {
   stage = mkdtempSync(join(tmpdir(), "apka-t11-release-"));
@@ -51,6 +52,6 @@ if (args[0] === "--stage") {
 const manifest = { schema: 1, kind: "local-release-candidate", uploaded: false, stage,
   fileCount: files.length, totalBytes: files.reduce((sum, file) => sum + file.bytes, 0),
   filesSha256: hash(JSON.stringify(files)), files, migrations };
-const output = join(root, "docs/reports/2026-10-16-T11-E1-release.json");
+const output = join(root, "docs/reports/2026-10-16-T11-C1-release.json");
 writeFileSync(output, `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(JSON.stringify({ manifest: relative(root, output), fileCount: manifest.fileCount, filesSha256: manifest.filesSha256, stage, uploaded: false }));

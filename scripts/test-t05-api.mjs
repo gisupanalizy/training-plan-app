@@ -49,7 +49,7 @@ async function run() {
   const started = ok(await command(a.client, startId, null, 0, "start", startPayload), "start");
   assert.deepEqual(ok(await command(a.client, startId, null, 0, "start", startPayload), "retry start"), started);
   assert.equal(started.revision, 1);
-  assert.ok((await command(a.client, startId, null, 0, "start", { ...startPayload, performedOn: "2026-10-10" })).error, "ten sam ID z innymi danymi");
+  assert.equal((await command(a.client, startId, null, 0, "start", { ...startPayload, performedOn: "2026-10-10" })).error?.code, "PT409", "ten sam ID z innymi danymi — bez pętli serializacji");
   assert.ok((await command(a.client, randomUUID(), null, 0, "start", startPayload)).error, "druga aktywna sesja nie powstaje");
   assert.ok((await command(b.client, randomUUID(), started.workoutId, 1, "finish", {})).error, "B nie zmienia A");
   assert.ok((await command(anon, randomUUID(), started.workoutId, 1, "finish", {})).error, "anon nie zmienia A");
@@ -76,7 +76,7 @@ async function run() {
     actualDurationSeconds: null, actualDistanceMeters: null, actualRpe: null, actualRir: null, actualNote: "Dobrze" };
   const saved = ok(await command(a.client, savedId, started.workoutId, 1, "save_set", resultPayload), "zapis serii");
   assert.deepEqual(ok(await command(a.client, savedId, started.workoutId, 1, "save_set", resultPayload), "timeout/retry"), saved);
-  assert.ok((await command(a.client, randomUUID(), started.workoutId, 1, "comment", { comment: "stara karta" })).error, "stara rewizja konfliktuje");
+  assert.equal((await command(a.client, randomUUID(), started.workoutId, 1, "comment", { comment: "stara karta" })).error?.code, "PT409", "stara rewizja konfliktuje bez pętli serializacji");
   assert.ok((await command(b.client, randomUUID(), started.workoutId, 2, "save_set", resultPayload)).error, "B nie zmienia serii A");
   const skip = ok(await command(a.client, randomUUID(), started.workoutId, 2, "save_set", { setId: sets[1].id,
     status: "skipped", actualReps: null, actualKg: null, actualDurationSeconds: null,

@@ -31,7 +31,7 @@ try {
     }
   }
   console.log("PASS: syntetyczne ścieżki Git/Vercel (semantyka Git, bez uploadu).");
-  const manifest = JSON.parse(readFileSync(join(root, "docs/reports/2026-10-16-T11-E1-release.json"), "utf8"));
+  const manifest = JSON.parse(readFileSync(join(root, "docs/reports/2026-10-16-T11-C1-release.json"), "utf8"));
   const candidate = join(temp, "candidate");
   for (const file of [...manifest.files, ...manifest.migrations]) {
     const dest = join(candidate, file.path);
@@ -43,7 +43,7 @@ try {
   cpSync(join(root, "scripts/prepare-t11-deploy.mjs"), join(candidate, "scripts/prepare-t11-deploy.mjs"));
   const prepare = () => run(process.execPath, ["scripts/prepare-t11-deploy.mjs"], candidate);
   assert.equal(prepare().status, 0);
-  const regenerated = JSON.parse(readFileSync(join(candidate, "docs/reports/2026-10-16-T11-E1-release.json"), "utf8"));
+  const regenerated = JSON.parse(readFileSync(join(candidate, "docs/reports/2026-10-16-T11-C1-release.json"), "utf8"));
   assert.deepEqual(regenerated.files, manifest.files, "Zmienione źródła wymagają nowego manifestu.");
   assert.deepEqual(regenerated.migrations, manifest.migrations);
   const probe = join(candidate, "src/t11-upload-probe");

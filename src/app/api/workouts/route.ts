@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     p_expected_revision: body.expectedRevision, p_action: body.action, p_payload: body.payload,
   });
   if (error) {
-    const status = error.code === "40001" || error.code === "23505" ? 409 :
+    const status = error.code === "PT409" || error.code === "40001" || error.code === "23505" ? 409 :
       error.code === "P0002" ? 404 : error.code === "28000" ? 401 : 400;
     return NextResponse.json({ error: status === 409 ? "Konflikt zmian. Odśwież trening; ponowienie tej samej operacji jest bezpieczne." :
       status === 404 ? "Nie znaleziono własnego treningu lub elementu." : "Nie udało się zapisać. Sprawdź pola." }, { status });

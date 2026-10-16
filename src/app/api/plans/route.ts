@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     p_expected_version_id: body.expectedVersionId, p_document: document,
   });
   if (error) {
-    const status = error.code === "40001" || error.code === "23505" ? 409 : error.code === "P0002" ? 404 : 400;
+    const status = error.code === "PT409" || error.code === "40001" || error.code === "23505" ? 409 : error.code === "P0002" ? 404 : 400;
     return NextResponse.json({ error: status === 409 ? "Plan zmienił się w innej karcie. Odśwież edytor." : "Nie udało się zapisać planu. Sprawdź pola i spróbuj ponownie." }, { status });
   }
   return NextResponse.json(data);
