@@ -338,7 +338,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-B — Start, Plany i prowadzenie treningu
 
-- Status: in_progress. Właściciel: /root/workout_ui; I /root (2026-10-18). Zależności: bramka A, lokalne T13-A/B/C i zlecenie B.
+- Status: review — lokalna bramka B przyjęta przez I (2026-10-18). Właściciel: /root/workout_ui, zakres zwolniony do I. Zależności: bramka A, lokalne T13-A/B/C i zlecenie B.
 - Zakres/odbiór/własność: [etap B](T15_UI_IMPLEMENTATION.md#b--start-plany-podgląd-szczegóły-i-zapis). Przenieść UI na działające komendy, zachować retry/szkice/konflikty i cztery karty.
 - Przekazanie: [prompt B](prompts/T15-B.md), [karta B](handoffs/planned/T15-B.md). High; lokalne HTTP/Chrome i regresje T13-C.
 

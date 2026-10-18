@@ -76,3 +76,34 @@ export function snapshotPrescription(set: WorkoutSet) {
 export function resolveSessionId(ids: string[], stored: string | null) {
   return stored && ids.includes(stored) ? stored : ids[0] ?? '';
 }
+
+export type PrescriptionMetrics = { series: string; load: string; rest: string };
+/** Osobne kolumny, bez rozbijania tekstu po separatorach ani zgadywania braków. */
+export function planMetrics(exercise: PlanEditorExercise, context?: TargetContext): PrescriptionMetrics {
+  const blocks = presentationBlocks(exercise);
+  const first = exercise.sets[0];
+  const series = blocks.slice(0, 2).map(sets => `${exercise.isOptional && blocks.length === 1 ? formatRange(exercise.setCountMin ?? sets.length, exercise.setCountMax) : sets.length} × ${targetGoal(sets[0], true)}${sets[0].isOptional ? ' opcj.' : ''}`).join(' + ') + (blocks.length > 2 ? ` + ${blocks.length - 2} bloków` : '');
+  return { series: series || 'Brak serii',
+    load: !first ? 'Niepodane' : exercise.sets.every(set => targetLoad(set, exercise.exerciseId, context) === targetLoad(first, exercise.exerciseId, context)) ? targetLoad(first, exercise.exerciseId, context) : 'Różne obciążenia',
+    rest: !first ? 'Niepodana' : exercise.sets.every(set => restLabel(set) === restLabel(first)) ? restLabel(first) : 'Różne przerwy' };
+}
+export function snapshotMetrics(sets: WorkoutSet[]): PrescriptionMetrics {
+  const targets = sets.map(snapshotTarget);
+  const metrics = planMetrics({ name: '', exerciseId: null, variant: null, equipment: null, supersetGroup: null, note: null, sets: targets });
+  const loads = sets.map(set => set.target_load_type_snapshot === 'percent_1rm' ? `${loadLabel(snapshotTarget(set))} · ${set.rounded_target_kg_snapshot == null ? 'brak maksimum' : `${set.rounded_target_kg_snapshot} kg`}` : loadLabel(snapshotTarget(set)));
+  return { ...metrics, load: loads.length && loads.every(load => load === loads[0]) ? loads[0] : loads.length ? 'Różne obciążenia' : 'Niepodane' };
+}
+/** Parametry są jedynie lokalnym kontekstem nawigacji, nigdy adresem przekierowania. */
+export function historyReturnHref(month?: string | string[], day?: string | string[]) {
+  if (typeof month !== 'string' || typeof day !== 'string' || !month || !day || !/^\d{4}-(0[1-9]|1[0-2])$/.test(month) || !/^\d{4}-\d{2}-\d{2}$/.test(day) || !day.startsWith(`${month}-`)) return '/historia';
+  const instant = new Date(`${day}T12:00:00Z`);
+  if (!Number.isFinite(instant.getTime()) || instant.toISOString().slice(0, 10) !== day) return '/historia';
+  return `/historia?month=${month}&day=${day}`;
+}
+/** Kopiowanie wyłącznie jednoznacznych celów snapshotu; zakres nie oznacza dolnej granicy. */
+export function exactSnapshotValues(set: WorkoutSet) {
+  const exact = (min: number | null, max: number | null) => min != null && (max == null || min === max) ? String(min) : '';
+  return { reps: set.target_amrap_snapshot ? '' : exact(set.target_reps_min_snapshot, set.target_reps_max_snapshot),
+    kg: set.target_load_type_snapshot === 'percent_1rm' ? set.rounded_target_kg_snapshot?.toString() ?? '' : set.target_load_type_snapshot === 'absolute' ? exact(set.target_kg_snapshot, set.target_kg_max_snapshot) : '',
+    duration: exact(set.target_duration_seconds_snapshot, set.target_duration_seconds_max_snapshot), distance: set.target_distance_meters_snapshot?.toString() ?? '' };
+}

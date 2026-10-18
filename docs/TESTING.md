@@ -279,3 +279,10 @@ Wcześniejsze próby: pierwszy build bez uprawnień nie dotarł do Dockera; pono
 - `DO_NOT_TRACK=1 T15F_PLAYWRIGHT_MODULE=<lokalny moduł Playwright> node scripts/run-local-t05.mjs scripts/test-t15f-browser.mjs`:PASS, lokalny Chrome i Supabase, syntetyczne konto; login błędny/poprawny, fokus, datowany1RM, krok, zmiana hasła, logout/relogin,360/390/430. Pierwsza próba miała zbyt szeroki selektor role alert (Next announcer); zawężono do formularza i ponowiono.
 - `DO_NOT_TRACK=1 npm run test:t04:local`:PASS (wersje, historia1RM, izolacja A/B/anon).
 - Wspólny build B/E/F i `npm run typecheck`:PASS. Pełna suite234PASS/9skip/2FAIL nieaktualne oczekiwania demo B; naprawia właściciel. Fizyczny telefon/Safari i rzeczywisty systemowy menedżer autofill niewykonane. Atrybuty autocomplete i styl Nocy obecne, nie równoważne testowi systemowego autofill.
+
+### T15-B — lokalna bramka2026-10-18
+
+-32 czyste testy8 plikówPASS; komenda w rzeczywistym handoffie B. Integracyjna suite przed ostatnią paczką CTA239PASS/9skip; ostatnia paczka ma32 testy autora +build/typy +pełny Chrome/T13-C PASS.
+- `scripts/test-t15b-browser.mjs` przez lokalny run-local-t05 z T15B_PLAYWRIGHT_MODULE: nowe powierzchnie3 szerokości, cztery karty, reload drugiego planu, keyboard/swipe/drag→Enter/history return/szkicPASS. Następnie importowany niezmieniony test-t13c-browser.mjs PASS: realne komendy/retry/ACK→GET/409/szkice/daty/delete/history/snapshoty, głos mock transportu.
+- Pierwsza próba T13-C FAIL czwarta karta802,64>nav768. Po przesunięciu Kontynuuj pod karty powtórkaPASS750,64<768; plan749,36<768. Ograniczenia telefonu/Safari pozostają otwarte.
+- E API505sesji/503katalogu/>500dzieci PASS; E Chrome jeszcze niewykonane. T08 HTTP/API po adaptacji filtra historii PASS940→1140kg/A-B-anon.

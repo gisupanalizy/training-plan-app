@@ -314,3 +314,9 @@ T15-A review po przyjętej lokalnej bramce (204 testy/9skip, typy/build, Chrome2
 - Prezentacja Profil A/Logowanie C/hasła w Nocy; rzeczywiste datowane1RM i historia, istniejące Auth bez zmian usług/SQL. Pending i fokus błędu, blokada pól podczas zapisu.
 - F2unit, lokalny Chrome360/390/430 z prawdziwym login/error/1RM/krokiem/hasłem/logout/relogin oraz T04 PASS. Build/typy B/E/F PASS; dwie stare asercje demo w pełnej suite naprawia B.
 - Stary T08 HTTP zawężony do jawnej filtrowanej sekcji historii, ponieważ nowe PR all-time prawidłowo zawierają daty spoza filtra. Zakres i izolacja nadal sprawdzane; ponowienie oczekuje kolejki.
+
+### 2026-10-18 — T15-B lokalna bramka
+
+- Start/karuzela planów/podgląd/szczegóły tabelaryczne/prowadzenie treningu w Nocy; zachowane komendy i bezpieczny kontekst powrotu dla D.
+- Naprawiono początkowe wyrównanie drugiego planu i klawiaturę po drag. Chrome wykrył czwartą kartę aktywnego treningu pod nav; przeniesiono CTA pod listę, pełna powtórka PASS.
+-32unitPASS, nowe powierzchnie360/390/430 i pełny niezmieniony T13-C PASS, build/typyPASS. D może korzystać z kontraktu B→D. Bez API/SQL/push.

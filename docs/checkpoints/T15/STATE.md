@@ -1,12 +1,12 @@
 # T15 — bieżący checkpoint integratora
 
-2026-10-18. Gałąź codex/t15-ui; ostatni commit6c1cf10 — odebrany fundament A i dokumentacja.
+2026-10-18. Gałąź codex/t15-ui; ostatni commit dc5d631 — odebrany F; A zapisane w6c1cf10.
 
 ## Aktualni właściciele i etap
 
 - I /root: dokumenty wspólne/Git/kolejka; globals/layout/AppShell i src/components/ui, src/lib/ui po oddaniu A.
 - A review: bramka przyjęta; /root/foundation interrupted po oddaniu, nie wznawiać samoczynnie. [Handoff A](../../handoffs/2026-10-18-T15-A-fundament.md).
-- B in_progress: /root/workout_ui (Sol/high), strony Start/Plany/plan/trening, plan-preview/exercise-summary/workout-* i testy, workouts/presentation*, training-preview, nowe CSS Modules/plan-carousel, własny runner/checkpoint/handoff.
+- B review — lokalna bramka przyjęta: /root/workout_ui (Sol/high), strony Start/Plany/plan/trening, plan-preview/exercise-summary/workout-* i testy, workouts/presentation*, training-preview, nowe CSS Modules/plan-carousel, własny runner/checkpoint/handoff.
 - E in_progress: /root/progress (Sol/high), postep/page, lib/progress, components/progress, własne runnery/checkpoint/handoff. Kontrakt docs/T15_PROGRESS_CONTRACT.md/D045.
 - F review — lokalna bramka przyjęta: /root jako integrator, profil/logowanie/ustaw-haslo/one-rep-max-editor i nowe lokalne komponenty formularza konta/CSS; bez zmian kontraktów Auth.
 - C/D/G todo. D po B, G niezależny po wszystkich bramkach.
@@ -54,3 +54,17 @@ I przejął scripts/test-t08-api.mjs do semantycznego dostosowania starego HTTP 
 ## Wznowienie i wspólna kontrola B/E/F
 
 B/E zastano running, bez restartowania. Sprawdzono Git/checkpointy/procesy. Stary własny3005 zatrzymany; nowy build i typy PASS, serwer sesja91561 na3005. Dwie pierwsze próby builda FAIL typ testu E (druga minęła się z zapisem poprawki); trzecia PASS po potwierdzonym freeze. Full unit234PASS/9skip/2FAIL stare asercje training-preview — B naprawia. B dopracowuje obowiązkową tabelę szczegółów A, bramka nieprzyjęta. F2unit + Chrome Auth/1RM/hasło/wylogowanie360/390/430 +T04 PASS, bramka przyjęta. E ma teraz wyłączną kolejkę API/Chrome. I dostosował T08 HTTP do filtrowanej sekcji historii (nieusuwa zakresu dat), jeszcze czeka na wykonanie.
+
+## Wznowienie po kolejnym limicie
+
+Użytkownik ponowił kontynuację. B/E zastano errored przez usage limit, żaden test nie działał (ps sprawdzony). Wznowiono tych samych agentów, bez duplikatów. Aktualny commit dc5d631 zawiera odebrany F, częściowe B/E nadal oddzielne. Serwer3005 PID98020/98099 (build B/E/F sprzed ostatniej tabeli B). E otrzymał kolejkę API/Chrome oraz uwagi I: rozróżnianie nakładających się punktów, Enter po drag i UUID w szczegółach. B31 czystych testów PASS, zamrożone czeka na rebuild/Chrome. Root zarządza buildem; C/D/G jeszcze niewykonane. `git diff --check` PASS po wznowieniu.
+
+I: po wznowieniu pełna suite PASS237/9skip (35passed/5skipped), log /private/tmp/t15-integration-unit.log. T08 lokalny Auth/PostgREST+HTTP na3005 PASS940→1140kg, zakres filtrowanej historii oraz A/B/anon. E odzyskał PASS prawdziwego API505 sesji/503 katalogu/>500 dzieci; przygotowuje poprawki punktów przed rebuildem. I znalazł initial alignment karuzeli B dla bezpośredniego wyboru drugiego planu, przekazał B do naprawy. Freeze B/E zwolnione dla wskazanych poprawek, kolejka DB wolna po T08; rebuild tylko po obu potwierdzeniach.
+
+Poprawki I→B/E wdrożone i zamrożone. Wspólny build PASS (log /private/tmp/t15-build-be.log), typecheck PASS, pełna suite239PASS/9skip. Nowy serwer3005 sesja58433. B ma wyłączną kolejkę Chrome sesja98966 (po eskalacji sandbox/Docker); następnie E. Bramek B/E jeszcze nie przyjęto.
+
+B Chrome nowe powierzchnie PASS360/390/430, cztery karty planu390 dół749,36<nav768, reload/keyboard/native swipe/drag→Enter i history/szkic. I obejrzał preview390 i detail. Niezmieniony T13-C FAIL: czwarta karta aktywnego treningu dół802,64>768; B poprawia rozmieszczenie CTA, nie odebrano bramki. Runner zakończony/konta sprzątnięte. E dostał kolejkę Chrome na niezmienionym buildzie58433; rebuild czeka na koniec E i freeze B.
+
+E kolejka odzyskana: Chrome nie wystartował (sandbox Docker odmowa, require_escalated oczekiwał220s i przerwany). I sprawdził brak procesów, przerwał oczekiwanie agenta i wznowił go tylko dla statusu. API E powtórzone po markerzePASS3,6s. B poprawka gęstości kart/CTA32unitPASS, wspólny rebuild i typyPASS; serwer3005 sesja75680. B ma teraz ponowienie Chrome/T13-C. Następnie I uruchomi E Chrome własnym narzędziem, E pozostaje freeze. Nie deklarować E ChromePASS.
+
+B finalny Chrome/T13-C PASS sesja99765;4karty treningu390 dół750,64<nav768, plan749,36. Build i typyPASS. B zwalnia źródła, finalizuje handoff; I przyjmuje bramkę. E Chrome kolejka u I po poprawce cleanup runnera.

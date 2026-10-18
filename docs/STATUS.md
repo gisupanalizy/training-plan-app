@@ -4,9 +4,9 @@ Aktualizacja: 2026-10-18.
 
 ## T15 — implementacja lokalna w toku
 
-F review po lokalnym Chrome/Auth/1RM i T04 PASS; [handoff F](handoffs/2026-10-18-T15-F-profil-konto.md). B/E nadal in_progress, C/D/G oczekują.
+F review po lokalnym Chrome/Auth/1RM i T04 PASS; [handoff F](handoffs/2026-10-18-T15-F-profil-konto.md). B review po lokalnym odbiorze i pełnym T13-C ([handoff B](handoffs/2026-10-18-T15-B-plany-trening.md)); E in_progress, C/D/G oczekują.
 
-Użytkownik zlecił całe A–G z subagentami i lokalnymi commitami. Integrator /root, maksymalnie dwóch wykonawców. A review po przyjętej lokalnej bramce ([handoff A](handoffs/2026-10-18-T15-A-fundament.md)); B i E in_progress równolegle, C/D/F/G oczekują bramek. Bieżący rejestr: [checkpoint T15](checkpoints/T15/STATE.md), [stan początkowy](checkpoints/T15/INITIAL.md). Gałąź codex/t15-ui, baza51ea3b4; zastana konsultacja U2 zachowana. Bez push, publikacji, płatnego AI lub zdalnych migracji. Poniższe sekcje opisują historię.
+Użytkownik zlecił całe A–G z subagentami i lokalnymi commitami. Integrator /root, maksymalnie dwóch wykonawców. A review po przyjętej lokalnej bramce ([handoff A](handoffs/2026-10-18-T15-A-fundament.md)); B i F review po lokalnych bramkach; E in_progress, C/D/G oczekują bramek. Bieżący rejestr: [checkpoint T15](checkpoints/T15/STATE.md), [stan początkowy](checkpoints/T15/INITIAL.md). Gałąź codex/t15-ui, baza51ea3b4; zastana konsultacja U2 zachowana. Bez push, publikacji, płatnego AI lub zdalnych migracji. Poniższe sekcje opisują historię.
 
 ## T15-U2 — gotowy prompt zbiorczego zlecenia CLI
 
