@@ -1,6 +1,10 @@
-export type ProgressWorkout = { id: string; performed_on: string; status: string; created_at: string };
+export type ProgressWorkout = { id: string; performed_on: string; status: string; created_at: string; performed_at?: string | null; time_zone?: string; name?: string };
 export type ProgressExercise = { id: string; workout_session_id: string; exercise_id: string; target_name_snapshot: string; source_kind: string; position: number };
-export type ProgressSet = { performed_exercise_id: string; source_kind: string; status: string; target_optional_snapshot?: boolean; target_load_type_snapshot: string | null; target_dumbbell_basis_snapshot: string | null; actual_reps: number | null; actual_kg: number | null };
+export type ProgressSet = { id?: string; position?: number; performed_exercise_id: string; source_kind: string; status: string; target_optional_snapshot?: boolean; target_load_type_snapshot: string | null; target_dumbbell_basis_snapshot: string | null; actual_reps: number | null; actual_kg: number | null;
+  target_kind_snapshot?: string | null; target_bodyweight_adjustment_snapshot?: string | null; target_bodyweight_delta_kg_snapshot?: number | null;
+  target_duration_seconds_snapshot?: number | null; target_duration_seconds_max_snapshot?: number | null; target_distance_meters_snapshot?: number | null;
+  actual_duration_seconds?: number | null; actual_distance_meters?: number | null;
+};
 export type ExerciseInfo = { id: string; name: string; variant: string | null; equipment: string | null; load_mode: string };
 
 export function summarizeProgress(workouts: ProgressWorkout[], performed: ProgressExercise[], sets: ProgressSet[], exerciseInfo: ExerciseInfo[]) {
