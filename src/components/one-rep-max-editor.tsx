@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import styles from "./account.module.css";
 
 export function OneRepMaxEditor({ exercises, increment }: {
   exercises: { id: string; name: string; variant: string | null }[]; increment: number;
@@ -11,6 +12,8 @@ export function OneRepMaxEditor({ exercises, increment }: {
   const [note, setNote] = useState("");
   const [step, setStep] = useState(String(increment));
   const [message, setMessage] = useState("");
+  const alert = useRef<HTMLParagraphElement>(null);
+  useEffect(() => { if (message) alert.current?.focus(); }, [message]);
   const [busy, setBusy] = useState(false);
   const [operationId, setOperationId] = useState(() => crypto.randomUUID());
   function changed(change: () => void) { change(); setOperationId(crypto.randomUUID()); }
@@ -35,18 +38,21 @@ export function OneRepMaxEditor({ exercises, increment }: {
     } catch { setMessage("Nie udało się zapisać kroku zaokrąglenia."); }
     finally { setBusy(false); }
   }
-  return <div className="editor-grid">
-    <form className="editor-card editor-form" onSubmit={saveMaximum}><h3>Dodaj rzeczywisty 1RM</h3>
+  return <div className={styles.editor}>
+    <form onSubmit={saveMaximum} aria-label="Dodaj rzeczywisty 1RM"><h2>Dodaj rzeczywisty 1RM</h2>
+      <p className={styles.hint}>Wpisz zmierzone maksimum z datą. To osobna wartość od szacunku w Postępie.</p>
       {exercises.length === 0 ? <p>Najpierw dodaj ćwiczenie do planu.</p> : <>
-        <label className="editor-field">Ćwiczenie<select value={exerciseId} onChange={(event) => changed(() => setExerciseId(event.target.value))}>{exercises.map((exercise) => <option key={exercise.id} value={exercise.id}>{exercise.name}{exercise.variant ? ` · ${exercise.variant}` : ""}</option>)}</select></label>
-        <label className="editor-field">Rzeczywiste 1RM, kg<input type="number" min="0.01" step="0.01" required value={valueKg} onChange={(event) => changed(() => setValueKg(event.target.value))} /></label>
-        <label className="editor-field">Data obowiązywania<input type="date" required value={effectiveOn} onChange={(event) => changed(() => setEffectiveOn(event.target.value))} /></label>
-        <label className="editor-field">Uwagi<input value={note} onChange={(event) => changed(() => setNote(event.target.value))} /></label>
-        <button className="button button-dark" disabled={busy} type="submit">Zapisz maksimum</button></>}
+        <label className="editor-field">Ćwiczenie<select disabled={busy} value={exerciseId} onChange={(event) => changed(() => setExerciseId(event.target.value))}>{exercises.map((exercise) => <option key={exercise.id} value={exercise.id}>{exercise.name}{exercise.variant ? ` · ${exercise.variant}` : ""}</option>)}</select></label>
+        <div className={styles.pair}>
+          <label className="editor-field">Rzeczywiste 1RM, kg<input disabled={busy} type="number" inputMode="decimal" min="0.01" step="0.01" required value={valueKg} onChange={(event) => changed(() => setValueKg(event.target.value))} /></label>
+          <label className="editor-field">Data obowiązywania<input disabled={busy} type="date" required value={effectiveOn} onChange={(event) => changed(() => setEffectiveOn(event.target.value))} /></label>
+        </div>
+        <label className="editor-field">Uwagi<input disabled={busy} value={note} onChange={(event) => changed(() => setNote(event.target.value))} /></label>
+        <button className="button button-dark" disabled={busy} aria-busy={busy} type="submit">{busy ? "Zapisywanie…" : "Zapisz maksimum"}</button></>}
     </form>
-    <form className="editor-card editor-form" onSubmit={saveStep}><h3>Zaokrąglanie celu</h3><p>Najbliższy krok w kg. Remis zaokrąglamy w dół.</p>
-      <label className="editor-field">Krok kg<input type="number" min="0.01" step="0.01" required value={step} onChange={(event) => setStep(event.target.value)} /></label>
-      <button className="button button-outline" disabled={busy} type="submit">Zapisz krok</button>
-    </form>{message && <p className="auth-error" role="alert">{message}</p>}
+    <form onSubmit={saveStep} aria-label="Zaokrąglanie celu"><h2>Ustawienia</h2><p className={styles.hint}>Zaokrąglanie do najbliższego kroku w kg. Remis zaokrąglamy w dół.</p>
+      <label className="editor-field">Krok kg<input disabled={busy} type="number" inputMode="decimal" min="0.01" step="0.01" required value={step} onChange={(event) => setStep(event.target.value)} /></label>
+      <button className="button button-outline" disabled={busy} aria-busy={busy} type="submit">{busy ? "Zapisywanie…" : "Zapisz krok"}</button>
+    </form>{message && <p ref={alert} tabIndex={-1} className={styles.error} role="alert">{message}</p>}
   </div>;
 }

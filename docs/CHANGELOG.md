@@ -308,3 +308,9 @@ Użytkownik zlecił lokalne A–G z integratorem i maksymalnie dwoma wykonawcami
 T15 — przed B zapisano kontrakt przekazania przeglądu do D: jeden WorkoutEditor i walidowane historyMonth/historyDay dla powrotu do kalendarza, bez dowolnego returnUrl. Doprecyzowanie R14, zależności bez zmian.
 
 T15-A review po przyjętej lokalnej bramce (204 testy/9skip, typy/build, Chrome21 stanów i desktop). B/E rozpoczęte równolegle. Poprawiono overflow profilu z długim emailem360 w fundamencie. Wymagania bez zmian; telefon/Safari nadal osobno.
+
+### 2026-10-18 — T15-F lokalny Profil A i konto
+
+- Prezentacja Profil A/Logowanie C/hasła w Nocy; rzeczywiste datowane1RM i historia, istniejące Auth bez zmian usług/SQL. Pending i fokus błędu, blokada pól podczas zapisu.
+- F2unit, lokalny Chrome360/390/430 z prawdziwym login/error/1RM/krokiem/hasłem/logout/relogin oraz T04 PASS. Build/typy B/E/F PASS; dwie stare asercje demo w pełnej suite naprawia B.
+- Stary T08 HTTP zawężony do jawnej filtrowanej sekcji historii, ponieważ nowe PR all-time prawidłowo zawierają daty spoza filtra. Zakres i izolacja nadal sprawdzane; ponowienie oczekuje kolejki.

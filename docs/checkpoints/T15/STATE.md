@@ -1,6 +1,6 @@
 # T15 — bieżący checkpoint integratora
 
-2026-10-18. Gałąź codex/t15-ui; ostatni commit51ea3b4 (I przygotowuje osobny commit odebranego A).
+2026-10-18. Gałąź codex/t15-ui; ostatni commit6c1cf10 — odebrany fundament A i dokumentacja.
 
 ## Aktualni właściciele i etap
 
@@ -8,7 +8,8 @@
 - A review: bramka przyjęta; /root/foundation interrupted po oddaniu, nie wznawiać samoczynnie. [Handoff A](../../handoffs/2026-10-18-T15-A-fundament.md).
 - B in_progress: /root/workout_ui (Sol/high), strony Start/Plany/plan/trening, plan-preview/exercise-summary/workout-* i testy, workouts/presentation*, training-preview, nowe CSS Modules/plan-carousel, własny runner/checkpoint/handoff.
 - E in_progress: /root/progress (Sol/high), postep/page, lib/progress, components/progress, własne runnery/checkpoint/handoff. Kontrakt docs/T15_PROGRESS_CONTRACT.md/D045.
-- C/D/F/G todo. D po B, G niezależny po wszystkich bramkach.
+- F review — lokalna bramka przyjęta: /root jako integrator, profil/logowanie/ustaw-haslo/one-rep-max-editor i nowe lokalne komponenty formularza konta/CSS; bez zmian kontraktów Auth.
+- C/D/G todo. D po B, G niezależny po wszystkich bramkach.
 
 ## Wznowienie numer2 i kolejka
 
@@ -22,7 +23,7 @@ A: build/typecheck PASS,204 unit/9 skipped, Chrome21 stanów360/390/430 +desktop
 
 ## Następny krok
 
-I zapisuje tylko A/dokumentację w lokalnym commicie, jawnie wykluczając częściowe B/E. Następnie B/E doprowadzić do testów i bramek, uruchomić gotowe C/D/F oraz niezależny G. Bez płatnego AI, zdalnych migracji, push/publikacji.
+A/dokumentację zapisano jako6c1cf10, jawnie wykluczając częściowe B/E. Następnie B/E doprowadzić do testów i bramek, uruchomić gotowe C/D/F oraz niezależny G. Bez płatnego AI, zdalnych migracji, push/publikacji.
 
 ## Historia przygotowania (nie bieżące przydziały)
 
@@ -47,3 +48,9 @@ Wznowienie — I wykonał pełną suite z AI/live off: npm test PASS204/9 skippe
 I przyjął A: końcowy build/typecheck PASS,204 unit PASS/9 skipped; Chrome21 stanów mobilnych +desktop, nawigacja/fokus/kontrast PASS. I obejrzał t15a-plan-390.png. A naprawił overflow długiego emailu360 i zapisał fallback osobnego variant/equipment. A zwolnił wszystkie źródła; kończy wyłącznie własny handoff/checkpoint.
 
 Aktywni wykonawcy: /root/workout_ui B oraz /root/progress E (obaj Sol/high). C/D/F/G todo. I przejmuje shared UI/globals/layout/AppShell. E kontrakt D045 gotowy. Kolejka: I — HTTP regresja T13 na pozostawionym serwerze3005 (sesja45260); B/E tylko czyste testy do zgody na wspólne.
+
+I przejął scripts/test-t08-api.mjs do semantycznego dostosowania starego HTTP testu zakresu do filtrowanej historii, odrębnej od PR all-time. Oczekuje stabilnego znacznika historii od E.
+
+## Wznowienie i wspólna kontrola B/E/F
+
+B/E zastano running, bez restartowania. Sprawdzono Git/checkpointy/procesy. Stary własny3005 zatrzymany; nowy build i typy PASS, serwer sesja91561 na3005. Dwie pierwsze próby builda FAIL typ testu E (druga minęła się z zapisem poprawki); trzecia PASS po potwierdzonym freeze. Full unit234PASS/9skip/2FAIL stare asercje training-preview — B naprawia. B dopracowuje obowiązkową tabelę szczegółów A, bramka nieprzyjęta. F2unit + Chrome Auth/1RM/hasło/wylogowanie360/390/430 +T04 PASS, bramka przyjęta. E ma teraz wyłączną kolejkę API/Chrome. I dostosował T08 HTTP do filtrowanej sekcji historii (nieusuwa zakresu dat), jeszcze czeka na wykonanie.

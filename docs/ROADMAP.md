@@ -362,7 +362,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-F — Profil A i Logowanie C
 
-- Status: todo. Właściciel: nieprzypisany, rola F. Zależności: bramka A i zlecenie F.
+- Status: review — lokalna bramka F przyjęta przez I (2026-10-18). Właściciel: integrator /root, pliki zwolnione. Zależności: bramka A i zlecenie F.
 - Zakres/odbiór/własność: [etap F](T15_UI_IMPLEMENTATION.md#f--profil-a-i-logowanie-c). Istniejące Auth i ręczny datowany1RM, zachowane historyczne cele, nowe układy bez zmiany kontraktów.
 - Przekazanie: [prompt F](prompts/T15-F.md), [karta F](handoffs/planned/T15-F.md). Medium; formularze/Auth/klawiatura i właściwe regresje T04.
 
