@@ -1,19 +1,21 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { getSupabaseConfig } from "@/lib/supabase/config";
+import { Icon, type IconName } from "@/components/ui/icon";
 
 const navigation = [
-  { href: "/", label: "Trening", icon: "◉" },
-  { href: "/plany", label: "Plany", icon: "▤" },
-  { href: "/historia", label: "Historia", icon: "◷" },
-  { href: "/postep", label: "Postęp", icon: "↗" },
-  { href: "/profil", label: "Profil", icon: "◎" },
-];
+  { href: "/", label: "Trening", icon: "training" },
+  { href: "/plany", label: "Plany", icon: "plans" },
+  { href: "/historia", label: "Historia", icon: "history" },
+  { href: "/postep", label: "Postęp", icon: "progress" },
+  { href: "/profil", label: "Profil", icon: "profile" },
+] satisfies { href: string; label: string; icon: IconName }[];
 
 export function AppShell({ children, section }: { children: ReactNode; section: string }) {
   const configured = Boolean(getSupabaseConfig());
   return (
     <div className="app-shell">
+      <a href="#main-content" className="skip-link">Przejdź do treści</a>
       <aside className="sidebar">
         <Link className="brand" href="/" aria-label="Forma — strona główna">
           <span className="brand-mark">F<span>.</span></span>
@@ -23,8 +25,8 @@ export function AppShell({ children, section }: { children: ReactNode; section: 
         <nav aria-label="Nawigacja główna" className="sidebar-nav">
           {navigation.map((item) => (
             <Link key={item.href} href={item.href} aria-current={section === item.label ? "page" : undefined} className={`nav-link ${section === item.label ? "active" : ""}`}>
-              <span className="nav-icon" aria-hidden="true">{item.icon}</span>{item.label}
-              {section === item.label && <span className="nav-arrow" aria-hidden="true">↗</span>}
+              <Icon name={item.icon} className="nav-icon" />{item.label}
+              {section === item.label && <Icon name="chevronRight" className="nav-arrow" size={18} />}
             </Link>
           ))}
         </nav>
@@ -35,15 +37,15 @@ export function AppShell({ children, section }: { children: ReactNode; section: 
       </aside>
       <div className="main-column">
         <header className="topbar"><span className="mobile-brand">forma<span>.</span></span><span className="topbar-tag"><span className="status-dot" /> {configured ? "KONTO PRYWATNE" : "TRYB DEMO"}</span><span className="topbar-avatar">{configured ? "T" : "D"}</span></header>
-        <main id="main-content" className="content">{children}</main>
+        <main id="main-content" tabIndex={-1} className="content">{children}<footer className="asset-credit">Ilustracje: <a href="https://github.com/bryllim/workout-guide">Workout Guide · Bryl Lim / Everkinetic</a> · <a href="/exercise-assets/LICENSE-ASSETS">CC BY-SA 4.0</a> · <a href="/exercise-assets/manifest.json">Pochodzenie grafik</a></footer></main>
       </div>
       <nav className="mobile-nav" aria-label="Nawigacja główna">
-        {navigation.map((item) => <Link key={item.href} href={item.href} aria-current={section === item.label ? "page" : undefined} className={section === item.label ? "active" : ""}><span aria-hidden="true">{item.icon}</span><small>{item.label}</small></Link>)}
+        {navigation.map((item) => <Link key={item.href} href={item.href} aria-current={section === item.label ? "page" : undefined} className={section === item.label ? "active" : ""}><Icon name={item.icon} /><small>{item.label}</small></Link>)}
       </nav>
     </div>
   );
 }
 
 export function DemoNotice() {
-  return <div className="demo-notice" role="status"><span aria-hidden="true">ⓘ</span><span>Ten ekran pokazuje dane syntetyczne. Wpisy w podglądzie treningu nie są zapisywane.</span></div>;
+  return <div className="demo-notice" role="status"><Icon name="info" size={18} /><span>Ten ekran pokazuje dane syntetyczne. Wpisy w podglądzie treningu nie są zapisywane.</span></div>;
 }

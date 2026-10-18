@@ -1,3 +1,7 @@
+## T15-A — lokalny fundament (2026-10-18)
+
+Integrator przyjął bramkę A: npm test204 passed/9 skipped (AI/live off), build przez run-local-app i typecheck PASS. Nowy scripts/test-t15a-browser.mjs, uruchamiany przez run-local-t05 z T15A_PLAYWRIGHT_MODULE, sprawdza prawdziwe lokalne Auth/RPC i21 stanów360/390/430, wszystkie linki nawigacji, font/Noc/44px, skip-link i desktop1280. Bez błędów JS. Długi email profilu początkowo powodował overflow360; poprawiony i test ponowiony. Kontrasty tokenów policzone; telefon/Safari niewykonane. B–G nie są jeszcze odebrane.
+
 # Plan weryfikacji
 
 ## Makiety T14-R6 — prawdziwy klik myszy w iframe

@@ -332,13 +332,13 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-A — Fundament UI i domyślna Noc
 
-- Status: todo. Właściciel: nieprzypisany; planowana rola A/I. Zależności: T15-P, zlecenie implementacji, manifest zastanych zmian.
+- Status: review — bramka lokalna A przyjęta przez I (2026-10-18). Właściciel: /root/foundation, pliki zwolnione do I. Zależności: T15-P, zlecenie implementacji, manifest zastanych zmian.
 - Zakres/odbiór/własność: [etap A](T15_UI_IMPLEMENTATION.md#a--fundament-noc-nawigacja-i-zasoby). Tokeny, AppShell, nawigacja, font/ilustracje, dostępne wspólne UI, kontrakty dla reszty. Bez przebudowy funkcji B–F.
 - Przekazanie: [prompt A](prompts/T15-A.md), [karta A](handoffs/planned/T15-A.md). Medium; typy/testy/build i mobilny odbiór fundamentu.
 
 ### T15-B — Start, Plany i prowadzenie treningu
 
-- Status: todo. Właściciel: nieprzypisany, rola B. Zależności: bramka A, lokalne T13-A/B/C i zlecenie B.
+- Status: in_progress. Właściciel: /root/workout_ui; I /root (2026-10-18). Zależności: bramka A, lokalne T13-A/B/C i zlecenie B.
 - Zakres/odbiór/własność: [etap B](T15_UI_IMPLEMENTATION.md#b--start-plany-podgląd-szczegóły-i-zapis). Przenieść UI na działające komendy, zachować retry/szkice/konflikty i cztery karty.
 - Przekazanie: [prompt B](prompts/T15-B.md), [karta B](handoffs/planned/T15-B.md). High; lokalne HTTP/Chrome i regresje T13-C.
 
@@ -356,7 +356,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-E — Postęp z rzeczywistych wyników
 
-- Status: todo. Właściciel: nieprzypisany, rola E. Zależności: bramka A, datowanie T13-A, zlecenie E i zapis kontraktu obliczeń przez E/I przed agregacją.
+- Status: in_progress. Właściciel: /root/progress; I /root (2026-10-18). Zależności: bramka A, datowanie T13-A, zlecenie E i zapis kontraktu obliczeń przez E/I przed agregacją.
 - Zakres/odbiór/własność: [etap E](T15_UI_IMPLEMENTATION.md#e--postęp-z-rzeczywistych-wyników). Własne autoryzowane dane, rzeczywiste punkty, metryki/PR całej historii, pomoc i gesty, zachowana semantyka T08 i brak zapisu szacunku do profilu.
 - Przekazanie: [prompt E](prompts/T15-E.md), [karta E](handoffs/planned/T15-E.md). High; domena, paginacja, izolacja A/B/anon, lokalny UI/API.
 
@@ -377,3 +377,10 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 - Status: done. Właściciel: Codex (2026-10-18), jawne zlecenie zapisania aktualnych zmian w Git.
 - Zakres: bieżący kod T13, dokumentacja, publiczne makiety/generatory/zasoby T14 i plan T15, wraz z najnowszą konsultacją T15-U. Prywatne źródła poza repo; bez push/publikacji.
 - Sprawdzenia: zakres, wykluczenia, skan wzorców danych wrażliwych i diff-check. Bez nowych testów funkcjonalnych dla samego zapisu. [Handoff](handoffs/2026-10-18-GIT-S1-zapis-stanu.md).
+
+### T15-U2 — Prompt integratora CLI po konsultacji
+
+- Status: done. Właściciel: Codex — jeden konsultant (2026-10-18). Zależności: T15-U i przekazana przez użytkownika rozmowa CLI — spełnione.
+- Zakres: ocenić uwagi i przygotować pełne przyszłe zlecenie A–G z subagentami, bramkami, checkpointami i procedurą wznowienia. Nie uruchamiać implementacji lub delegowania podczas pisania promptu.
+- Odbiór: gotowy prompt startowy i pełna instrukcja w repo, jawne pierwszeństwo zbiorczego zlecenia nad osobnymi zleceniami etapów; maksymalnie dwóch wykonawców, niezależny G, ochrona wspólnych testów i danych. A–G nadal todo.
+- Wynik: [instrukcja integratora](prompts/T15-ORCHESTRATOR.md) i [handoff U2](handoffs/2026-10-18-T15-U2-prompt-cli.md), krótki prompt startowy do ręcznego użycia. Bez kodowania lub uruchamiania agentów w tej sesji.

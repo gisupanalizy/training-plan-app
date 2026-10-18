@@ -2,6 +2,14 @@
 
 Aktualizacja: 2026-10-18.
 
+## T15 — implementacja lokalna rozpoczęta
+
+Użytkownik zlecił całe A–G z subagentami i lokalnymi commitami. Integrator /root, maksymalnie dwóch wykonawców. A review po przyjętej lokalnej bramce ([handoff A](handoffs/2026-10-18-T15-A-fundament.md)); B i E in_progress równolegle, C/D/F/G oczekują bramek. Bieżący rejestr: [checkpoint T15](checkpoints/T15/STATE.md), [stan początkowy](checkpoints/T15/INITIAL.md). Gałąź codex/t15-ui, baza51ea3b4; zastana konsultacja U2 zachowana. Bez push, publikacji, płatnego AI lub zdalnych migracji. Poniższe sekcje opisują historię.
+
+## T15-U2 — gotowy prompt zbiorczego zlecenia CLI
+
+Konsultacja done; [handoff U2](handoffs/2026-10-18-T15-U2-prompt-cli.md), [pełny prompt integratora](prompts/T15-ORCHESTRATOR.md). Uwzględnia rozmowę użytkownika z CLI: A przed resztą, maksymalnie dwóch wykonawców, samodzielne przyjmowanie bramek przez I, E z jawnym kontraktem, G niezależny, kolejka wspólnych testów i checkpointy/wznowienie. Późniejsze wklejenie promptu startowego jest zleceniem całego A–G, które zastępuje stare oczekiwanie na osobne zlecenia etapów. Samo zapisanie instrukcji nie uruchomiło implementacji; A–G nadal todo. Baza Git51ea3b4, nowe dokumenty konsultacji pozostają zmianami roboczymi. Weryfikacja tej sesji: dokumenty/linki/diff-check, bez testów produktu lub subagentów.
+
 ## GIT-S1 — lokalny punkt kontrolny
 
 Na zlecenie użytkownika zapisano aktualną pracę w lokalnym commicie: kod T13, dokumentację/konsultacje, publiczne makiety T14 i plan T15. [Handoff zapisu](handoffs/2026-10-18-GIT-S1-zapis-stanu.md). Prywatne materiały i sekrety poza Git; bez push/publikacji. Stan funkcjonalny pozostaje poniżej, bez startu implementacji T15.

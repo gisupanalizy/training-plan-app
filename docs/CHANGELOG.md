@@ -296,3 +296,15 @@ Na pytanie użytkownika wydzielono konsultację T15-U (in_progress → done), ab
 ## 2026-10-18 — GIT-S1: lokalny zapis aktualnej pracy
 
 Na jawne zlecenie użytkownika zapisano bieżący kod/dokumentację/publiczne mockupy i zasoby w Git, z zachowaniem zastanych zmian i nowej konsultacji T15-U. Prywatny PDF/galeria i sekrety wyłączone. Sprawdzono zakres, wykluczenia, wzorce prywatnych danych oraz diff-check. Bez push, publikacji lub nowych bramek funkcjonalnych; samego zapisu nie utożsamia się z odbiorem T13/T15.
+
+## 2026-10-18 — T15-U2: prompt zbiorczego zlecenia CLI
+
+Po odczycie przekazanej rozmowy CLI przygotowano pełny szablon integratora i krótki prompt startowy. Zawiera przyszłą autoryzację A–G i delegowania, max2 wykonawców, pierwszeństwo nad oczekiwaniem osobnych zleceń, bramki, kontrakty B/D i E, wyłączność plików, kolejkę testów oraz checkpointy i bezpieczne wznowienie. Zgoda zaczyna działać dopiero po użyciu promptu przez użytkownika, nie przez zapis pliku. Oficjalne dokumenty subagentów/CLI/limitów sprawdzone, bez gwarancji automatycznego restartu. T15-U2 done jako konsultacja; A–G todo. Bez implementacji, uruchamiania agentów, konfiguracji CLI, commitu lub push.
+
+## 2026-10-18 — T15: zbiorcze zlecenie implementacji
+
+Użytkownik zlecił lokalne A–G z integratorem i maksymalnie dwoma wykonawcami, niezależnym G, checkpointami i lokalnymi commitami. Zgoda zastępuje osobne zlecenia etapów. A in_progress; reszta czeka na bramki. Bez zmiany wymagań lub publikacji.
+
+T15 — przed B zapisano kontrakt przekazania przeglądu do D: jeden WorkoutEditor i walidowane historyMonth/historyDay dla powrotu do kalendarza, bez dowolnego returnUrl. Doprecyzowanie R14, zależności bez zmian.
+
+T15-A review po przyjętej lokalnej bramce (204 testy/9skip, typy/build, Chrome21 stanów i desktop). B/E rozpoczęte równolegle. Poprawiono overflow profilu z długim emailem360 w fundamencie. Wymagania bez zmian; telefon/Safari nadal osobno.

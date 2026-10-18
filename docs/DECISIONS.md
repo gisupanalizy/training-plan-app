@@ -350,3 +350,9 @@ Uzupełnienie D035 po wykonaniu: migracja22 zastosowana tylko lokalnie; odtworzo
 - Pomoc1RM jest dostępna przez ikonę informacji i klik aktywnej metryki, z wzorem, przykładem, współczynnikami i rozdzieleniem od ręcznego pomiaru profilu. Zachowano obecną propozycję tabeli1–10, sprawdzoną ponownie w źródle Hevy; algorytm produkcyjny nadal wymaga technicznego kontraktu w T15-E/I.
 - Rekordy przewijają się natywnym swipe w obie strony na telefonie. W tej rundzie sprawdzono syntetyczny dotyk Chrome, nie fizyczne urządzenie.
 - Użytkownik zlecił dopracowanie makiet i zapytał o plan wdrożenia/podział na wykonawców. T15-P przygotował etapy A–G, jeden integrator, odrębne pliki, prompty i karty przyszłych handoffów. T15-D obejmuje tę samą pracę co T13-D, a odbiór G także T13-E. Bez automatycznego uruchamiania agentów lub rozpoczęcia src.
+
+## D045 — T15: lokalna orkiestracja i kontrakt analityki
+
+- Data: 2026-10-18. Status: confirmed dla zbiorczego zlecenia użytkownika A–G; accepted technical dla kontraktu I w granicach D043/D044. Nie oznacza wdrożenia/odbioru.
+- Jeden integrator, do dwóch wykonawców, niezależny G, lokalne commity, checkpointy i kolejka współdzielonych testów; bez push/publikacji/płatnego AI/zdalnych migracji.
+- [Kontrakt E](T15_PROGRESS_CONTRACT.md) zapisano przed agregacją: tabela reference-table-v1, jawne źródła i statusy, konserwatywna porównywalność T08, PR pełnej historii, null/0 i paginacja. Ręczny1RM i snapshoty pozostają oddzielne. Wykonawca zgłasza I sprzeczność danych/wymagań przed rozszerzeniem semantyki.
