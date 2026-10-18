@@ -17,7 +17,7 @@ Aktualizacja: 2026-10-12. Status: wymagania użytkownika + oznaczone propozycje 
 ## Proponowany zakres pełnej bety
 
 1. Osobne konta zaproszonych testerów, prywatne dane użytkownika. Udział kolegów nie oznacza dostępu do cudzych treningów.
-2. Biblioteka planów: tygodnie, dni/sesje, ćwiczenia w kolejności, serie z indywidualnymi parametrami.
+2. Biblioteka planów: treningi do wyboru, ćwiczenia w kolejności, serie z indywidualnymi parametrami; tygodnie pozostają w danych i kontekście źródła.
 3. Ćwiczenia własne i aliasy nazw; zachowanie oryginalnych nazw z dokumentu.
 4. Serie: liczba lub zakres powtórzeń, kg lub procent 1RM, przerwa, tempo, RPE/RIR i uwagi, jeśli występują w źródle. Obsługa masy ciała i braku podanego obciążenia.
 5. Zachowanie grup ćwiczeń, np. superserii, i różnych parametrów kolejnych serii. Nietypowy zapis trafia do uwag oraz przeglądu, nie znika podczas importu.
@@ -44,3 +44,15 @@ Panel trenera, subskrypcje, publiczny katalog i ranking, integracje zegarków, p
 ## Warunek gotowości bety
 
 Dwóch testerów na osobnych kontach może zaimportować plan, poprawić go, wykonać trening z ręcznym i głosowym zapisem, wrócić do wyników po ponownym zalogowaniu i nie ma dostępu do danych drugiej osoby. Scenariusze akceptacyjne: [TESTING](TESTING.md).
+
+## Uzgodnione rozszerzenie T13 — planowane, 2026-10-17
+
+Po feedbacku właściciela uzgodniono zwarty mobilny plan/trening z osobnym widokiem ćwiczenia i jedną serią, bibliotekę treningów bez tygodni w bieżącej obsłudze, jeden aktywny trening konta z wyborem powrotu/zakończenia/trwałego usunięcia, atomowe zastąpienie, kalendarz historii i automatyczną datę/godzinę z korektą przy zakończeniu. Wymagania R01–R16 i pełne szczegóły: [T13](T13_MOBILE_WORKOUT.md), D033. Dane tygodni i wariantów, historia/1RM, prywatność, ręczny zapis i zatwierdzanie głosu pozostają zachowane. A/B/C wykonano wyłącznie lokalnie, review do E; D–E nadal wymagają osobnego zlecenia. T13 nie jest funkcją obecnego wdrożenia produkcji.
+
+## Postęp R4 — wymaganie UI i propozycja rozszerzenia analityki, 2026-10-18
+
+Użytkownik zlecił uproszczony Postęp z domyślnym **szacowanym1RM**, Max Ciężarem, Objętością i rekordami, a dla masy ciała z Max/Sumą Powtórzeń. W makietach jest to analityka demonstracyjnych serii; metoda i implementacja w aplikacji pozostają propozycją (D043). Nie zastępuje rzeczywistego pomiaru1RM z datą używanego do procentowych zaleceń. Nie zmienia automatycznie Profilu lub historycznych celów. To rozszerzenie kierunku projektu, nie funkcja wdrożonej wersji.
+
+## T14-R5 / T15 — wybrany wygląd i plan implementacji, 2026-10-18
+
+Domyślna paleta Noc i Profil A potwierdzone (D044), razem z pozostałymi wyborami T14. Punkt Postępu reprezentuje zapis treningu, nie interpolację; klik punktu otwiera informację, klik poza nim zamyka. Pomoc szacowanego1RM wyjaśnia metodę, rekordy mają swipe. [T15](T15_UI_IMPLEMENTATION.md) planuje wdrożenie na istniejących modułach, z integratorem i osobnymi bramkami; nie jest nową wykonaną funkcją, uruchomieniem agentów lub zgodą na publikację. Techniczna metoda i zakres porównywalności analityki wymagają zapisania przed T15-E.

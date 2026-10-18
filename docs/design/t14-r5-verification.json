@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-18",
+  "private": false,
+  "checks": [
+    "Noc we wszystkich ramkach i po reload; Profil A potwierdzony",
+    "6 stanów360/390/430px: punkty wyłącznie w datach treningów, dokładny odczyt i pomoc bez overflow",
+    "Chmurka1RM: aktywna metryka/ikona/Enter/Escape, wzór i współczynniki; ukryta dla innych metryk",
+    "Dotyk: tylko tap punktu otwiera; pusty wykres i obszar poza nim zamykają; swipe PR w obie strony dla obu ćwiczeń"
+  ],
+  "widths": [
+    {
+      "width": 360,
+      "variant": "a",
+      "provenance": true,
+      "pointDateMatches": true
+    },
+    {
+      "width": 360,
+      "variant": "b",
+      "provenance": true,
+      "pointDateMatches": true
+    },
+    {
+      "width": 390,
+      "variant": "a",
+      "provenance": true,
+      "pointDateMatches": true
+    },
+    {
+      "width": 390,
+      "variant": "b",
+      "provenance": true,
+      "pointDateMatches": true
+    },
+    {
+      "width": 430,
+      "variant": "a",
+      "provenance": true,
+      "pointDateMatches": true
+    },
+    {
+      "width": 430,
+      "variant": "b",
+      "provenance": true,
+      "pointDateMatches": true
+    }
+  ],
+  "swipes": [
+    {
+      "variant": "a",
+      "right": 104,
+      "left": 0
+    },
+    {
+      "variant": "b",
+      "right": 104,
+      "left": 0
+    }
+  ],
+  "errors": [],
+  "engine": "Chrome headless + CDP touch; bez fizycznego telefonu/Safari"
+}

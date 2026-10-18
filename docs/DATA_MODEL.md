@@ -44,7 +44,7 @@ Brak 1RM nie uniemożliwia zapisania planu lub treningu. Procent pozostaje widoc
 
 ## Integralność historii
 
-T08 odczytuje `workout_sessions`, `performed_exercises`, `performed_sets` i `exercises` dla właściciela. Licznik wykonania planu opiera się na `source_kind = planned`; serie `extra` nie zwiększają mianownika. Objętość `powtórzenia × kg` obejmuje tylko wykonane serie z jawną zewnętrzną semantyką obciążenia i porównywalną podstawą wartości. `skipped` i `pending` nie dają zera w historii obciążenia, a masa ciała/asysta i niejednoznaczny ciężar hantli nie są dodawane do objętości. Wynik jest wyliczany na odczycie, więc poprawka wykonanej serii jest widoczna bez zmiany snapshotu celu; żadna estymacja nie tworzy rekordu rzeczywistego 1RM. Szczegóły: [D018](DECISIONS.md).
+T08 odczytuje `workout_read_model` (od T13-A; wcześniej `workout_sessions`), `performed_exercises`, `performed_sets` i `exercises` dla właściciela. Licznik wykonania planu opiera się na `source_kind = planned`; serie `extra` nie zwiększają mianownika. Objętość `powtórzenia × kg` obejmuje tylko wykonane serie z jawną zewnętrzną semantyką obciążenia i porównywalną podstawą wartości. `skipped` i `pending` nie dają zera w historii obciążenia, a masa ciała/asysta i niejednoznaczny ciężar hantli nie są dodawane do objętości. Wynik jest wyliczany na odczycie, więc poprawka wykonanej serii jest widoczna bez zmiany snapshotu celu; żadna estymacja nie tworzy rekordu rzeczywistego 1RM. Szczegóły: [D018](DECISIONS.md).
 
 - Trening zachowuje cele i nazwy z momentu rozpoczęcia, także po zmianie lub archiwizacji planu.
 - Dodatkowe ćwiczenia/serie istnieją w wykonaniu, bez modyfikacji planu.
@@ -86,3 +86,23 @@ Karty i formularze ręcznego edytora korzystają z dotychczasowego `PlanEditorDo
 ## T10 — zamknięcie bezpośredniego zapisu planu
 
 D026 i migracja `20261014100000_t10_plan_write_boundary.sql` odbierają `authenticated` INSERT/UPDATE/DELETE do `exercises`, `plans`, `plan_versions`, `plan_sessions`, `planned_exercises`, `planned_sets`. Odczyt nadal wymaga RLS. Katalog i plan powstają przez istniejącą transakcyjną publikację/approve; klient nie może ominąć wersjonowania lub zmienić wariantu katalogu bez tej ścieżki. Zapis profilu oraz dopisywanie rzeczywistego 1RM pozostają używanymi ścieżkami. Bez zmiany historycznych danych, snapshotów i kontraktów dokumentu.
+
+## T13-A — lokalna migracja22, review do E
+
+D034/D035 i [kontrakt A](T13_MOBILE_WORKOUT.md) są zrealizowane lokalnie w [migracji22](../supabase/migrations/20261017100000_t13a_workout_sessions.sql). `workout_sessions` ma niezmienne started_at/snapshot_on, korygowalne przy finish performed_at/performed_on i performed_time_zone. Legacy snapshot_on pochodzi z dawnego performed_on, nowe pola godziny pozostają null. Trigger kotwicy chroni właściciela, plan, snapshot_on i started_at; wszystkie stare triggery celów pozostają. Zmiana czasu nie przelicza 1RM, procentów/kg ani kroku.
+
+Wszystkie komendy serializuje owner lock. Delete fizycznie usuwa wykonanie i rewizje; nullable FK receipts jest odłączany po usunięciu rewizji, bez kasowania potwierdzeń. Nowa tabela deleted_workouts ma tylko owner_id/workout_id, bez FK do nieistniejącej sesji i bez treści; trwa do usunięcia konta. Stary retry daje410, retry samego delete pierwotny sukces, inna treść tego samego operationId409. Replace/finish zapisuje wewnętrzny receipt rewizji starej sesji i zewnętrzny receipt nowego startu w jednej transakcji.
+
+read_workout zapewnia jeden snapshot MVCC z pełnymi celami/wynikami i poprzednią serią tego samego exercise_id. workout_read_model (security_invoker/RLS) projektuje datę w bieżącej strefie profilu, date-only zachowuje dosłownie. Używają go listy/historia, porównania i filtry postępu T08. API i DTO: specyfikacja T13; faktyczny odbiór w [handoffie A](handoffs/2026-10-17-T13-A-sesje-api-datowanie.md). Brak zastosowania migracji produkcji.
+
+
+## T13-B — projekcja planu bez zmiany danych
+
+Podgląd wybiera po ID jednostki w obrębie planu i wersji, bez scalania po nazwie lub tygodniu. `PlanEditorDocument`, tabela jednostek i historyczne snapshoty pozostają bez zmian. Pamięć przeglądarki `forma:plan-session:<planId>:<versionId>` zawiera tylko ostatnio wybrane ID; nie jest źródłem własności ani danych. Po odczycie serwera wybór musi należeć do przekazanej wersji, w innym przypadku następuje fallback do pierwszego. Brak pamięci nie blokuje podglądu.
+
+Czyste `presentationBlocks` rozwijają istniejące grupowanie edytora o granice opcjonalności i indywidualnych uwag; oryginalne serie/źródła nie są modyfikowane. `setPrescription`/`compactPrescription` formatują plan, a `snapshotPrescription` formatuje zapisane cele wykonania bez dzisiejszego 1RM. Wciąż rozróżniają null i0. Kontrakt zapisu, API i migracje nie zostały zmienione w B.
+
+
+## T13-C — stan klienta, bez zmiany schematu
+
+D037: szkice są w pamięci zamontowanej sesji z kluczem workout.id i indeksowane przez stabilne setId; seria wskazuje exerciseId w autoryzowanym GET. URL przechowuje wyłącznie ID wybranej serii. Komenda ma kopię całej koperty i nie zmienia expectedRevision przy retry. Po potwierdzeniu osobny GET dostarcza aktualny stan; scalanie nie cofa rewizji, usuwa wyłącznie potwierdzony szkic i synchronizuje niezmieniony lokalnie komentarz.409 zachowuje szkic i wymaga odczytu oraz jawnej kolejnej komendy. Brak trwałego autosave/offline. Finish/delete/replace używają niezmienionego kontraktu A; korekta czasu i podgląd `snapshotPrescription` nigdy nie dobierają nowego 1RM.

@@ -26,7 +26,7 @@ export async function getProgress(from?: string, to?: string) {
     }
   };
   const workouts = await readAll<ProgressWorkout>((offset) => {
-    let query = client.from("workout_sessions").select("id,performed_on,status,created_at")
+    let query = client.from("workout_read_model").select("id,performed_on,status,created_at")
       .eq("owner_id", ownerId).order("performed_on", { ascending: false }).order("id").range(offset, offset + 499);
     if (checkedFrom) query = query.gte("performed_on", checkedFrom);
     if (checkedTo) query = query.lte("performed_on", checkedTo);

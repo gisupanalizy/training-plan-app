@@ -59,3 +59,9 @@ T03 dodał sprawdzanie powiązania `APP_ENV`, URL i referencji projektu Supabase
 - Integracje OpenAI i źródła zweryfikowane 2026-10-11: [AI_AND_VOICE](AI_AND_VOICE.md).
 
 T11-E1 (2026-10-16): źródło konfiguracji publicznej wybierane jako pełna rodzina STORAGE (Marketplace) lub standardowa (lokalna/ręczna). Pierwszeństwo ma integracja, a niepełna para nie jest uzupełniana innym źródłem. Oddzielny `src/lib/supabase/admin.ts` wybiera serwerowy secret/service_role tej samej rodziny; proxy korzysta wyłącznie z publicznej konfiguracji. Izolacja refów i APP_ENV/VERCEL_ENV pozostaje obowiązkowa. Nie jest to zmiana RLS, schematu ani uprawnień modelu.
+
+## T13 — A/B/C lokalnie, D–E planowane
+
+[Specyfikacja T13](T13_MOBILE_WORKOUT.md) definiuje A–E i kontrakty producent–konsument. A jest lokalnie w review: wszystkie komendy mają jeden owner lock; replace jest atomowy, delete zachowuje receipts i minimalny ślad do ochrony retry. GET wywołuje STABLE RPC read_workout z jednym snapshotem MVCC, wraz z poprzednim wynikiem. workout_read_model z RLS i workout_local_date projektują daty w strefie profilu dla historii/porównań/postępu; snapshot_on nadal kotwiczy dobór 1RM. D035 utrwala szczegóły rzeczywistych FK; migracja22 zastosowana tylko lokalnie.
+
+B dostarcza klientowy PlanPreview, ExerciseSummary oraz czyste presentation.ts, oparte na istniejącym seriesBlocks. Wybór ma lokalną pamięć wyłącznie ID planu/wersji/jednostki, a dane nadal pochodzą z autoryzowanego odczytu. snapshotPrescription formatuje historyczne cele bez ponownego doboru maksimum. C dostarcza useWorkoutCommand z niezmienną pełną kopertą, osobnym GET po ACK, ochroną szkiców i jawnym rozstrzygnięciem409; WorkoutEditor ma przegląd/szczegóły, WorkoutStart konflikt/legacy/replace, WorkoutFinish korektę czasu/DST. D ma dostarczyć kalendarz używający odczytu A i widoków C. E to niezależny lokalny odbiór. D–E niewykonane. Bez nowych usług i zmian integracji AI.

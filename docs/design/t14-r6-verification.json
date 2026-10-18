@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-18",
+  "private": false,
+  "mouseChecks": [
+    {
+      "variant": "weight",
+      "metric": "estimated",
+      "persisted": true,
+      "blankDismisses": true,
+      "outsideDismisses": true
+    },
+    {
+      "variant": "weight",
+      "metric": "weight",
+      "persisted": true,
+      "blankDismisses": true,
+      "outsideDismisses": true
+    },
+    {
+      "variant": "weight",
+      "metric": "volume",
+      "persisted": true,
+      "blankDismisses": true,
+      "outsideDismisses": true
+    },
+    {
+      "variant": "bodyweight",
+      "metric": "maxreps",
+      "persisted": true,
+      "blankDismisses": true,
+      "outsideDismisses": true
+    },
+    {
+      "variant": "bodyweight",
+      "metric": "totalreps",
+      "persisted": true,
+      "blankDismisses": true,
+      "outsideDismisses": true
+    }
+  ],
+  "dragChecks": [
+    {
+      "variant": 0,
+      "pans": true,
+      "tooltipAfterDragClick": true
+    },
+    {
+      "variant": 1,
+      "pans": true,
+      "tooltipAfterDragClick": true
+    }
+  ],
+  "widths": [
+    {
+      "width": 360,
+      "variant": "a",
+      "mouseAndKeyboard": true
+    },
+    {
+      "width": 360,
+      "variant": "b",
+      "mouseAndKeyboard": true
+    },
+    {
+      "width": 390,
+      "variant": "a",
+      "mouseAndKeyboard": true
+    },
+    {
+      "width": 390,
+      "variant": "b",
+      "mouseAndKeyboard": true
+    },
+    {
+      "width": 430,
+      "variant": "a",
+      "mouseAndKeyboard": true
+    },
+    {
+      "width": 430,
+      "variant": "b",
+      "mouseAndKeyboard": true
+    }
+  ],
+  "firstTapAfterPinch": true,
+  "errors": [],
+  "engine": "Chrome headless, rzeczywiste zdarzenia myszy w iframe + klawiatura i CDP touch; bez fizycznego telefonu/Safari"
+}

@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-18",
+  "private": false,
+  "checks": [
+    "Trzy różne treści kroków i rzeczywiste potwierdzenia w podsumowaniu",
+    "Ilustracje biblioteczne załadowane lokalnie; bez poprzednich szkiców",
+    "Kliknięcie parametru w dolnej części karty otwiera właściwe ćwiczenie",
+    "Cała karta otwierana także klawiaturą",
+    "Drag myszą w obie strony, także od przycisku, bez przypadkowej nawigacji",
+    "Wykres w A/B/C, dwa wykresy w C; punkty, okres i wybór ćwiczenia zmieniają dane",
+    "Dotyk: swipe lewo/prawo; pionowy gest nad karuzelą przewija stronę"
+  ],
+  "errors": [],
+  "libraryImagesLoaded": 4,
+  "touchVerticalScroll": 45,
+  "engine": "Chrome headless; mysz, klawiatura i syntetyzowany dotyk, bez fizycznego Safari"
+}

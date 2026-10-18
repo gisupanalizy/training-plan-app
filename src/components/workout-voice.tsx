@@ -42,19 +42,19 @@ export function WorkoutVoice({ workoutId, revision, intent, setId, targetName, p
     }
   }
   const label = intent === "set" ? `Dyktuj serię ${position ?? ""}` : intent === "comment" ? "Dyktuj komentarz" : "Dyktuj dodatkowe ćwiczenie";
-  return <div className="voice-area"><button type="button" className="button button-outline" onClick={() => { setOpen(!open); setResult(null); }}>{open ? "Zamknij dyktowanie" : label}</button>
+  return <div className="voice-area"><button type="button" className="button button-outline" disabled={blocked} onClick={() => { setOpen(!open); setResult(null); }}>{open ? "Zamknij dyktowanie" : label}</button>
     {open && <><VoiceInput key={`${workoutId}:${revision}:${setId ?? intent}`} scope="workout" label={label}
       context={{ workoutId, revision, intent, setId }} onProposal={received} />
       {result && <div className="editor-card voice-proposal"><strong>Propozycja do zatwierdzenia</strong><p><strong>Transkrypcja:</strong> {result.transcript}</p>
         <p><strong>Cel:</strong> {intent === "set" ? `${targetName} · seria ${position}` : intent === "comment" ? "Komentarz do tego treningu" : "Nowe ćwiczenie w tym treningu"} · rewizja {revision}</p>
         {proposal?.intent === "clarify" ? <p role="alert">{proposal.question || "Doprecyzuj wypowiedź i spróbuj ponownie."}</p> : <>
           {intent === "set" && <div className="editor-grid"><label className="editor-field">Powtórzenia<input type="number" min="0" step="1" value={reps} onChange={(e) => setReps(e.target.value)} /></label><label className="editor-field">Kilogramy<input type="number" min="0" step="0.01" value={kg} onChange={(e) => setKg(e.target.value)} /></label></div>}
-          {intent === "comment" && <label className="editor-field">Komentarz<textarea value={comment} onChange={(e) => setComment(e.target.value)} /></label>}
+          {intent === "comment" && <label className="editor-field">Komentarz<textarea aria-label="Komentarz" value={comment} onChange={(e) => setComment(e.target.value)} /></label>}
           {intent === "exercise" && <><div className="editor-grid"><label className="editor-field">Ćwiczenie<input value={name} onChange={(e) => setName(e.target.value)} /></label><label className="editor-field">Wariant<input value={variant} onChange={(e) => setVariant(e.target.value)} /></label><label className="editor-field">Liczba serii<input type="number" min="1" max="30" value={series} onChange={(e) => setSeries(e.target.value)} /></label><label className="editor-field">Powtórzenia na serię<input type="number" min="0" value={reps} onChange={(e) => setReps(e.target.value)} /></label><label className="editor-field">Kilogramy na serię (puste = brak danych)<input type="number" min="0" step="0.01" value={kg} onChange={(e) => setKg(e.target.value)} /></label></div></>}
           <button type="button" disabled={blocked || !validTarget || !validRevision || proposal?.intent !== intent ||
             (intent === "set" && reps === "" && kg === "") || (intent === "comment" && !comment.trim()) ||
             (intent === "exercise" && (!name.trim() || !series || !reps))} onClick={confirm}>Zatwierdź i zapisz</button>
-          {!validRevision && <p role="alert">Trening zmienił się. Odśwież stronę.</p>}</>}
+          {!validRevision && <p role="alert">Trening zmienił się. Przygotuj nową propozycję dla aktualnej serii.</p>}</>}
       </div>}</>}
   </div>;
 }

@@ -1,5 +1,35 @@
 # Plan weryfikacji
 
+## Makiety T14-R6 — prawdziwy klik myszy w iframe
+
+`node docs/design/t14-r6-verify.mjs` z opcjonalnymi `T14_GALLERY_URL`, `T14_REPORT_DIR`, `T14_PLAYWRIGHT_MODULE`. [Publiczny raport](design/t14-r6-verification.json), prywatny poza repo. Realne pointerdown/up/click przez `page.mouse` w sandboxowanych iframe, bez force/dispatch/programowego click:5 metryk, widoczna informacja z właściwą datą i źródłową serią dla kg/estymacji, utrzymana po propagacji zdarzenia i mieszcząca się w viewportcie. Pusty wykres i obszar poza nim zamykają. Drag przesuwa daty bez otwierania, kolejny klik otwiera. Dodatkowo6 stanów360/390/430px, klawiatura i pierwszy celowy tap po pinch. Oba runnery R6 PASS; prywatny R5 ponowiony PASS dla dotyku/swipe/pomocy. To nie fizyczny telefon/Safari.
+
+R5 nie obejmował wcześniej zwykłego kliknięcia myszy i nie wykrywał natychmiastowego pointer capture. Wstępny runner R6 dodatkowo otwierał pomoc przez klik już aktywnej metryki, zasłaniając testowany punkt; poprawiono setup testu na wybór metryki tylko gdy nieaktywna. Końcowe wyniki powyżej dotyczą poprawionego setupu i UI. Nie ponawiano pełnych szerokości wszystkich ramek/produktu, bo nie zmieniono układu, CSS lub src.
+
+## Makiety T14-R5 — punkty, pomoc i Noc
+
+Celowany `node docs/design/t14-r5-verify.mjs`, opcjonalnie `T14_GALLERY_URL`, `T14_REPORT_DIR`, `T14_PLAYWRIGHT_MODULE`. Publiczny [raport R5](design/t14-r5-verification.json), prywatny poza repo. Sprawdza Noc we wszystkich ramkach/po reload, potwierdzony Profil A, pochodzenie każdego widocznego punktu z dat treningów, odczyt daty/metryki, pomoc1RM i współczynniki, Enter/Escape oraz brak overflow przy360/390/430px. CDP touch: wyłącznie punkt otwiera, pusty wykres i obszar poza nim zamykają, PR przesuwane w obie strony dla obu ćwiczeń. Wynik końcowy: oba runnery PASS, swipe104→0px. To natywny scroll wywołany syntetycznym dotykiem, nie fizyczny telefon.
+
+Regresję szerokości/wszystkich ramek i gestu pinch nadal wykonuje R4 poniżej. W tej rundzie192+372 PASS,216 prywatnych kontroli palet PASS. Po ostatniej korekcie obszaru kliknięcia powtórzono R5; nie ponawiano całego produktu lub testów fizycznych. Kontrole składni obejmują też `t14-themes.py` i runner R5; motyw głównej galerii i porównanie palet korzystają ze wspólnych tokenów.
+
+## T15 — przyszłe bramki implementacji
+
+[Plan T15](T15_UI_IMPLEMENTATION.md) wskazuje kontrole każdego etapu i własność plików. A–G nie są wykonane; prompty i karty planned nie dowodzą testów. A weryfikuje fundament/Noc, B regresje T13-C, C edytor/import, D pełne T13-D, E domenę metryk/PR/pełnej historii i prywatność, F Auth/ręczny1RM, G cały przepływ i T13-E. Wykonawca E musi policzyć oczekiwane wartości niezależnie od implementacji, uwzględnić ponad500 rekordów i rozdzielić okno wykresu od całej historii PR. Mockupowy fixture nie wystarcza do odbioru rzeczywistych danych. Ręczny zapis i snapshoty testować oddzielnie od szacowanego1RM. Uruchomione testy i ograniczenia dopiero w rzeczywistych handoffach etapów.
+
+## Makiety T14-R4 — oddzielnie od testów produktu
+
+Aktualny runner: `node docs/design/t14-r4-verify.mjs`, opcjonalnie `T14_GALLERY_URL`, `T14_REPORT_DIR`, `T14_PLAYWRIGHT_MODULE`. Prywatne raporty/zrzuty kierować poza repo. Chrome headless sprawdza wszystkie ramki360/390/430px, cztery karty390×844, otwieranie edytora całą kartą/Enter i cancel, dwa przykłady Postępu, położenie metryk i zakresów, PR całej historii niezależne od zakresu, liczby z tych samych fixture'ów i null/0. Dodatkowo syntetyczny pinch in/out, pionowy gest, klawiatura wykresu i przewijanie PR. [Publiczny raport R4](design/t14-r4-verification.json):192 kontrole; prywatny raport poza repo:372. Inter faktycznie załadowany w ramkach. To test HTML makiet, nie domenowego algorytmu analityki produktu.
+
+Palety: `node docs/design/t14-color-verify.mjs` z odpowiednim URL i prywatnym katalogiem raportu. Runner dostosowano do selektorów R4; w tej rundzie uruchomiono prywatny wariant216 kontroli, formularz w ciemnej palecie i przerysowanie wykresu. Publiczny raport palet pochodzi z wcześniejszej rundy, nie jest odbiorem R4. Kontrole tokenów nie zastępują pełnego audytu dostępności.
+
+Składnia: AST generatorów full/R3/R4/color, `node --check` interakcji/runnera R4, runnera kolorów i skryptów zewnętrznych wygenerowanych galerii. Font/licencję porównać z SHA256 i długością w `design/fonts/manifest.json`. Publiczne HTML sprawdzić pod kątem nazw prywatnego źródła. `git diff --check`. Telefon i Safari nadal niesprawdzone. Nie ponawiano builda/API/DB produktu, bo ta runda nie zmienia src.
+
+## Historyczne makiety T14-R3
+
+Runner `node docs/design/t14-r3-verify.mjs` dotyczy poprzedniego układu. Sprawdzał ramki360/390/430px, cztery pełne karty390×844, potwierdzone wybory, ikony, formularz ćwiczenia (cancel/ponowne otwarcie/indywidualne serie/zero), daty i gesty Postępu. Wymaga adaptacji przed uruchomieniem na R4: osobny przycisk edycji został usunięty, a trzy kompozycje Postępu zastąpiły dwa przykłady jednego układu. Syntetyczny multitouch nie zastępuje fizycznego telefonu lub Safari.
+
+Starsze `t14-full-verify.mjs` i `t14-r2-verify.mjs` opisują poprzednie kompozycje, wybór ośmiu ekranów i zakresy4/8 tygodni. Ich historyczne raporty nie są odbiorem R3. Nie uruchamiać bez adaptacji ani nie interpretować niezgodnego selektora jako regresji wymagań. R3 nie zmienia kodu produktu, dlatego nie ponawiano builda/API/DB; wyniki i ograniczenia w najnowszym handoffie T14.
+
 Status: plan weryfikacji. T01–T05 mają testy opisane w handoffach. T06 ma testy domenowe, lokalny Auth/API/Storage A/B/anon oraz HTTP E2E na mocku AI. Prawdziwy model sprawdzono osobno na 12 syntetycznych przypadkach i trzech prywatnych plikach; wyniki i granice opisuje [handoff T06](handoffs/2026-10-12-T06-proby-realne-pliki.md). T07 ma test komponentu i rozszerzony HTTP na mocku; szczegóły w [handoffie T07](handoffs/2026-10-12-T07-ekran-importu.md).
 
 ## Warstwy
@@ -174,3 +204,67 @@ Rzeczywisty import tekstu: pierwsza asercja testu błędnie oczekiwała3surowych
 Głos: systemowy say/Zosia wygenerował syntetyczne2,91775s WAV97464B. Hostowana transkrypcja200 (~2,943s), interpretacja5powt./60kg na właściwą serię, brak zapisu przed zatwierdzeniem i kontrolowany zapis po zatwierdzeniu przeszły. Runner zatrzymał dopiero dodatkowy odczyt metadanych voice_attempts przez authenticated (42501); tabela prawidłowo nie jest dostępna klientowi. Nie deklarujemy całego runnera jako PASS i nie powtarzano płatnych wywołań dla tej zbędnej kontroli. Własne konto usunięto,0plików/0błędów cleanup. Bez fizycznego mikrofonu i telefonu.
 
 Obie flagi true, szacunki aplikacji import4/głos1USD w24h;5USD łącznie na start obejmuje obie funkcje. To nie twardy łączny limit rachunku ani zgoda na codzienny nowy budżet. Użytkownik otrzymał instrukcję limitu projektu OpenAI, zapis niepotwierdzony. Krótkie nagrania można testować;5MiB wobec4,5MB Vercel pozostaje ograniczeniem dużych plików przed pełną betą. Stary smoke wymagał503AIoff — nie uruchamiać go bez dostosowania do obecnego stanu.
+
+## T13 — A/B/C sprawdzone lokalnie, D–E planowane
+
+Pełne wymagania R01–R16 i lokalne bramki: [T13](T13_MOBILE_WORKOUT.md). A sprawdza rzeczywiste lokalne A/B/anon, równoczesne starty, save/delete/replace, rollback całej zamiany, starą rewizję/PT409, utratę odpowiedzi po commit, późne retry start/save po delete, legacy receipts i wiele aktywnych. Kontrole FK/grantów muszą potwierdzać wyłączną ścieżkę komend. Korekta daty przy finish przesuwa kalendarz/filtry, a porównanie snapshotów przed/po potwierdza identyczne cele, 1RM i zaokrąglenie, również null.
+
+B/C: osiem serii, różne cele/rampa/AMRAP, superseria i nierówne rundy, opcjonalne/dodatkowe/pominięte osobno, null/0, historyczna poprawka. C: jeden formularz, brak reload i utraty innych szkiców, wszystkie decyzje nawigacji, 409 i błąd odczytu po zapisie, stała pełna komenda retry, mock opóźnionego głosu przy zmianie celu. D: kilka sesji dziennie, granice dni/miesięcy/roku, rok przestępny, DST, profilowa strefa/filtry, legacy bez godziny i trwałe delete. E niezależnie odtwarza krytyczne przypadki i pełny przepływ na zintegrowanym stanie.
+
+Wymagane klikalne testy prawdziwej lokalnej aplikacji z syntetycznymi danymi przy 360/390/430 px, cztery krótkie karty przy 390×844, dostępność/fokus/44 px i klawiatura. `npm test`, `npm run build`, następnie `npm run typecheck`; lokalne istniejące runnery według dotkniętego zakresu. Runnery A opisano poniżej; runner B opisano w sekcji wykonania B; runner C opisano w sekcji wykonania C; runnery D–E pozostają przyszłą pracą. Bez płatnego AI i bez kierowania lokalnych runnerów na produkcję. Wyniki/mocked API/telefon/hosting zapisuje się oddzielnie. Niewykonany fizyczny telefon/Safari nadal w T10-R1. Sesja T13-P wykonała wyłącznie kontrolę dokumentacji; wykonanie A opisano poniżej.
+
+
+### T13-A — wykonany odbiór lokalny 2026-10-17
+
+Wymagane działające lokalne Supabase/Docker. AI wyłączone: `OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false DO_NOT_TRACK=1`; nie uruchamiano płatnych prób. Środowisko: Node26.4, Supabase CLI2.120, rzeczywisty PostgreSQL17.11/Auth/PostgREST oraz produkcyjny Next16.4 na localhost3005.
+
+- `npx supabase migration up --local`: PASS, migracja22. Odczyt katalogu FK/triggerów przed zmianą, bez zdalnych migracji.
+- `node scripts/test-t13a-migration.mjs`: PASS. Osobna tymczasowa baza w lokalnym klastrze, schematy Auth/Storage bez danych, replay21 migracji → syntetyczne dwie aktywne sesje z receipts/revisions →22. Porównanie wszystkich zastanych wierszy/snapshotów/potwierdzeń; godziny null, snapshot_on skopiowane. Rzeczywiste FK/granty i wymuszony błąd INSERT po finish/delete w replace: identyczny stan wszystkich tabel po rollback. Baza usunięta w finally; bez resetu bazy aplikacji.
+- `T13A_HTTP_BASE=http://localhost:3005 npm run test:t13a:local`: PASS, najpierw prawdziwy RPC, potem POST/GET Next z cookies dwóch kont i anon. Różne i identyczne starty, dwa replace, replace/start, save/delete; konflikty/PT409 bez pętli, aktualne rewizje, brak duplikacji. Obce sesje/dzieci/nowy plan, zamknięte helpery/DML, własne deleted410 i obce404, no-store. GET podczas12 zapisów/18 odczytów ma spójne revision/actual_note.
+- Utrata odpowiedzi po commit delete/replace jest kontrolowaną symulacją: RPC odrzuca potwierdzenie, HTTP anuluje body po otrzymaniu nagłówków sukcesu; retry ma identyczny ID/rewizję/payload. Późny start/save nie odtwarza sesji, retry replace działa po zakończeniu nowej, po jej usunięciu410. Nie jest to próba fizycznego zerwania sieci telefonu.
+- Korekta17→15.10 zachowuje wszystkie snapshoty (1RM120, cel90, zakresy/opcjonalność/null). Przesunięcie północy/strefy do14.10 daje ten sam GET/view/filtr postępu. Pending pozostaje pending, zero pozostaje zerem, historyczna poprawka dozwolona. Brak offsetu/luka DST/przyszłość odrzucone; oba jawne offsety jesienne przyjęte; zmiana strefy daje409. Poprzedni wynik obejmuje powtórzenia/kg i czas/dystans, wiązanie po exercise_id zachowuje wariant. Strony treningu/historii/postępu HTTP200.
+- `npm run test:t04:local`, `test:t05:local`, `test:t06r1:local`, `test:t08:local`, `test:t09:local`: PASS. Dodatkowo T08/T09 z `T08_HTTP_BASE`/`T09_HTTP_BASE=http://localhost:3005`: PASS.
+- `npm test`: 180 passed /9 skipped, 24 pliki passed /5 skipped. Dziewięć nowych testów czasu: północ, granica roku, przestępny luty, obie zmiany DST i date-only. Pominięte testy opt-in integracji/live, bez deklaracji jakości AI.
+- `node scripts/run-local-app.mjs build` i następujące `npm run typecheck`: PASS. `git diff --check` i kontrola linków/promptu: wyniki w handoffie.
+
+Pierwszy test T13-A przerwało błędne oczekiwanie410 dla retry replace, którego nowy trening był tylko zakończony; kontrakt wymaga200. Asercję poprawiono i ponowiono właściwy runner. Początkowy dostęp do socketu Dockera wymagał eskalacji sandboxa; po uzyskaniu dostępu wszystkie opisane integracje były rzeczywiste. W tej sesji A nie wykonywano B–E ani fizycznego telefonu/Safari; A review, lokalna bramka przyjęta przez integratora. Późniejsze B opisano niżej.
+
+
+### T13-B — wykonany odbiór lokalny 2026-10-18
+
+Nowy runner `scripts/test-t13b-browser.mjs` wymaga prawdziwego Next3005, lokalnego Supabase/Auth/PostgREST i modułu Playwright z runtime desktopowego. Odrzuca pozalokalne adresy. Start: `DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-app.mjs build`, potem `node scripts/run-local-app.mjs start` z tymi samymi flagami. Uruchomienie testu:
+
+```sh
+DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false T13B_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs node scripts/run-local-t05.mjs scripts/test-t13b-browser.mjs
+```
+
+- PASS: rzeczywiste własne syntetyczne konto, zapis planu, selektor bez tygodni z osobnymi A/A, pierwszy/ostatni/fallback/wersje, start najnowszej wersji i wznowienie, brak startu archiwum. Osiem serii rozwija się klawiaturą; rampa,70kg,AMRAP,opcjonalna,null/0,oryginał/uwagi/źródło i podgląd całego planu zachowane. Fokus po wyborze w podglądzie wraca do nagłówka.
+- PASS:360/390/430×844 bez overflow. Przy390 czwarta karta kończy się na763,984375 przed górą nawigacji782. Cele44 mierzone dla selektora, rozwinięć, startu, edycji oraz daty; pole daty fokusowane także przy390×500. Zrzuty `/private/tmp/t13b-360.png`, `t13b-390.png`, `t13b-430.png` obejrzano wizualnie. To desktopowy Chrome z viewportem, bez rzeczywistej klawiatury ekranowej/telefonu/Safari.
+- PASS: syntetyczny import przez realne API/DB/UI: adapter zastąpiono zapisanym syntetycznym draftem, bez żądania AI. Ćwiczenia → Serie i superserie → reload → Podsumowanie → publikacja. Dwie jednostki A zachowane z tygodniami1/2 i16seriami/uwagami, opublikowany plan otwiera nowy podgląd. Nie dowodzi jakości AI ani parsowania nowych prywatnych źródeł.
+- PASS: `T04R1_HTTP_BASE=http://localhost:3005 T04R1_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs node scripts/run-local-t05.mjs scripts/test-t04r1-browser.mjs` z AI off. Prawdziwy syntetyczny edytor, karty/okna/cancel/przeniesienie/superserie/mobile/fokus/zapis/retry i stare snapshoty.
+- PASS: `DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false npm run test:t07r1:http`, bez opt-in modułu prywatnych źródeł. Rzeczywiste lokalne A/B/anon, korekta/reload/progress, publikacja/retry, źródła/Storage; syntetyczny mock adaptera, brak płatnego AI.
+- PASS: `OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false DO_NOT_TRACK=1 npm test`:190 passed/9 skipped,26 plików passed/5 skipped.10 nowych testów domeny/komponentu B: grupowanie8/7+1, rampa/uwagi, AMRAP/czas/dystans, optional range, procent/wariant/null/0 i snapshot; wybór, wersje, szczegóły, odmowa pamięci. Pozostałe regresje obejmują istniejące zachowane fixtures importu, bez nowych prawdziwych prób modelu.
+- PASS: finalny build wykonany przez runner HTTP importu, potem `npm run typecheck`; `node --check scripts/test-t13b-browser.mjs` i `git diff --check`. Bez ponownej migracji, regresji całego A, hostingu i fizycznego T10-R1.
+
+Wcześniejsze próby: brak socketu Dockera w sandboxie (powtórzono z uprawnieniem); Node26 nie udostępniał localStorage w teście (dodano jawny mock); poprawiono powtarzające się klucze React i izolację stanu startu między jednostkami. Pierwsze dwa pomiary gęstości nie przeszły (czwarta karta do876/836 px); poprawiono układ i ponowiono z wynikiem764. Test nawigacji wersji odczytywał stary select przed zakończeniem nawigacji; dodano oczekiwanie na docelowy URL i wybór. Asercję tekstu opcjonalności dostosowano do poprawionej liczby pojedynczej. Końcowe polecenia PASS; wszystkie konta własnych runnerów usunięte w finally, serwery3005/3006 zatrzymane. Odbiór B przyjęty przez integratora, B review do niezależnego E. Szczegóły w handoffie B wskazanym w STATUS.
+
+
+### T13-C — wykonany odbiór lokalny 2026-10-18
+
+Jeden wykonawca/integrator, bez innych agentów i bez zmiany SQL/API. `scripts/test-t13c-browser.mjs` wymaga lokalnego Supabase z migracją22 i lokalnego Next3005 z AI off; tworzy własne syntetyczne konto i usuwa je w finally. Node26.4, Chrome/Playwright z runtime desktopowego. Polecenia:
+
+```sh
+DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-app.mjs build
+DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-app.mjs start
+DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false T13C_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs node scripts/run-local-t05.mjs scripts/test-t13c-browser.mjs
+```
+
+PASS:360/390/430 bez overflow; cztery pełne karty390×844 (czwarta do659,41, nawigacja782), jedna seria, osiem zwiniętych serii, rampa/AMRAP/opcjonalna, cele44/fokus/Enter, powrót/scroll i przeglądarkowy Wstecz. Formularz przy wysokości500 i przewijanie pól/akcji; bez rzeczywistej systemowej klawiatury. Zachowany szkic komentarza po zapisie serii, trzy wybory zapisz/odrzuć/zostań. Abort odpowiedzi po rzeczywistym commit, identyczna pełna komenda retry; znacznik dokumentu nie zmienia się. ACK/nieudany GET ponawia tylko GET. Rzeczywisty409 po zapisie drugiej karty/API zachowuje liczby do jawnego rozstrzygnięcia.
+
+PASS: nierówne rundy S1, dodatkowa seria i ćwiczenie, pominięcie osobno,0 powtórzeń/null kg. Wszystkie serie i historyczna poprawka. Głos wyłącznie mock: brak zapisu przed zatwierdzeniem, poprawny zapis po nim, opóźniony wynik po zmianie celu odrzucony, awaria503 zostawia ręczne pola. Komponent sprawdza także zmianę rewizji przed odpowiedzią. Rzeczywisty formularz ponownego logowania zachowuje historię.
+
+PASS: automatyczny start, konflikt/cancel/powrót, atomowe finish-replace i delete-replace, dodatkowe potwierdzenie/cancel delete,410 usuniętej sesji, indywidualne legacy bez zgadywania godziny. Fixture legacy to własne syntetyczne wiersze przez lokalnego admina, bez zmiany schematu. Korekta czasu18→15.10: snapshot null pozostaje null mimo dodania1RM podczas sesji, nowa sesja120/90 zachowuje120/90 po korekcie. Pending nie staje się wykonanym.
+
+Regresje PASS: `T13A_HTTP_BASE=http://localhost:3005 npm run test:t13a:local` (RPC/HTTP A/B/anon/concurrency), `npm run test:t05:local`, `T08_HTTP_BASE=http://localhost:3005 npm run test:t08:local`, `T09_HTTP_BASE=http://localhost:3005 npm run test:t09:local`, wszystkie z DO_NOT_TRACK=1 i AI off. `npm test`198 passed/9 skipped (28 plików passed/5 skipped), produkcyjny build przez run-local-app i następujący `npm run typecheck` PASS. Bez replay migracji, nowego klikanego edytora/importu lub produkcji; ich kod i istniejące testy komponentów pozostały zgodne. Stary runner B wymaga date-only input ze starego startu i nie jest bieżącą bramką C; nowy start sprawdza C.
+
+Wcześniejsze próby: pierwszy build bez uprawnień nie dotarł do Dockera; ponowiony z dostępem. Pierwszy test dialogu jsdom wymagał jawnego mocka showModal/close. Pierwszy build wykazał niepoprawne testowe ByRoleOptions.exact; poprawiono. Browser timeout przy komentarzu ujawnił potrzebę stabilnej aria-label przy kontrolowanym textarea; poprawiono. Asercja legacy zakładała kolejność insert zamiast kolejności API — zmieniono na stan każdej sesji. Pierwszy pomiar scrolla porównywał pozycję przed automatycznym scrollowaniem Playwright do faktycznej pozycji kliknięcia; runner zapisuje teraz scroll w zdarzeniu click. Finalne próby przeszły. [Handoff C](handoffs/2026-10-18-T13-C-prowadzenie-treningu.md) zachowuje granice dowodów. Fizyczny telefon/Safari, E i D niewykonane; bez płatnego AI.

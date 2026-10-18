@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-18",
+  "private": false,
+  "frames": 64,
+  "widthChecks": 192,
+  "checks": [
+    "Edytor: wyłącznie cała karta; parametry i Enter otwierają formularz, cancel działa",
+    "Ciężar: domyślny szacowany1RM, metryki, daty pod osią, poprawne PR całej historii, null/0 i klawiatura",
+    "Kalistenika: dwie metryki, własne rekordy i brak wymyślonych kg",
+    "192 kontroli szerokości wszystkich stanów",
+    "Syntetyczny pinch in/out i pionowy gest jednym palcem",
+    "Rekordy przewijane poziomo także klawiaturą"
+  ],
+  "bad": [],
+  "errors": [],
+  "records": {
+    "max": 100,
+    "estimate": 106.38297872340426,
+    "volume": 1480,
+    "null": null,
+    "zero": 0
+  },
+  "measurements": [
+    {
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    }
+  ],
+  "pinch": {
+    "initial": 7776000000,
+    "pinched": 2474181646.5771484,
+    "expanded": 7775999999.999756,
+    "scrollBefore": 0,
+    "scrollAfter": 83
+  },
+  "engine": "Chrome headless; mysz, klawiatura i syntetyzowany multitouch; bez fizycznego telefonu/Safari"
+}

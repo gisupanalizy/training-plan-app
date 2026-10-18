@@ -243,3 +243,110 @@ Uzupełnienie D026 po odbiorze: `.gitignore` i `.vercelignore` jawnie wykluczaj�
 - Granice: istniejący limit produktu30s/5MiB nie został zmieniony. Vercel4,5MB nadal odrzuci duży multipart przed aplikacją; na początek kilka sekund, bez deklarowania odbioru maksymalnej wielkości. Q06 pozostaje do naprawy przed pełną betą. Odbiór prawdziwego mikrofonu/telefonu nadal po stronie użytkownika/T10-R1. Wymagane sprawdzenie hostowanych transkrypcji i interpretacji, nie sama flaga.
 
 Uzupełnienie D031/D032 po sprawdzeniu: rzeczywisty import i krótki głos działają, aktualne Production Ready. T11 review — użytkownik testuje prototyp; pełny odbiór operatorski odłożony, brak automatycznych dalszych prac. Wyniki i błędy samego runnera zapisane w raporcie/handoffie.
+
+## D033 — T13: zakres mobilnego planu i wykonania oraz podział A–E
+
+- Data: 2026-10-17. Status: confirmed dla zakresu planu i zlecenia dokumentacji, bez zgody na implementację w tej sesji.
+- Źródło: uzgodniony plan z chatu „Opisz możliwości aplikacji” (`01a14698-9758-7d80-8aeb-59f24e65d76a`, tura planu `01a14904-94a0-7521-9ef3-4e2e0b1d16dc`) i bieżące polecenie użytkownika „Przygotuj podział uzgodnionego planu T13 … Nie uruchamiaj agentów ani implementacji”.
+- Wybór: pełne wymagania R01–R16 utrwala [specyfikacja T13](T13_MOBILE_WORKOUT.md): biblioteka treningów bez tygodni w bieżącym UI, zwarte karty i osobne szczegóły/jedna seria, zachowanie szkiców bez reload, jeden aktywny trening i jawne zakończenie lub trwałe usunięcie z atomowym startem nowego, indywidualne rozstrzygnięcie legacy, kalendarz i korekta daty/godziny przy zakończeniu z zachowaniem celów/1RM.
+- Uzasadnienie: zapis pełnego planu w repo usuwa zależność od kontekstu poprzedniego chatu; sam podział nie może zgubić wymagań. Zachowano ID T13 i wydzielono T13-P oraz A–E. Domyślnie sekwencyjnie, jeden integrator; E przez innego, ręcznie zleconego recenzenta. Modele zgodnie z preferencją użytkownika: Sol/high dla kontraktów/A/C/E, medium dla B/D po gotowych kontraktach, bez zmiany modelu narzędziem.
+- Konsekwencje: A–D przechodzą lokalne bramki i review, E daje podstawę integratorowi do done. T11/T10-R1 i odłożony T12 nie są pozornie zamykane. T13-P dotyczy wyłącznie dokumentacji; A–E wymagają osobnego zlecenia. Brak nowych usług, budżetu AI lub publikacji.
+
+## D034 — T13-A: projekt bezpiecznego delete/retry i korekty datowania
+
+- Data: 2026-10-17. Status: accepted jako projekt kontraktu technicznego do przyszłego A; niewdrożony, brak zastosowanej migracji lub wyników testów wykonawczych.
+- Problem: obecne receipts/revisions mają FK do sesji, trigger blokuje zmianę performed_on, a blokada aktywnej sesji dotyczy dnia planu. Proste DELETE/UPDATE nie realizuje uzgodnionego zakresu i może utracić ochronę retry lub zafałszować cele.
+- Wybór: wspólna transakcyjna blokada właściciela dla komend, globalna kontrola aktywnych, atomowy replace_active i spójny GET. Fizycznie kasować wykonanie/revisions, odłączyć FK receipts i pozostawić minimalne potwierdzenia oraz własny ślad usuniętego ID bez treści treningu. Retry delete daje to samo potwierdzenie, stary start/save dla usuniętej sesji daje 410, bez odtworzenia; sprzeczny payload nadal 409/PT409. Minimalne ślady na czas konta, bez nowego TTL w T13.
+- Wybór czasu: oddzielić niezmienne snapshot_on i techniczny started_at od korygowalnego performed_at/performed_on; starym wpisom nie zgadywać godziny. Finish może zmienić tylko metadane wykonania/status/revision i ślad, nigdy snapshoty ani dobór 1RM. Jeden kontrakt projekcji czasu dla historii/kalendarza/postępu w aktualnej strefie profilu, jawne DST. Zachować stare payloady jako date-only.
+- Uzasadnienie i szczegóły: [kontrakt A i bramki](T13_MOBILE_WORKOUT.md) opisują wejścia/wyjścia, FK, rollback, legacy i dowody wymagane przed przekazaniem B–D. Są to doprecyzowania techniczne uzgodnionego trwałego usuwania i niezmienności historii, bez nowej funkcji produktu.
+- Konsekwencje: A ma sprawdzić projekt na realnym lokalnym schemacie, wykonać nową kompatybilną migrację i testy. Nie edytować starych migracji ani wyłączać RLS/triggerów globalnie. Zmiana projektu wymaga zapisu przed konsumentami; zmiana wymagań produktu pozostaje propozycją dla użytkownika.
+
+
+## D035 — T13-A: realizacja na istniejących FK
+
+- Data: 2026-10-17. Status: accepted technicznie przez integratora przed implementacją; bieżące zlecenie użytkownika uruchamia wyłącznie A.
+- Odczyt lokalnego katalogu PostgreSQL potwierdził FK receipts → sesja, revisions → receipt/sesja i triggery T02/T06-R1. Zachowujemy FK receipts: po usunięciu rewizji ustawiamy ich nullable workout_session_id na null; techniczne ID wyniku pozostaje w response, a własny tombstone rozpoznaje usunięcie. Nie kasujemy receipts i nie wyłączamy triggerów.
+- Replace z finish zapisuje osobne minimalne potwierdzenie rozstrzygnięcia starej sesji i jej rewizję, ponieważ istniejący złożony FK rewizji wymaga receipt tej samej sesji. Zewnętrzny operationId nadal identyfikuje jedną całą transakcję i wynik nowego startu. Receipts wewnętrzne nie są osobnym publicznym API.
+- Spójny GET będzie pojedynczym stabilnym RPC SQL z jednym snapshotem MVCC, obejmującym również poprzedni porównywalny wynik. Wspólna projekcja dat będzie stosowana przed filtrowaniem historii i postępu; legacy pozostaje date-only.
+- Pliki A przejęte przez Codex, także integratora; package.json wymaga tylko dodania lokalnego runnera, typy kontraktu powstaną w src/lib/workouts. Bez zmiany modelu produktu ani etapów B–E. Wyniki migracji/testów zostaną zapisane po wykonaniu.
+
+Uzupełnienie D035 po wykonaniu: migracja22 zastosowana tylko lokalnie; odtworzona po21 migracjach i danych legacy w izolowanej bazie. Bramkę A przyjęto po RPC/HTTP A/B/anon, concurrency/rollback/retry i niezmienności snapshotów, regresjach, buildzie i typach. A review do E. Nie zmieniono wymagań produktu, zakresu B–E, infrastruktury ani produkcji.
+
+
+## D036 — T13-B: lokalny wybór jednostki i wspólne podsumowania
+
+- Data: 2026-10-18. Status: accepted technicznie przez integratora w zleconym B, bez zmiany wymagań produktu.
+- Wybór: lokalna preferencja przechowuje wyłącznie ID jednostki pod kluczem planu i wersji. ID musi należeć do autoryzowanego dokumentu przekazanego przez serwer; fallback to pierwsza jednostka, odmowa pamięci nie blokuje UI. Kolejność rozróżnia identyczne nazwy. Tydzień i uwagi są kontekstem źródła, nie selektorem biblioteki.
+- Czyste podsumowania reużywają grupowanie T04-R1/T07-R1 i dodatkowo zachowują granice opcjonalności/uwag. Szczegóły pokazują każdą oryginalną serię i źródło. Format historycznego celu pobiera wyłącznie zapisane snapshoty; nie przelicza 1RM.
+- Wersje i dotychczasowy formularz startu są rozwijane na żądanie dla gęstości mobilnej. Stan formularza startu ma osobny mount na jednostkę, archiwum nie oferuje startu/wznowienia. C przejmuje istniejący komponent i jego kontrakt A; w B nie wdrożono konfliktów/czasu/finish ani nowego klienta komend.
+- R03 nie wymagał zmian edytora/parsera importu: istniejący import zachowuje odrębne jednostki i nie żąda nowych terminów. Potwierdzono syntetycznym przejściem trzech kroków i publikacją dwóch A z różnymi tygodniami. B nie przejąło dodatkowych plików edytora/importu. Integrator przypisał B nowy scripts/test-t13b-browser.mjs do wymaganej bramki, bez nowej zależności i zmian package.json.
+
+
+## D037 — T13-C: pełna komenda, odczyt po ACK i szkice sesji
+
+- Data: 2026-10-18. Status: accepted technicznie przez wykonawcę/integratora C w osobno zleconym zakresie R04–R11/R13/R15/R16.
+- Wybór: useWorkoutCommand utrwala w otwartej karcie całą kopertę operationId/workoutId/expectedRevision/action/payload. Retry błędu sieci ponawia identyczny POST; po ACK wykonujemy GET, a jego błąd ponawia wyłącznie odczyt. Receipt nie zastępuje stanu.409 zachowuje szkice; jawny odczyt i kolejny zapis tworzą nową operację. Delete nie odczytuje skasowanej sesji po ACK.
+- Szkice należą do zamontowanego WorkoutEditor z kluczem workout.id, a setId wiąże ćwiczenie i serię w autoryzowanym stanie. Zapis usuwa tylko własny potwierdzony szkic. Nawigacja chroni brudne pola i przywraca listę/fokus/scroll; URL zawiera tylko wybrane ID. Nie dodajemy obietnicy offline ani przechowywania prywatnych wyników w localStorage.
+- Przegląd/szczegóły reużywają snapshotPrescription B; ExerciseSummary pozostaje przy planie B, bez przebudowy jego kontraktu. Różne cele/opcjonalne/dodatkowe zachowują osobne rekordy. Rundy wymagane wyprzedzają wybór opcjonalnej. Głos jest zatwierdzaną propozycją kotwicy serii/rewizji, a zmiana kontekstu anuluje wynik.
+- Start/legacy/finish/delete/replace używają niezmienionego API A. Kandydaci lokalnej godziny są weryfikowani w strefie profilu, luka DST blokuje, podwójna godzina wymaga wyboru offsetu. Brak zmian SQL/API lub danych historycznych. C review po lokalnej bramce, done dopiero po E; D nie uruchomiono.
+
+
+## D038 — T14: wybór UI na podstawie mock-upów
+
+- Data: 2026-10-18. Status: confirmed dla przygotowania propozycji i priorytetu telefonu; **proposed** dla każdego konkretnego układu. Użytkownik chce najpierw przejrzeć kilka opcji, a potem wybrać rozwijany kierunek.
+- Wybór procesu: trzy porównywalne warianty Forma A/B/C obejmują plany, podgląd, szczegóły i zapis serii na syntetycznych danych. Przed wdrożeniem decyzja użytkownika; sama galeria i rekomendacja nie zatwierdzają wariantu.
+- Cel: rozpoznawalne ikony ćwiczeń, osobne serie/obciążenie/przerwa, rozdzielone serie/uwagi/źródło oraz plan i wykonanie. [Analiza](design/t14-analiza-i-warianty.md) opisuje propozycje i kompromisy, w tym bramkę czterech kart T13. Nie znosi jej większa karta w wariancie C.
+- Konsekwencje: wyłącznie artefakty projektowe i dokumentacja. Bez zmian kontraktów A/B/C, danych, src, usług lub budżetu; T14 review czeka na wybór. Nie zapisano finalnego DESIGN.md i nie uruchomiono dalszej implementacji.
+
+
+## D039 — Wybrany kierunek A/A/A/C i swipe planów
+
+- Data: 2026-10-18. Status: confirmed — jawny wybór użytkownika w chacie.
+- Plany A, Podgląd A, Szczegóły A, Zapis serii C. Przy wielu planach użytkownik chce swipe lewo/prawo; równoważne strzałki, wskaźnik i klawiatura doprecyzowują dostępność. Brak automatycznej rotacji. Usuwa bloker wyboru z D038.
+- Kolejne zlecenie: włączyć wskazany prywatny PDF do lokalnej makiety, dodać warianty importu i pozostałych ekranów. Użytkownik potwierdził pełny zestaw: Start, Import i korekta, Edytor, Historia, Postęp, Profil, Logowanie. Impeccable pozostaje metodą projektu.
+- Treść prywatnego planu pozostaje poza repozytorium. Podgląd powstaje z odczytu PDF; nie jest dowodem pobrania istniejącego szkicu z bazy. Nie utożsamiać intensywności źródłowej z procentem1RM bez potwierdzenia. Nie fabrykować wykonań użytkownika.
+- Granice: to wybór wizualny i dopracowanie makiet, bez implementacji src, migracji, publikacji i płatnych prób AI. T13 i jego bramki pozostają osobno.
+
+## D040 — T14-R2: różne kroki korekty i wykresy w Postępie
+
+- Data: 2026-10-18. Status: confirmed dla wymagań z jawnego feedbacku użytkownika; proposed dla nowych kompozycji i wyboru biblioteki produkcyjnej.
+- Ćwiczenia i Serie muszą wykonywać różne zadania. Mock-up rozdziela nazwy/kolejność, parametry i podsumowanie z potwierdzeniami; samo wejście w krok nie stanowi akceptacji danych. Pełna karta ćwiczenia ma otwierać szczegóły, a Plany obsługiwać rzeczywisty gest.
+- Każdy wariant Postępu ma wykres oraz dane potrzebne do odczytu. A pokazuje wpisany ciężar i powtórzenia, B objętość porównywalnych serii, C ciężar i wykonanie planu. Brak wyniku jest luką; dane pozostają demonstracyjne. Nie dodajemy estymacji1RM ani historii właściciela.
+- Zamiast własnych szkiców użyto lokalnych SVG Workout Guide, przypiętych do commita i z atrybucją Bryl Lim/Everkinetic. Grafiki mają CC BY-SA 4.0, niezależnie od MIT kodu. Dokładne dopasowanie jest wymagane; brak wariantu daje neutralny znacznik, nie ilustrację innego ćwiczenia. To propozycja zasobów dla projektu, bez abonamentu lub wdrożenia zależności produkcyjnej.
+- Wybór A/A/A/C zachowany. Pozostałe warianty wymagają decyzji użytkownika. R2 pozostaje mock-upem poza src/API/DB/T13-D. Otwarty test publicznego drag i brakujące ilustracje zapisano w handoffie, bez deklarowania pełnego odbioru.
+
+## D041 — T14-K: kolorystyka wybierana osobno od układu
+
+- Data: 2026-10-18. Status: confirmed dla przygotowania osobnego porównania na zlecenie użytkownika; proposed dla każdej nowej palety i jej wdrożenia.
+- Osobna galeria pokazuje Las jako odniesienie oraz Kobalt, Miedź, Morską, Grafit i ciemną Noc. Ta sama treść/układ pozwala oceniać kolor niezależnie od wcześniejszych wyborów A/A/A/C.
+- Preferencja palety ma osobny lokalny klucz; wybór w podglądzie i skopiowanie nazwy nie są publikacją lub implementacją motywu. Nie wprowadzamy nowego wymagania konfiguracji motywów konta ani automatycznego przełączania według systemu.
+- Dark jest osobną propozycją powierzchni, tekstów i akcji, bez odwracania kolorów przez filtr. Skala szarości służy tylko porównaniu hierarchii. Zachowujemy semantykę ostrzeżeń i wykresów oraz atrybucję ilustracji.
+- Prywatny odpowiednik nadal poza repo. Bez zmian src/API/DB, usług, kosztów AI i bramek T13.
+
+## D042 — T14-R3: wybory ekranów, edycja ćwiczenia i rzeczywisty 1RM
+
+- Data: 2026-10-18. Status: confirmed dla jawnych wyborów i wymagań użytkownika; proposed dla konkretnych nowych kompozycji Postępu.
+- Wybrane: Start A, Import C (wyśrodkowane ikony akcji i ikona edycji przy ręcznym tworzeniu), Korekta A („Nazwy ćwiczeń i kolejność”), Edytor A z intuicyjną edycją całego ćwiczenia, Historia A, Logowanie C. Wcześniejsze Plany/Podgląd/Szczegóły A i Zapis C pozostają. Postęp, układ Profilu i paleta nie zostały wybrane.
+- Edytor nazywa parametry „Serie” i „Powtórzenia”, gdy zadanie jest powtórzeniowe. Czas/dystans/AMRAP i niejednoznaczne źródło zachowują odrębne etykiety; nie zamieniamy sekund lub zapisu źródła w powtórzenia. Zmieniamy całość ćwiczenia lub świadomie poszczególne serie.
+- Postęp ma gest przybliżania/oddalania i zakresy obejmujące całą historię, a nie wyłącznie4/8 tygodni. Nowe A/B/C porównują kg i powtórzenia: dwa wspólne wykresy, powtórzenia przy stałym ciężarze, każda seria jako punkt. To propozycje do oceny, bez estymacji1RM.
+- Użytkownik doprecyzował: rzeczywisty1RM może być wpisywany ręcznie niezależnie od historii treningu. Zachowujemy D002 i datowany pomiar do obliczeń. Wynik wielopowtórzeniowej serii nie podmienia1RM; profil nie dopisuje fikcyjnych serii do Postępu i nie przelicza historii. Wstępna sugestia wiązania wybranego rekordu z ustawieniem1RM nie jest nowym zatwierdzonym kontraktem i nie została wdrożona.
+- Zakres: wyłącznie makiety/dokumentacja. Bez zmian modelu/API/DB, src, migracji, publikacji, płatnego AI lub T13-D.
+
+## D043 — T14-R4: jeden Postęp i szacowany 1RM w analizie
+
+- Data: 2026-10-18. Status: confirmed dla szczegółowego briefu UI użytkownika; proposed dla metody estymacji i przyszłej implementacji analityki.
+- Edycja ćwiczenia otwiera się po kliknięciu całej karty. Osobny przycisk „Edytuj ćwiczenie” usunięty na jawne zlecenie; formularz, klawiatura i anulowanie pozostają.
+- Postęp zastępuje trzy kompozycje R3 jednym jasnym układem w dwóch odmianach treści. Duży tytuł, dropdown ćwiczenia, metryki nad pojedynczym wykresem liniowym,1M/3M/6M/1R/Wszystko pod osią X, rekordy poniżej. Bez żółtego bannera, ręcznego wyboru ciężaru i wykresu bąbelkowego.
+- Użytkownik jawnie dodał domyślną metrykę „Szacowany1RM”, obok Max Ciężar i Objętości. Zmienia to wcześniejsze ograniczenie propozycji Postępu z D040/D042; **nie zmienia D002 dotyczącego rzeczywistego1RM do procentowych zaleceń**. Analiza pozostaje oddzielona od pomiaru profilu, bez automatycznego zapisu lub przeliczania dawnych celów.
+- Masa ciała pokazuje Max Powtórzeń i Sumę Powtórzeń, bez kg lub szacowanego1RM. PR to najdłuższa seria, max powtórzeń w sesji i najwięcej serii w sesji.
+- W makiecie szacunek jest liczony z demonstracyjnych serii według jawnej referencyjnej tabeli Hevy dla1–10 powtórzeń. To wybrana propozycja metody, nie zatwierdzony algorytm produkcji. Rekordy obejmują całą historię niezależnie od widocznego okna wykresu; sekcja opisuje ten zakres. Objętość=sum(kg×powt.) dla porównywalnego zewnętrznego obciążenia.
+- Inter pochodzi z oficjalnego repozytorium, OFL1.1, lokalne bajty/font i licencja. Dane historii nadal demonstracyjne, prywatny plan poza repo. Bez src/API/DB/migracji/T13-D lub publikacji.
+
+## D044 — T14-R5: Noc, Profil A, punkty i plan wdrożenia
+
+- Data: 2026-10-18. Status: confirmed dla jawnych decyzji i interakcji; proposed dla etapów technicznego wdrożenia T15.
+- Noc jest wybraną **domyślną** paletą, zastępując wymóg jasnego przykładu z R4. Profil A potwierdzony w odpowiedzi użytkownika. Wszystkie układy mają wybór; nie planujemy kolejnej rundy A/B/C. Nie oznacza to kontowego wyboru sześciu motywów lub publikacji.
+- Punkt przedstawia jeden zapisany trening danego ćwiczenia/wariantu. W makiecie wszystkie wpisy są demonstracyjne, nie są pomiarami użytkownika. Linia i orientacyjne podpisy dat nie dodają pomiarów. Tap punktu pokazuje dokładną datę i wynik, a szacowany1RM także źródłową serię. Na jawny kolejny feedback **klik poza punktem zamyka informację; nie wybiera najbliższego treningu**. Punkt ma dostępny obszar dotyku44px, bez włączania całego wykresu jako przycisku.
+- Pomoc1RM jest dostępna przez ikonę informacji i klik aktywnej metryki, z wzorem, przykładem, współczynnikami i rozdzieleniem od ręcznego pomiaru profilu. Zachowano obecną propozycję tabeli1–10, sprawdzoną ponownie w źródle Hevy; algorytm produkcyjny nadal wymaga technicznego kontraktu w T15-E/I.
+- Rekordy przewijają się natywnym swipe w obie strony na telefonie. W tej rundzie sprawdzono syntetyczny dotyk Chrome, nie fizyczne urządzenie.
+- Użytkownik zlecił dopracowanie makiet i zapytał o plan wdrożenia/podział na wykonawców. T15-P przygotował etapy A–G, jeden integrator, odrębne pliki, prompty i karty przyszłych handoffów. T15-D obejmuje tę samą pracę co T13-D, a odbiór G także T13-E. Bez automatycznego uruchamiania agentów lub rozpoczęcia src.

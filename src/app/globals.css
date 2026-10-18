@@ -291,3 +291,68 @@ p{line-height:1.55}
 .compact-plan-editor button:focus-visible,.compact-plan-editor summary:focus-visible{outline:3px solid #619d3c;outline-offset:3px}
 @media(max-width:740px){.plan-toolbar{grid-template-columns:1fr;padding:16px}.plan-toolbar-actions{margin-bottom:5px}.plan-toolbar-actions button{flex:1}.plan-training-heading h2{font-size:24px}.plan-card-actions button{flex:1;min-height:40px}.plan-card-actions .review-link{flex-basis:100%;text-align:left}.plan-save-bar{bottom:78px;padding:14px}.plan-save-status{width:100%}.plan-exercise-card .review-card-heading{flex-wrap:nowrap}.plan-overview-day{padding:10px}.plan-range{gap:8px}.plan-range>.review-link{flex-basis:100%;padding:0}.plan-range>.editor-field{min-width:100px}}
 @media(max-width:740px){.plan-save-bar{position:static}.plan-toolbar .editor-field{margin:8px 0}.plan-toolbar-actions{gap:8px}}
+
+/* T13-B: style podglądu, przekazywane C po lokalnej bramce B. */
+.plan-preview-page{max-width:900px;margin:auto;overflow-wrap:anywhere}
+.plan-preview-page .back-link{min-height:44px;display:inline-flex;align-items:center;margin-bottom:4px}
+.plan-preview-page .eyebrow{margin-bottom:8px}
+.plan-preview-page .page-heading h1{font-size:32px}
+.plan-preview-page .page-heading p{font-size:12px}
+.plan-preview-page .version-list{margin:8px 0;gap:4px;display:flex;flex-wrap:wrap}
+.plan-preview-page .version-list a{min-height:44px;min-width:44px;display:inline-flex;align-items:center;padding:8px;font-size:12px}
+.plan-preview :is(select,button,summary,a){min-height:44px;min-width:44px}
+.plan-preview :is(select,summary):focus-visible,.plan-preview h2:focus-visible{outline:3px solid #619d3c;outline-offset:3px}
+.preview-selector{font-size:12px;font-weight:700;display:grid;gap:5px}
+.preview-selector select{font:inherit;width:100%;max-width:100%;border:1px solid #b5beb2;background:white;border-radius:8px;padding:8px;color:var(--ink)}
+.preview-session-heading{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:10px 0 0}
+.preview-session-heading h2{font-size:22px;margin:0;flex:1}
+.preview-session-heading>span{font-size:12px;color:var(--muted)}
+.preview-session-heading .workout-start{margin:0}
+.preview-session-heading p{font-size:12px;margin:0}
+.plan-preview summary{cursor:pointer;padding:12px 0;font-size:12px;font-weight:700}
+.preview-context{margin-bottom:6px;color:#536451}
+.preview-context p{font-size:13px;white-space:pre-wrap}
+.preview-cards{display:grid;gap:8px}
+.preview-exercise{background:white;border:1px solid var(--line);border-radius:10px;padding:10px 12px 0;min-width:0}
+.preview-exercise-title{display:flex;align-items:baseline;gap:8px}
+.preview-exercise-title>span{font-size:11px;color:#62715f}
+.preview-exercise h3{font-size:16px;margin:0;letter-spacing:-.02em;line-height:1.25}
+.preview-prescription{font-size:12px;line-height:1.4;margin:5px 0 0;color:#42583f}
+.preview-flags{font-size:11px;line-height:1.3;margin:4px 0;color:#42583f}
+.preview-series summary{padding:12px 0;line-height:20px}
+.preview-series summary>span{font-weight:400;color:#62715f}
+.preview-series p{font-size:13px;margin:5px 0;white-space:pre-wrap}
+.preview-series ol{padding-left:24px;margin:10px 0}
+.preview-series li{padding:8px 0;border-top:1px solid var(--line);font-size:13px}
+.preview-overview{margin-top:12px;border-top:1px solid var(--line)}
+.preview-overview section{background:white;border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:10px}
+.preview-overview h3{margin-bottom:8px}
+.preview-overview p,.preview-overview li{font-size:13px}
+.preview-overview li{margin-bottom:8px}
+.preview-overview button{white-space:normal}
+@media(max-width:700px){
+  .content:has(.plan-preview-page){padding-top:8px}
+  .plan-preview-page .page-heading{flex-direction:row;gap:8px;margin-bottom:4px;align-items:start}
+  .plan-preview-page .page-heading h1{font-size:25px}
+  .plan-preview-page .page-heading .button{width:auto;white-space:normal;min-width:80px;min-height:44px;padding:10px;font-size:12px}
+  .plan-preview-page .page-heading p{display:none}
+  .plan-preview-page .version-list{margin:0}
+}
+.preview-start{margin-left:auto}
+.preview-start>summary{background:var(--dark);color:white;border-radius:8px;padding:12px;font-size:12px;list-style:none}
+.preview-start[open]{width:100%}
+.preview-start .workout-start{margin:8px 0}
+.preview-start .workout-start input{min-height:44px;min-width:44px;max-width:100%}
+.preview-page-nav{display:flex;align-items:start;justify-content:space-between;gap:8px;margin-bottom:4px}
+.preview-versions{font-size:12px;max-width:65%}
+.preview-versions>summary{cursor:pointer;min-height:44px;min-width:44px;padding:14px 6px;font-weight:700}
+.preview-versions summary:focus-visible{outline:3px solid #619d3c;outline-offset:3px}
+.preview-exercise-title{flex-wrap:wrap;column-gap:8px;row-gap:4px}
+.preview-exercise-title .preview-flags{margin:0;font-size:11px;line-height:1.3}
+
+/* T13-C: jeden formularz i zwarty przegląd; pasek akcji nie zasłania klawiatury. */
+.workout-ui{max-width:850px;overflow-wrap:anywhere}
+.workout-heading{margin-bottom:14px}.workout-heading h1{font-size:30px;margin:0 0 6px}.workout-heading p{margin:0 0 8px;font-size:13px}.workout-counts{color:#394d40}
+.workout-cards{display:grid;gap:8px;margin-bottom:16px}.workout-card{background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}.workout-card-open{display:grid;gap:5px;width:100%;text-align:left;border:0;background:transparent;padding:12px;color:var(--ink);min-height:92px;white-space:normal}.workout-card-title{font-size:16px;font-weight:800;line-height:1.15}.workout-card-target{font-size:12px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.workout-card-state{font-size:11px;color:#455c48}.workout-group{border:1px solid #9bb98b;border-radius:10px;padding:5px;display:grid;gap:5px}.workout-group-title{margin:0;font-size:11px;font-weight:bold;padding:2px 4px}
+.workout-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.workout-ui button,.workout-ui a.button,.workout-dialog button{min-height:44px;min-width:44px;white-space:normal}.workout-ui input:not([type=checkbox]),.workout-ui select,.workout-ui textarea,.workout-dialog input:not([type=checkbox]),.workout-dialog select{min-height:44px;max-width:100%;font-size:16px}.workout-ui summary{min-height:44px;padding:12px 4px;cursor:pointer}.workout-ui :focus-visible,.workout-dialog :focus-visible{outline:3px solid #619d3c;outline-offset:3px}.workout-detail>h2{margin:18px 0 8px;font-size:25px}.workout-detail>p{font-size:14px;margin-bottom:10px}.workout-additional,.workout-all{margin:12px 0;border-block:1px solid var(--line)}.workout-set-row{padding:10px 0;border-top:1px solid var(--line)}.workout-set-row p{font-size:13px;margin:0 0 6px}.workout-message{background:#fff5db;color:#553d10;border:1px solid #dfc783;border-radius:9px;padding:12px;margin:12px 0}.workout-message p{margin:0 0 8px}.workout-dialog{border:1px solid #bbc8b2;border-radius:14px;padding:24px;max-width:min(560px,calc(100vw - 24px));width:100%;max-height:calc(100dvh - 24px);overflow:auto;color:var(--ink)}.workout-dialog::backdrop{background:#13291cb0}.workout-dialog h2{font-size:23px}.workout-dialog .button{margin:6px 6px 6px 0}.workout-dialog .editor-field{margin:12px 0}.workout-check{display:flex;align-items:center;gap:10px;min-height:44px}.workout-check input{width:24px;height:24px}.workout-history-back{min-height:44px;display:inline-flex;align-items:center;margin-bottom:4px}
+@media(max-width:700px){.content:has(.workout-ui){padding-top:10px}.workout-heading h1{font-size:27px}.workout-heading .button{padding:10px 18px}.workout-cards{gap:6px}.workout-card-open{padding:10px;gap:4px;min-height:88px}.workout-card-title{font-size:15px}.workout-dialog{padding:18px}.workout-detail .editor-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.workout-detail .editor-field{min-width:0}.workout-detail input{width:100%}.workout-detail{padding-bottom:24px}}

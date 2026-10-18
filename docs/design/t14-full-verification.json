@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-18",
+  "private": false,
+  "engine": "Chrome headless; viewport i syntetyzowany touch, bez fizycznego telefonu/Safari",
+  "frames": 64,
+  "widthChecks": 192,
+  "checks": [
+    "64 stanów przy 360px bez overflow",
+    "64 stanów przy 390px bez overflow",
+    "64 stanów przy 430px bez overflow",
+    "Import → korekta trzech kroków; publikacja czeka na wyjaśnienie",
+    "Przełącznik źródło/propozycja działa",
+    "Wybór wariantu utrzymany po odświeżeniu",
+    "Symulacja zapisu zachowuje 0; kg pozostaje puste",
+    "Logowanie jest lokalną symulacją bez żądań",
+    "Chromium syntetyczny touch: swipe lewo i prawo działa",
+    "Karuzela obsługuje klawiaturę",
+    "Mobilna galeria i kontrolki wyboru"
+  ],
+  "bad": [],
+  "errors": [],
+  "measurements": [
+    {
+      "session": 0,
+      "end": 701,
+      "fourth": 677.359375
+    },
+    {
+      "session": 1,
+      "end": 701,
+      "fourth": 677.359375
+    }
+  ]
+}
