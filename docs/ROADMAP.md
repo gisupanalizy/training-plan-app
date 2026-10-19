@@ -212,7 +212,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T13-D — Kalendarz historii
 
-- Status: todo. Właściciel: — (przyszły wykonawca D). Zależności: A/C w review po przyjętych bramkach, sekwencyjnie także B, T08 done; osobne zlecenie D.
+- Status: review wraz z T15-D — lokalna bramka przyjęta przez I (2026-10-19). Właściciel: /root/foundation. Zależności: A/C w review po przyjętych bramkach, sekwencyjnie także B, T08 done; osobne zlecenie D.
 - Pliki: historia, komponenty/testy kalendarza, przejęte style; rozszerzenie repozytorium tylko po przydziale przez integratora.
 - Odbiór: R14–R16 i bramka D — miesiąc pon.–niedz., Dzisiaj, wiele sesji, Wznów osobno, otwieranie C, legacy/nieznana godzina, północ/DST i korekta zgodna z filtrami; lokalny mobile i testy/build/typy.
 - Przekazanie: [prompt D](prompts/T13-D.md), [karta handoffu D](handoffs/planned/T13-D.md). Review do E.
@@ -350,7 +350,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-D — Historia A razem z T13-D
 
-- Status: todo. Właściciel: nieprzypisany, rola D. Zależności: bramki A/B i T13-A/C, jawne zlecenie D. To alias tej samej pracy funkcjonalnej T13-D, nie drugi kalendarz.
+- Status: review — lokalna bramka D przyjęta przez I (2026-10-19). Właściciel: /root/foundation, pliki zwolnione. Zależności: bramki A/B i T13-A/C, jawne zlecenie D. To alias tej samej pracy funkcjonalnej T13-D, nie drugi kalendarz.
 - Zakres/odbiór/własność: [etap D](T15_UI_IMPLEMENTATION.md#d--historia-a-realizowana-razem-z-t13-d). Kalendarz według wybranego UI z projekcją czasu A i przeglądem B/C, pełne R14–R16.
 - Przekazanie: [prompt D](prompts/T15-D.md), [karta D](handoffs/planned/T15-D.md). Medium; oba ID review do G/T13-E.
 

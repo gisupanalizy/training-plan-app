@@ -325,3 +325,7 @@ T15-A review po przyjętej lokalnej bramce (204 testy/9skip, typy/build, Chrome2
 
 - Domknięto checkpoint99433b8 rzeczywistym ChromePASS wykonanym przez I; źródła/PR/paginacja i prywatność wcześniejPASS w API. Bez zmian wymagań; E review do G.
 - B odebrane w60fcf41. Wykonawca /root/workout_ui przejmuje odrębny C po zwolnieniu B; E kończy dokumenty, następnie slot dla D. Zachowano limit2 wykonawców.
+
+### 2026-10-19 — T15-D/T13-D odebrane lokalnie
+
+Jeden kalendarz Historia A/Noc oparty o istniejący odczyt i projekcję T13-A; aktywne osobno, legacy bez wymyślonej godziny, walidowany powrót B i autoryzowany profil dla strefy/Dzisiaj. Bez zmian repozytorium/API/SQL.6testów, build/typy i realne API/Chrome3szerokości/klawiatura/daty/delete/privacyPASS. Oba ID review do G/T13-E.

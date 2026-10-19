@@ -290,3 +290,9 @@ Wcześniejsze próby: pierwszy build bez uprawnień nie dotarł do Dockera; pono
 ### T15-E — domknięcie lokalnej bramki2026-10-19
 
 I wykonał `DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-t05.mjs scripts/test-t15e-browser.mjs`:PASS (sesja97754, exit0).15stanów360/390/430, mysz klik/drag/klik, Enter po drag/Escape, pomoc, pinch i pierwszy tap po nim, PR swipe134→0, własne daty, nakładające się sesje przez zwijaną listę, korekta→odczyt, desktop, zero błędówJS. Raport i zrzuty /private/tmp/t15e-*. I obejrzał390 zewnętrzne i masa ciała. Wcześniejsza odmowa sandbox i220s oczekiwania na eskalację agenta nie były testem; dopiero uruchomienie I przeszło. Fizyczny telefon/Safari niewykonane. API dowody i29 czystych testów w handoffie E; bez ponawiania zaliczonych testów bez zmiany kodu.
+
+### T15-D / T13-D — lokalna bramka2026-10-19
+
+-6unit/componentPASS: daty/leapyear/pon-niedz/zakresy/strefa/DST/status/URL/keyboard/fokus. Wspólny build+typecheckPASS; pełna suite C/D249PASS/9skip.
+- `T15D_PLAYWRIGHT_MODULE=<lokalny moduł Playwright> DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false node scripts/run-local-t05.mjs scripts/test-t15d-browser.mjs`: końcowyPASS sesja54374. Auth/RPC/API iChrome360/390/430, pola dni min44.56/48.84/54.56×46px, mouse/tap/keyboard, puste/wiele/legacy/abandoned/leapyear/DST/północ/strefa. Powrót B, korekta daty finish przenosi dzień bez zmiany snapshotów, UI delete usuwa Wznów i zachowuje wybór. IzolacjaA/B/anonPASS. I obejrzał /private/tmp/t15d-calendar-390.png.
+- Pierwszy runnerFAIL asercja klawiatury przed rAF przenoszącym fokus; oczekiwanie prawdziwego fokusu poprawione, produkcja bez zmian. Fizyczny telefon/Safari niewykonane.

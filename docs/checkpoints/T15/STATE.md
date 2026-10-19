@@ -1,15 +1,31 @@
 # T15 — bieżący checkpoint integratora
 
-2026-10-19. Gałąź codex/t15-ui; HEAD99433b8 checkpoint E, B odebrane60fcf41, Fdc5d631, A6c1cf10.
+Aktualizacja2026-10-19. Gałąź codex/t15-ui; HEAD e544425. A6c1cf10, Fdc5d631, B60fcf41, E99433b8 + odebrana bramkae544425. Bez push/publikacji.
 
-## Aktualni właściciele i etap
+## Bieżąca własność
 
-- I /root: dokumenty wspólne/Git/kolejka; globals/layout/AppShell i src/components/ui, src/lib/ui po oddaniu A.
-- A review: bramka przyjęta; /root/foundation interrupted po oddaniu, nie wznawiać samoczynnie. [Handoff A](../../handoffs/2026-10-18-T15-A-fundament.md).
-- B review — lokalna bramka przyjęta: /root/workout_ui (Sol/high), strony Start/Plany/plan/trening, plan-preview/exercise-summary/workout-* i testy, workouts/presentation*, training-preview, nowe CSS Modules/plan-carousel, własny runner/checkpoint/handoff.
-- E review — bramka lokalna przyjęta2026-10-19: /root/progress (Sol/high), postep/page, lib/progress, components/progress, własne runnery/checkpoint/handoff. Kontrakt docs/T15_PROGRESS_CONTRACT.md/D045.
-- F review — lokalna bramka przyjęta: /root jako integrator, profil/logowanie/ustaw-haslo/one-rep-max-editor i nowe lokalne komponenty formularza konta/CSS; bez zmian kontraktów Auth.
-- C in_progress: /root/workout_ui, import/edytor zgodnie z promptem C. D/G todo; D po B, G niezależny po wszystkich bramkach.
+- I /root: wspólne docs, Git, kolejka testów, globals/layout/AppShell/shared UI po A. A/B/E/F odebrane lokalnie i zwolnione do I.
+- C in_progress /root/workout_ui Sol/high: plany/import i edytor, komponenty i testy wskazane promptem C, własne moduły/runnery/checkpoint/handoff. B nie jest już jego aktywnym zakresem.
+- D/T13-D review po przyjętej bramce /root/foundation Sol/medium: historia/page, nowe komponenty/helpery kalendarza/CSS/testy, własne runnery/checkpoint/handoff. Repository wyłącznie po osobnym przydziale I.
+- /root/progress zakończony po E. G todo: nowy niezależny autor po A–F, high. Maksymalnie2 aktywnych wykonawców.
+
+## Bieżąca kolejka i środowisko
+
+Brak aktywnych runnerów. Build/typy/DB/Chrome przydziela I; C/D tylko czyste testy do zgody. Własny produkcyjny3005 PID9287/9357 (sesja75680), build B/E/F; nie obejmuje przyszłych C/D. Zastany dev48576/48577 i inne projekty nietykalne. Przed rebuildem obaj autorzy potwierdzają freeze, I zatrzymuje wyłącznie swój3005. Supabase lokalny, bez nowych migracji/AI. Playwright runtime: /Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs.
+
+## Odebrane dowody
+
+A: build/typy,204unit/9skip,Chrome21stanów +desktop/klawiatura/kontrast, T13-A RPC+HTTP PASS.
+B:32unit, nowe UI360/390/430 +pełny niezmienionyT13-C PASS;4karty treningu390 dół750,64<nav768, plan749,36; naprawiony wcześniejszy FAIL gęstości.
+E:29unit, API505sesji/503katalogu/>500dzieci/PR/korekta/snapshoty/A-B-anon; I Chrome sesja97754 exit0,15stanów/gesty/Enter po drag/nakładające punkty/swipe134→0/korekta/desktop PASS. Raport /private/tmp/t15e-browser-report.json; I i autor obejrzeli zrzuty.
+F:2unit+Chrome login/error/fokus/1RM/krok/hasło/logout/relogin360/390/430 oraz T04 PASS. Build/typy integracyjnePASS; pełna suite239PASS/9skip przed ostatnią naprawą CTA B, która ma osobne32unit+pełnyT13-C/build/typyPASS. Finalną suite powtórzyć po C/D.
+Telefon/Safari/systemowy autofill niewykonane; G pozostaje wymaganym niezależnym odbiorem. Szczegółowe komendy/fakty/nieudane próby w handoffach etapów i TESTING.
+
+## Następny krok
+
+C/D implementacja i czyste testy, freeze→wspólny build/typy→kolejno lokalne API/Chrome→lokalne commity odebranych zakresów. Potem świeży recenzent G/T13-E. Zachować kontrakt E docs/T15_PROGRESS_CONTRACT.md i B→D w T15_UI_IMPLEMENTATION.md. Bez blokera produktu, nie dublować zakresów po limicie.
+
+## Historia wcześniejszych checkpointów (nie bieżące przydziały)
 
 ## Wznowienie numer2 i kolejka
 
@@ -72,3 +88,13 @@ B finalny Chrome/T13-C PASS sesja99765;4karty treningu390 dół750,64<nav768, pl
 ## Wznowienie2026-10-19
 
 Git czysty, zastano lokalne60fcf41 B i99433b8 checkpoint E; zachowano. B/E errored po limicie, brak runnerów; własny3005 PID9287/9357 pozostaje. E Chrome wykonany przez I sesja97754 exit0,15stanów/gesty/swipe134→0/korekta/desktopPASS, raport w tmp. E wznowiony tylko do końcowego handoffu/oględzin. B wznowiony na nowy C po odebranej bramce B i commicie; maksymalnie2 wykonawców. D po zwolnieniu E, bez duplikowania.
+
+E finalnie oddane, dokumenty odebranej bramki commit e544425. /root/progress zakończony; slot przekazany /root/foundation na D (Sol/medium), drugi wykonawca C /root/workout_ui (Sol/high). Brak aktywnych testów, serwer3005 PID9287/9357 z B/E/F.
+
+C/D pierwszy wspólny build+typecheckPASS, server3005 sesja79098. C ma kompilowalny UI lecz18 starych testów do semantycznej adaptacji; freeze zwolnione po buildzie, nie oznaczono bramki. D6unitPASS, źródła freeze, dostał kolejkę API/Chrome. I zgłosił C do weryfikacji counts po +Dodaj serię oraz zachowanie indywidualnej opcjonalności. Własność bez zmian.
+
+Wznowienie po kolejnym limicie2026-10-19: C/D errored, zero runnerów w ps, Next3005 PID41764 pozostał. Wznowiono tych samych wykonawców, bez duplikatów. C checkpoint41unitPASS/3runnerysyntaxPASS, oczekuje finalnego builda z CRON_SECRET z tymczasowego pliku poza repo (nie wypisywać). D odzyskuje wynik eskalacji cell45, prefix zatwierdzony; ma kolejkę na obecnym buildzie. C freeze do potwierdzenia. Bramek C/D jeszcze nie przyjęto.
+
+I pełna suite aktualnych C/D PASS249/9skip (37passed/5skipped), /private/tmp/t15-integration-unit.log. D odzyskany runner FAIL zbyt wczesna asercja fokusu po End (rAF); test dostał oczekiwanie rzeczywistego fokusu, produkcja bez zmian. Cleanup obejmuje błąd launch. Ponowienie D sesja54374, kolejka nadal D; C freeze potwierdzone41unit/3runnerysyntax.
+
+D finalny Chrome sesja54374PASS, I obejrzał screenshot390 i przyjął bramkę. Kalendarz360/390/430 i44px, klawiatura, daty/strefy/DST/legacy/multiple/finish/date correction/delete/snapshoty/A-B-anonPASS. D kończy tylko handoff/checkpoint. C przed buildem poprawia fallback flag nowych serii po whole optional true→false, następnie freeze.
