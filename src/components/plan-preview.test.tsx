@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { PlanPreview, type PlanPreviewProps } from './plan-preview';
 import { emptySet } from '@/lib/domain/plan-editor';
 vi.mock('./workout-start', () => ({ WorkoutStart: ({ planSessionId }: { planSessionId: string }) => <button>Start {planSessionId}</button> }));
@@ -41,6 +41,22 @@ test('fallback błędnego ID, brak pamięci i podgląd całości pozostawiają w
   fireEvent.click(screen.getByRole('button', { name: 'Wybierz trening 2: A' }));
   expect(screen.getByLabelText('Wybierz trening')).toHaveProperty('value', 'b');
   expect(screen.getByText('Kontekst 2')).toBeTruthy();
+});
+
+test('łączy co najmniej dwa ćwiczenia tej samej superserii', () => {
+  const data = props();
+  const base = data.document.sessions[0].exercises[0];
+  data.document.sessions[0].exercises = [
+    { ...base, name: 'Przysiad', supersetGroup: 'S1' },
+    { ...base, name: 'Wiosłowanie', supersetGroup: 'S1' },
+    { ...base, name: 'Deska', supersetGroup: null },
+  ];
+  render(<PlanPreview {...data} />);
+  const group = screen.getByRole('region', { name: 'Superseria S1' });
+  expect(within(group).getByRole('heading', { name: 'Przysiad' })).toBeTruthy();
+  expect(within(group).getByRole('heading', { name: 'Wiosłowanie' })).toBeTruthy();
+  expect(group.contains(screen.getByRole('heading', { name: 'Deska' }))).toBe(false);
+  expect(screen.getAllByRole('region', { name: /Superseria/ })).toHaveLength(1);
 });
 
 test('odmowa pamięci przeglądarki nie blokuje ręcznego wyboru', () => {

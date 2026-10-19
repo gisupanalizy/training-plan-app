@@ -333,3 +333,7 @@ Jeden kalendarz Historia A/Noc oparty o istniejący odczyt i projekcję T13-A; a
 ### 2026-10-19 — T15-C odebrane lokalnie
 
 Import C, odrębne kroki Korekty A i pełna karta Edytora A w Nocy. Całe ćwiczenie edytowane na lokalnej kopii; apply/cancel obejmuje serie i metadane, stabilneID/źródła/opcjonalność zachowane. Naprawiono counts oraz przywracanie flag nowych serii po rozszerzeniu zakresu.42unit, realne lokalne HTTP/editor/importPDF-XLSX i QA4kart390PASS, build/typyPASS. Bez zmian API/domain/SQL. A–F gotowe do niezależnego G/T13-E.
+
+### 2026-10-19 — widoczne superserie w treningu
+
+Podgląd treningu rysował każde ćwiczenie osobną kartą, a jedyną informacją o grupie był drobny podpis. Ramka w zapisie i edytorze używała tego samego szarego obrysu co karty, więc na Nocy grupa znikała. Co najmniej dwa ćwiczenia o tej samej grupie są teraz wspólnym blokiem ze złotą ramką i tytułem. Bez zmiany danych ani reguł grupowania.
