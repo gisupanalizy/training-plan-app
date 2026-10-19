@@ -329,3 +329,7 @@ T15-A review po przyjętej lokalnej bramce (204 testy/9skip, typy/build, Chrome2
 ### 2026-10-19 — T15-D/T13-D odebrane lokalnie
 
 Jeden kalendarz Historia A/Noc oparty o istniejący odczyt i projekcję T13-A; aktywne osobno, legacy bez wymyślonej godziny, walidowany powrót B i autoryzowany profil dla strefy/Dzisiaj. Bez zmian repozytorium/API/SQL.6testów, build/typy i realne API/Chrome3szerokości/klawiatura/daty/delete/privacyPASS. Oba ID review do G/T13-E.
+
+### 2026-10-19 — T15-C odebrane lokalnie
+
+Import C, odrębne kroki Korekty A i pełna karta Edytora A w Nocy. Całe ćwiczenie edytowane na lokalnej kopii; apply/cancel obejmuje serie i metadane, stabilneID/źródła/opcjonalność zachowane. Naprawiono counts oraz przywracanie flag nowych serii po rozszerzeniu zakresu.42unit, realne lokalne HTTP/editor/importPDF-XLSX i QA4kart390PASS, build/typyPASS. Bez zmian API/domain/SQL. A–F gotowe do niezależnego G/T13-E.

@@ -17,11 +17,11 @@ const nullableText = (value: string) => value.trim() === "" ? null : value;
 const newExercise = (): PlanEditorExercise => ({ reviewId: crypto.randomUUID(), exerciseId: null, name: "", variant: null, equipment: null, supersetGroup: null, note: null, sets: [{ ...emptySet(1), reviewId: crypto.randomUUID() }] });
 
 type ImportReview = { id: string; questions: ImportQuestion[]; draft: Record<string, unknown>; answers?: Record<string, unknown>; onSource?: (reference: string) => void };
-export function PlanEditor({ initial, planId, expectedVersionId, catalog, importReview }: {
-  initial?: PlanEditorDocument; planId: string | null; expectedVersionId: string | null; catalog: CatalogExercise[]; importReview?: ImportReview;
+export function PlanEditor({ initial, planId, expectedVersionId, catalog, importReview, initialVoice = false }: {
+  initial?: PlanEditorDocument; planId: string | null; expectedVersionId: string | null; catalog: CatalogExercise[]; importReview?: ImportReview; initialVoice?: boolean;
 }) {
   return importReview ? <LegacyImportEditor initial={initial} planId={planId} expectedVersionId={expectedVersionId} catalog={catalog} importReview={importReview} />
-    : <CompactPlanEditor initial={initial} planId={planId} expectedVersionId={expectedVersionId} catalog={catalog} />;
+    : <CompactPlanEditor initialVoice={initialVoice} initial={initial} planId={planId} expectedVersionId={expectedVersionId} catalog={catalog} />;
 }
 
 // Zachowana zgodność starego klienta importu; bieżący import używa ImportReview.

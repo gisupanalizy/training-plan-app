@@ -95,3 +95,7 @@ Każdy prompt odsyła do bieżącego STATUS i rzeczywistych handoffów poprzedni
 ## Kontrakt przekazania B → D (I, 2026-10-18)
 
 Wspólnym przeglądem pozostaje istniejący `WorkoutEditor({loaded})` pod `/trening/[id]`, z aktualnymi komendami, szkicami i poprawką historycznych serii. D nie tworzy drugiego edytora/przeglądu. D linkuje do tej trasy z opcjonalnymi `historyMonth=YYYY-MM` i `historyDay=YYYY-MM-DD`. B obsługuje te parametry w stronie treningu i buduje wyłącznie lokalny link `/historia?month=...&day=...`; waliduje rzeczywiste daty i zgodność dnia z miesiącem. Brak/błędne parametry dają bezpieczny `/historia`. Nie przyjmujemy dowolnego returnUrl. Wewnętrzne przejścia serii zachowują parametry powrotu; ochrona niezapisanych zmian obowiązuje także na tym linku. D odtwarza wybór z month/day. To techniczne doprecyzowanie istniejącego wymogu powrotu, nie nowa funkcja produktu. Zmiany wspólnego przeglądu po oddaniu B wymagają I.
+
+## Stan programu — 2026-10-19
+
+Zbiorcze zlecenie A–G jest aktywne. A–F mają lokalne bramki przyjęte przez I; G jeszcze niewykonane. Rzeczywiste wyniki i nieudane próby: checkpoint STATE oraz handoffy etapów. T13-D odebrane lokalnie razem z D, bez drugiego kalendarza. Dotychczasowe wybory i wymagania pozostają bez zmian; lokalne PASS nie oznacza publikacji, telefonu/Safari ani końcowego niezależnego odbioru.

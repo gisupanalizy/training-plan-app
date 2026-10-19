@@ -344,7 +344,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-C — Import, Korekta i Edytor
 
-- Status: in_progress. Właściciel: /root/workout_ui; I /root (2026-10-19). Zależności: bramka A, istniejące T04-R1/T07-R1, zlecenie C.
+- Status: review — lokalna bramka C przyjęta przez I (2026-10-19). Właściciel: /root/workout_ui, źródła zwolnione do I. Zależności: bramka A, istniejące T04-R1/T07-R1, zlecenie C.
 - Zakres/odbiór/własność: [etap C](T15_UI_IMPLEMENTATION.md#c--import-korekta-i-edytor-całego-ćwiczenia). Układy C/A/A, pełna karta/formularz, różne etapy korekty; bez parserów/API.
 - Przekazanie: [prompt C](prompts/T15-C.md), [karta C](handoffs/planned/T15-C.md). High; regresje edytora/importu na mocku AI.
 

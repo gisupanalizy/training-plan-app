@@ -16,7 +16,12 @@ function mount(initial = fixture(), catalog: { id: string; name: string; variant
   return render(<PlanEditor initial={initial} planId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" expectedVersionId="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" catalog={catalog} />);
 }
 function server() { const mock = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ planId: 'plan' }) }); vi.stubGlobal('fetch', mock); return mock; }
-const click = (name: string) => fireEvent.click(screen.getByRole('button', { name }));
+const click = (name: string) => {
+  if (name === 'Edytuj serie' || name === 'Edytuj ćwiczenie' || name === '+ Dodaj blok serii') {
+    fireEvent.click(screen.getAllByRole('button', { name: /^Edytuj ćwiczenie:/ })[0]);
+    if (name === '+ Dodaj blok serii') { fireEvent.click(screen.getByRole('button', { name: '+ Dodaj serię' })); fireEvent.click(screen.getByRole('button', { name: 'Cały blok' })); }
+  } else { if(name==='Edytuj trening') fireEvent.click(screen.getByText('Kolejność i ustawienia treningu')); fireEvent.click(screen.getByRole('button', { name })); }
+};
 async function publish(mock: ReturnType<typeof vi.fn>) { click('Opublikuj nową wersję'); await waitFor(() => expect(mock).toHaveBeenCalled()); return JSON.parse(mock.mock.calls.at(-1)![1].body).document as PlanEditorDocument; }
 
 test('pokazuje jeden trening, kompaktowy blok i użyte parametry bez formularzy serii', () => {
@@ -24,8 +29,8 @@ test('pokazuje jeden trening, kompaktowy blok i użyte parametry bez formularzy 
   expect(screen.queryAllByRole('spinbutton')).toHaveLength(0);
   expect(screen.getByRole('heading', { name: 'Przysiad' })).toBeTruthy();
   expect(screen.queryByRole('heading', { name: 'Martwy ciąg' })).toBeNull();
-  expect(screen.getByText('3 serie × 8–10 powtórzeń')).toBeTruthy();
-  expect(screen.getByText('tempo 3010 · RPE 0')).toBeTruthy();
+  expect(screen.getByText('3 × 8–10')).toBeTruthy();
+  click('Edytuj ćwiczenie'); expect(screen.getByLabelText('Tempo')).toHaveProperty('value','3010'); expect(screen.getByLabelText('RPE')).toHaveProperty('value','0'); click('Anuluj');
   fireEvent.change(screen.getByLabelText('Wybierz trening'), { target: { value: 'day-1' } });
   expect(screen.getByRole('heading', { name: 'Martwy ciąg' })).toBeTruthy();
   click('Podgląd całego planu');
@@ -42,7 +47,7 @@ test('zmienia cały blok, zachowuje ID, indywidualne uwagi, źródła i inne tre
   expect(screen.queryByLabelText('Podstawa ciężaru hantli')).toBeNull();
   fireEvent.change(screen.getByLabelText('Przerwa (s)'), { target: { value: '0' } });
   click('Zastosuj zmiany');
-  expect(screen.getByText('60 kg · Bez przerwy')).toBeTruthy();
+  expect(screen.getByText('60 kg')).toBeTruthy(); expect(screen.getByText('Bez przerwy')).toBeTruthy();
   const result = await publish(mock);
   expect(result.sessions[0].exercises[0].sets).toEqual(initial.sessions[0].exercises[0].sets.map(set => ({ ...set, restSeconds: 0 })));
   expect(result.sessions[1]).toEqual(initial.sessions[1]);
@@ -70,7 +75,7 @@ test('anulowanie dodawania ćwiczenia, treningu i serii nie zmienia szkicu', asy
 test('waliduje fragment mimo nieukończonego ćwiczenia w innym treningu', () => {
   const initial = fixture(); initial.sessions[1].exercises[0].name = ''; mount(initial);
   click('Edytuj serie'); fireEvent.change(screen.getByLabelText('Przerwa (s)'), { target: { value: '60' } }); click('Zastosuj zmiany');
-  expect(screen.queryByRole('dialog')).toBeNull(); expect(screen.getByText('60 kg · Przerwa 60 s')).toBeTruthy();
+  expect(screen.queryByRole('dialog')).toBeNull(); expect(screen.getByText('60 kg')).toBeTruthy(); expect(screen.getByText('Przerwa 60 s')).toBeTruthy();
   click('Opublikuj nową wersję'); expect(screen.getByRole('alert').textContent).toMatch(/nazwy/);
 });
 
@@ -206,4 +211,35 @@ test('wybór ćwiczeń w superserii zachowuje stan checkboxów przy ostrzeganiu 
   expect(screen.getByLabelText('Martwy ciąg')).toHaveProperty('checked', true);
   click('Zastosuj grupę'); const result = await publish(mock);
   expect(result.sessions[0].exercises.every(exercise => exercise.supersetGroup === 'SS1')).toBe(true);
+});
+
+test('pełny formularz atomowo stosuje nazwę i jedną serię, a cancel odrzuca obie zmiany', async () => {
+ const initial = fixture(), mock = server(); mount(initial); click('Edytuj ćwiczenie');
+ fireEvent.change(screen.getByLabelText('Nazwa ćwiczenia'), {target:{value:'Odrzucona nazwa'}}); click('Pojedyncza seria');
+ fireEvent.change(screen.getByLabelText('Powtórzenia'), {target:{value:'2'}}); click('Anuluj');
+ expect(await publish(mock)).toEqual(initial);
+ click('Edytuj ćwiczenie'); fireEvent.change(screen.getByLabelText('Nazwa ćwiczenia'), {target:{value:'Nowa nazwa'}}); click('Pojedyncza seria');
+ fireEvent.change(screen.getByLabelText('Wybierz serię'), {target:{value:'1'}}); fireEvent.change(screen.getByLabelText('Powtórzenia'), {target:{value:'7'}}); click('Zastosuj zmiany');
+ const result = await publish(mock); expect(result.sessions[0].exercises[0].name).toBe('Nowa nazwa');
+ expect(result.sessions[0].exercises[0].sets).toEqual(initial.sessions[0].exercises[0].sets.map((set,i)=> i===1 ? {...set,repsMin:7}:set));
+});
+test.each([false,true])('dodanie serii opcjonalnej=%s aktualizuje zakres i zachowuje indywidualną opcjonalność po przełączeniu całego ćwiczenia', async optional => {
+ const initial=fixture(), ex=initial.sessions[0].exercises[0]; ex.sets[2].isOptional=true; ex.setCountMin=2; ex.setCountMax=3;
+ const mock=server(); mount(initial); click('Edytuj ćwiczenie'); fireEvent.click(screen.getByLabelText('Całe ćwiczenie opcjonalne')); fireEvent.click(screen.getByLabelText('Całe ćwiczenie opcjonalne'));
+ click('+ Dodaj serię'); if(optional)fireEvent.click(screen.getByLabelText('Seria opcjonalna')); click('Zastosuj zmiany'); const result=await publish(mock), changed=result.sessions[0].exercises[0];
+ expect(changed.setCountMin).toBe(optional?2:3); expect(changed.setCountMax).toBe(4); expect(changed.sets.map(set=>!!set.isOptional)).toEqual([false,false,true,optional]);
+ expect(changed.sets.slice(0,3)).toEqual(ex.sets.map(set=>({...set,isOptional:!!set.isOptional}))); expect(new Set(changed.sets.map(set=>set.reviewId)).size).toBe(4);
+});
+test('pusta lub niepoprawna liczba serii blokuje cały apply, cancel nie zmienia źródła', async () => {
+ const initial=fixture(), mock=server(); mount(initial); click('Edytuj ćwiczenie');
+ fireEvent.change(screen.getByLabelText('Liczba serii'), {target:{value:''}}); click('Zastosuj zmiany');
+ expect(screen.getByRole('alert').textContent).toContain('Podaj poprawną liczbę serii'); expect(screen.getByRole('dialog')).toBeTruthy(); click('Anuluj'); expect(await publish(mock)).toEqual(initial);
+});
+
+test('rozszerzenie zakresu całego opcjonalnego ćwiczenia zachowuje minimum po wyłączeniu whole optional', async () => {
+ const initial=fixture(), ex=initial.sessions[0].exercises[0]; ex.isOptional=true; ex.setCountMin=2; ex.setCountMax=3; ex.sets.forEach(set=>{set.isOptional=true;});
+ const mock=server(); mount(initial); click('Edytuj ćwiczenie'); fireEvent.change(screen.getByLabelText('Liczba serii do'),{target:{value:'4'}});
+ fireEvent.click(screen.getByLabelText('Całe ćwiczenie opcjonalne')); click('Zastosuj zmiany'); const result=await publish(mock), changed=result.sessions[0].exercises[0];
+ expect(changed.isOptional).toBe(false); expect(changed.setCountMin).toBe(2); expect(changed.setCountMax).toBe(4); expect(changed.sets.map(set=>!!set.isOptional)).toEqual([false,false,true,true]);
+ expect(changed.sets.slice(0,3).map(set=>[set.reviewId,set.note,set.sourceRef])).toEqual(ex.sets.map(set=>[set.reviewId,set.note,set.sourceRef]));
 });

@@ -5,7 +5,7 @@ Aktualizacja2026-10-19. Gałąź codex/t15-ui; HEAD e544425. A6c1cf10, Fdc5d631,
 ## Bieżąca własność
 
 - I /root: wspólne docs, Git, kolejka testów, globals/layout/AppShell/shared UI po A. A/B/E/F odebrane lokalnie i zwolnione do I.
-- C in_progress /root/workout_ui Sol/high: plany/import i edytor, komponenty i testy wskazane promptem C, własne moduły/runnery/checkpoint/handoff. B nie jest już jego aktywnym zakresem.
+- C review po przyjętej bramce /root/workout_ui Sol/high: plany/import i edytor, komponenty i testy wskazane promptem C, własne moduły/runnery/checkpoint/handoff. B nie jest już jego aktywnym zakresem.
 - D/T13-D review po przyjętej bramce /root/foundation Sol/medium: historia/page, nowe komponenty/helpery kalendarza/CSS/testy, własne runnery/checkpoint/handoff. Repository wyłącznie po osobnym przydziale I.
 - /root/progress zakończony po E. G todo: nowy niezależny autor po A–F, high. Maksymalnie2 aktywnych wykonawców.
 
@@ -98,3 +98,9 @@ Wznowienie po kolejnym limicie2026-10-19: C/D errored, zero runnerów w ps, Next
 I pełna suite aktualnych C/D PASS249/9skip (37passed/5skipped), /private/tmp/t15-integration-unit.log. D odzyskany runner FAIL zbyt wczesna asercja fokusu po End (rAF); test dostał oczekiwanie rzeczywistego fokusu, produkcja bez zmian. Cleanup obejmuje błąd launch. Ponowienie D sesja54374, kolejka nadal D; C freeze potwierdzone41unit/3runnerysyntax.
 
 D finalny Chrome sesja54374PASS, I obejrzał screenshot390 i przyjął bramkę. Kalendarz360/390/430 i44px, klawiatura, daty/strefy/DST/legacy/multiple/finish/date correction/delete/snapshoty/A-B-anonPASS. D kończy tylko handoff/checkpoint. C przed buildem poprawia fallback flag nowych serii po whole optional true→false, następnie freeze.
+
+D odebrane i commit cc381f3. C ostatnia poprawka optional42unitPASS, finalny build C/D i typyPASS, nowy3005 sesja47466 z tymczasowym CRON_SECRET poza repo. C ma wyłączną kolejkę3runnerów editor/import/http, bez własnych buildów. /root/foundation zakończony. G czeka na C, będzie nowym niezależnym agentem.
+
+C funkcjonalne editor/T04-R1 PASS sesja5378, HTTP T06/T07 PASS91186, import PDF2/XLSX2/3kroki/blokady/retry PASS76635. Konta/Storage sprzątnięte. Oględziny ujawniły nadmiar narzędzi nad kartami i drugorzędnych pól przed seriami. I zwolnił freeze na jedną paczkę QA layoutu, z obowiązkowym pomiarem4kart390 i poprawą pozycji screenshotów. I obejrzał import390 i editor-mobile. HTTP nie wymaga ponowienia bez zmian kontraktów; po QA unit/build/typy/editor+celowane importUI, potem G. C bramka jeszcze nieprzyjęta.
+
+C finalne editor+importPASS sesje41675/10716,4pełne karty390/scroll0/navPASS. I obejrzał final editor390 i reviewPDF390, przyjmuje bramkę. C finalizuje handoff i zwalnia pliki; po commicie G nowy niezależny recenzent.
