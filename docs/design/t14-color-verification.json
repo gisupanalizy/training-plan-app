@@ -1,0 +1,598 @@
+{
+  "date": "2026-10-18",
+  "private": false,
+  "palettes": 6,
+  "widthChecks": 216,
+  "checks": [
+    "Sześć palet; kontrast tokenów tekstu, akcji, ostrzeżeń, kontrolek i fokusu",
+    "216 stanów kolor/ekran/szerokość bez overflow",
+    "Cztery pełne karty390×844 we wszystkich jednostkach i paletach",
+    "Pojedyncza paleta i przejście całą kartą zachowują motyw",
+    "Lokalny wybór palety utrzymany po reload",
+    "Filtr wykresu zachowuje kolor palety",
+    "Mobilna galeria390px, skala szarości i kontrolki"
+  ],
+  "bad": [],
+  "errors": [],
+  "contrast": [
+    {
+      "palette": "forest",
+      "fg": "ink",
+      "bg": "paper",
+      "ratio": 14.75,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "ink",
+      "bg": "surface",
+      "ratio": 15.88,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "muted",
+      "bg": "paper",
+      "ratio": 5.95,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "muted",
+      "bg": "surface",
+      "ratio": 6.41,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "primary",
+      "bg": "paper",
+      "ratio": 11.41,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "onPrimary",
+      "bg": "primary",
+      "ratio": 12.29,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "onAccent",
+      "bg": "accent",
+      "ratio": 9.84,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "heroInk",
+      "bg": "hero",
+      "ratio": 12.29,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "heroMuted",
+      "bg": "hero",
+      "ratio": 9.34,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "warningInk",
+      "bg": "warning",
+      "ratio": 6.29,
+      "min": 4.5
+    },
+    {
+      "palette": "forest",
+      "fg": "control",
+      "bg": "surface",
+      "ratio": 4.04,
+      "min": 3
+    },
+    {
+      "palette": "forest",
+      "fg": "focus",
+      "bg": "paper",
+      "ratio": 4.62,
+      "min": 3
+    },
+    {
+      "palette": "cobalt",
+      "fg": "ink",
+      "bg": "paper",
+      "ratio": 14.06,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "ink",
+      "bg": "surface",
+      "ratio": 15.08,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "muted",
+      "bg": "paper",
+      "ratio": 5.71,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "muted",
+      "bg": "surface",
+      "ratio": 6.12,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "primary",
+      "bg": "paper",
+      "ratio": 7.16,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "onPrimary",
+      "bg": "primary",
+      "ratio": 7.68,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "onAccent",
+      "bg": "accent",
+      "ratio": 8.21,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "heroInk",
+      "bg": "hero",
+      "ratio": 10.09,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "heroMuted",
+      "bg": "hero",
+      "ratio": 8.05,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "warningInk",
+      "bg": "warning",
+      "ratio": 6.34,
+      "min": 4.5
+    },
+    {
+      "palette": "cobalt",
+      "fg": "control",
+      "bg": "surface",
+      "ratio": 3.88,
+      "min": 3
+    },
+    {
+      "palette": "cobalt",
+      "fg": "focus",
+      "bg": "paper",
+      "ratio": 7.16,
+      "min": 3
+    },
+    {
+      "palette": "copper",
+      "fg": "ink",
+      "bg": "paper",
+      "ratio": 14.21,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "ink",
+      "bg": "surface",
+      "ratio": 15.02,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "muted",
+      "bg": "paper",
+      "ratio": 5.95,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "muted",
+      "bg": "surface",
+      "ratio": 6.29,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "primary",
+      "bg": "paper",
+      "ratio": 6.68,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "onPrimary",
+      "bg": "primary",
+      "ratio": 7.06,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "onAccent",
+      "bg": "accent",
+      "ratio": 7.39,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "heroInk",
+      "bg": "hero",
+      "ratio": 9.06,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "heroMuted",
+      "bg": "hero",
+      "ratio": 7.2,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "warningInk",
+      "bg": "warning",
+      "ratio": 6.26,
+      "min": 4.5
+    },
+    {
+      "palette": "copper",
+      "fg": "control",
+      "bg": "surface",
+      "ratio": 4.2,
+      "min": 3
+    },
+    {
+      "palette": "copper",
+      "fg": "focus",
+      "bg": "paper",
+      "ratio": 6.14,
+      "min": 3
+    },
+    {
+      "palette": "ocean",
+      "fg": "ink",
+      "bg": "paper",
+      "ratio": 13.08,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "ink",
+      "bg": "surface",
+      "ratio": 14.01,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "muted",
+      "bg": "paper",
+      "ratio": 5.53,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "muted",
+      "bg": "surface",
+      "ratio": 5.92,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "primary",
+      "bg": "paper",
+      "ratio": 7.07,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "onPrimary",
+      "bg": "primary",
+      "ratio": 7.57,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "onAccent",
+      "bg": "accent",
+      "ratio": 7.69,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "heroInk",
+      "bg": "hero",
+      "ratio": 9.6,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "heroMuted",
+      "bg": "hero",
+      "ratio": 7.71,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "warningInk",
+      "bg": "warning",
+      "ratio": 5.96,
+      "min": 4.5
+    },
+    {
+      "palette": "ocean",
+      "fg": "control",
+      "bg": "surface",
+      "ratio": 3.71,
+      "min": 3
+    },
+    {
+      "palette": "ocean",
+      "fg": "focus",
+      "bg": "paper",
+      "ratio": 7.07,
+      "min": 3
+    },
+    {
+      "palette": "graphite",
+      "fg": "ink",
+      "bg": "paper",
+      "ratio": 14.05,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "ink",
+      "bg": "surface",
+      "ratio": 15.33,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "muted",
+      "bg": "paper",
+      "ratio": 5.76,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "muted",
+      "bg": "surface",
+      "ratio": 6.29,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "primary",
+      "bg": "paper",
+      "ratio": 11.77,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "onPrimary",
+      "bg": "primary",
+      "ratio": 12.84,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "onAccent",
+      "bg": "accent",
+      "ratio": 10.76,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "heroInk",
+      "bg": "hero",
+      "ratio": 12.84,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "heroMuted",
+      "bg": "hero",
+      "ratio": 9.91,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "warningInk",
+      "bg": "warning",
+      "ratio": 6.17,
+      "min": 4.5
+    },
+    {
+      "palette": "graphite",
+      "fg": "control",
+      "bg": "surface",
+      "ratio": 3.91,
+      "min": 3
+    },
+    {
+      "palette": "graphite",
+      "fg": "focus",
+      "bg": "paper",
+      "ratio": 6.98,
+      "min": 3
+    },
+    {
+      "palette": "night",
+      "fg": "ink",
+      "bg": "paper",
+      "ratio": 16.08,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "ink",
+      "bg": "surface",
+      "ratio": 13.8,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "muted",
+      "bg": "paper",
+      "ratio": 9.76,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "muted",
+      "bg": "surface",
+      "ratio": 8.38,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "primary",
+      "bg": "paper",
+      "ratio": 11.13,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "onPrimary",
+      "bg": "primary",
+      "ratio": 10.01,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "onAccent",
+      "bg": "accent",
+      "ratio": 10.01,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "heroInk",
+      "bg": "hero",
+      "ratio": 11.12,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "heroMuted",
+      "bg": "hero",
+      "ratio": 8.79,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "warningInk",
+      "bg": "warning",
+      "ratio": 9.05,
+      "min": 4.5
+    },
+    {
+      "palette": "night",
+      "fg": "control",
+      "bg": "surface",
+      "ratio": 4.5,
+      "min": 3
+    },
+    {
+      "palette": "night",
+      "fg": "focus",
+      "bg": "paper",
+      "ratio": 11.13,
+      "min": 3
+    }
+  ],
+  "measurements": [
+    {
+      "palette": "forest",
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "forest",
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "cobalt",
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "cobalt",
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "copper",
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "copper",
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "ocean",
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "ocean",
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "graphite",
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "graphite",
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "night",
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "palette": "night",
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    }
+  ],
+  "engine": "Chrome headless; viewport, mysz i klawiatura; bez fizycznego telefonu/Safari"
+}

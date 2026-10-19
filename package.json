@@ -23,7 +23,8 @@
     "evaluate:t06:real": "node scripts/evaluate-t06-real.mjs",
     "test:t07r1:http": "node scripts/run-local-t06-http.mjs",
     "test:t04r1:http": "node scripts/run-local-t04r1-http.mjs",
-    "test:t10:local": "node scripts/run-local-t10.mjs"
+    "test:t10:local": "node scripts/run-local-t10.mjs",
+    "test:t13a:local": "node scripts/run-local-t05.mjs scripts/test-t13a-api.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

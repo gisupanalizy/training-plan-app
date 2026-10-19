@@ -24,3 +24,7 @@ D031: testy właściciela i uruchomienie importu AI mają pierwszeństwo.5USD ł
 - Wybór modelu po pomiarach, nie na podstawie samej nazwy lub deklaracji marketingowej.
 
 Te założenia nie są potwierdzonymi preferencjami użytkownika. Zmianę zapisz w odpowiedniej specyfikacji i CHANGELOG. Po decyzji D025 telefon/system/przeglądarkę użytkownik poda przy odbiorze T10-R1 po Vercel; nie blokuje to lokalnego T09/T10.
+
+## T13 — kontrakt A i interfejs C odebrane lokalnie
+
+Usuwanie z retry i korektę czasu bez zmiany historycznych celów rozpisano jako projekt kontraktu D034 w [T13-A](T13_MOBILE_WORKOUT.md). Dokumentacyjnie nie pozostawiono wyboru „kasować receipts czy zachować” ani „przeliczać 1RM czy nie”: minimalne receipts/ślad zostają, cele nie są przeliczane. A sprawdziło rzeczywiste FK/triggery, legacy i bramkę lokalną, a osobno zlecone B/C wdrożyły podgląd i UI wykonania. A/B/C pozostają review do E. Nie ma znanego blokera technicznego C; D/E wymagają osobnych zleceń. To stan realizacji, nie nowa zmiana wymagań. Ogólne usuwanie ukończonych treningów, korekta daty już po zakończeniu i nowe okno retencji receipts są poza T13, ewentualnie wymagają osobnej propozycji.

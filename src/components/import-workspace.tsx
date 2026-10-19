@@ -3,6 +3,8 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Icon } from "@/components/ui";
+import styles from "./plan-authoring.module.css";
 import { ImportReview } from "./import-review";
 import type { PlanEditorDocument } from "@/lib/domain/plan-editor";
 import type { ImportQuestion } from "@/lib/imports/questions";
@@ -117,17 +119,24 @@ export function ImportWorkspace({ initialId, supabaseUrl, supabaseKey }: { initi
   }
   const job = detail?.job;
   const review = job?.status === "needs_review" ? job.review_data?.document ?? detail?.document : null;
-  return <div className="import-workspace">
+  return <div className={`import-workspace ${styles.workspace}`}>
     {error && <p className="auth-error" role="alert">{error}</p>}
     {stage && <p className="demo-notice" role="status">{stage}</p>}
-    {!id && <><section className="editor-card"><h2>Wybierz źródło</h2><p>Oryginał pozostanie prywatny przez 7 dni. Plan nie zostanie zapisany bez zatwierdzenia.</p>
-      <div className="import-tabs"><button type="button" aria-pressed={mode === "file"} onClick={() => { setMode("file"); stream.current?.getTracks().forEach((track) => track.stop()); stream.current = null; setCameraReady(false); }}>Plik</button><button type="button" aria-pressed={mode === "camera"} onClick={() => void camera()}>Aparat</button><button type="button" aria-pressed={mode === "text"} onClick={() => { setMode("text"); stream.current?.getTracks().forEach((track) => track.stop()); stream.current = null; setCameraReady(false); }}>Wklej tekst</button></div>
+    {!id && <><div className={styles.sourceGrid} aria-label="Wybierz źródło">
+      <button type="button" className={styles.sourceTile} aria-label="Plik" aria-pressed={mode === 'file'} onClick={() => { setMode('file'); stream.current?.getTracks().forEach(track => track.stop()); stream.current = null; setCameraReady(false); }}><Icon name="upload" size={27} /><strong>Plik PDF lub XLSX</strong><small>Dokument lub zdjęcie</small></button>
+      <button type="button" className={styles.sourceTile} aria-label="Aparat" aria-pressed={mode === 'camera'} onClick={() => void camera()}><Icon name="camera" size={27} /><strong>Zdjęcie lub aparat</strong><small>Plan z kartki</small></button>
+      <button type="button" className={styles.sourceTile} aria-label="Wklej tekst" aria-pressed={mode === 'text'} onClick={() => { setMode('text'); stream.current?.getTracks().forEach(track => track.stop()); stream.current = null; setCameraReady(false); }}><Icon name="file" size={27} /><strong>Wklej tekst</strong><small>Skopiowany plan</small></button>
+      <Link className={styles.sourceTile} href="/plany/edytor?voice=1"><Icon name="microphone" size={27} /><strong>Dyktuj plan</strong><small>Propozycja w edytorze</small></Link>
+    </div><section className={styles.sourceForm}><h2>{mode === 'file' ? 'Dodaj dokument' : mode === 'camera' ? 'Zrób zdjęcie' : 'Tekst planu'}</h2>
       {mode === "file" && <label className="editor-field">PDF (1–6 stron), XLSX, PNG lub JPEG<input type="file" accept=".pdf,.xlsx,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/png,image/jpeg" onChange={(event) => setFile(event.target.files?.[0] ?? null)} /></label>}
       {mode === "camera" && <div><video className="import-video" ref={video} playsInline muted aria-label="Podgląd aparatu" /><button type="button" className="button button-outline" onClick={capture} disabled={!stream.current}>Zrób zdjęcie</button><p>Po odmowie aparatu wybierz zdjęcie z plików.</p></div>}
       {mode === "text" && <label className="editor-field">Tekst planu<textarea value={text} maxLength={30000} onChange={(event) => setText(event.target.value)} placeholder="Wklej plan treningowy…" /></label>}
       {file && <p>Wybrany plik: {file.name} ({Math.ceil(file.size / 1024)} KB)</p>}
       <button type="button" className="button button-dark" disabled={busy} onClick={() => void start()}>Rozpocznij import</button></section>
-      <section className="editor-card"><h2>Wcześniejsze importy</h2><div className="plan-list">{jobs.map((item) => <button className="plan-list-item" type="button" key={item.id} onClick={() => select(item.id)}><span className="list-main"><strong>{item.source_kind.toUpperCase()}</strong><small>{labels[item.status] ?? item.status} · próba {item.attempt_number}</small></span><span aria-hidden="true">→</span></button>)}</div></section></>}
+      <div className={styles.notice}><strong>Ty zatwierdzasz</strong>Oryginał pozostanie prywatny przez 7 dni. Najpierw sprawdź ćwiczenia, potem serie i superserie. Plan powstanie po zatwierdzeniu.</div>
+      <Link className={styles.manual} href="/plany/edytor"><Icon name="edit" />Utwórz ręcznie</Link>
+      <details className={styles.earlier}><summary>Wcześniejsze importy ({jobs.length})</summary><div className="plan-list">{jobs.map(item => <button className="plan-list-item" type="button" key={item.id} onClick={() => select(item.id)}><span className="list-main"><strong>{item.source_kind.toUpperCase()}</strong><small>{labels[item.status] ?? item.status} · próba {item.attempt_number}</small></span><Icon name="chevronRight" /></button>)}</div>{!jobs.length && <p className="small-muted">Nie masz jeszcze importów.</p>}</details></>}
+
     {id && !detail && <p role="status">Wczytywanie importu…</p>}
     {job && <><section className={review ? "import-job-summary" : "editor-card"}><div className="editor-row"><h2>{labels[job.status] ?? job.status}</h2><button type="button" className="button button-outline" onClick={() => select(null)}>← Lista importów</button></div>
       <p>Źródło: {job.source_kind.toUpperCase()} · próba {job.attempt_number}/3 · dostępne do {new Date(job.expires_at).toLocaleDateString("pl-PL")}</p>

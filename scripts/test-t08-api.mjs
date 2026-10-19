@@ -81,8 +81,10 @@ async function run() {
     const beforePage = await page(`/postep?exercise=${performed[0].exercise_id}&from=2026-10-01&to=2026-10-01`, aCookie);
     assert.equal(beforePage.status, 200);
     const beforeHtml = await beforePage.text();
-    assert.match(beforeHtml, /940 kg/);
-    assert.doesNotMatch(beforeHtml, /2026-10-08/);
+    const filteredHistory = beforeHtml.match(/<section[^>]*data-progress-history="true"[^>]*>([\s\S]*?)<\/section>/)?.[1];
+    assert.ok(filteredHistory, "Filtrowana historia jest odrębną sekcją od rekordów all-time");
+    assert.match(filteredHistory, /940 kg/);
+    assert.doesNotMatch(filteredHistory, /2026-10-08/);
     const bPage = await page("/postep", await cookie(b.email));
     assert.equal(bPage.status, 200);
     assert.doesNotMatch(await bPage.text(), /Przysiad/);

@@ -7,6 +7,10 @@ import { seriesBlocks, exerciseSummary, loadLabel, restLabel, optionalLabel, ses
 import { ReviewDialog } from './review-dialog';
 import { ReviewGroupEdit } from './review-group-edit';
 import { PlanExerciseEdit, PlanSeriesEdit, PlanDayEdit, type CatalogExercise } from './plan-edit-dialogs';
+import { ExerciseIllustration, Icon } from '@/components/ui';
+import { PrescriptionFacts } from './exercise-summary';
+import { planMetrics } from '@/lib/workouts/presentation';
+import styles from './plan-authoring.module.css';
 import { VoiceInput, type VoiceResult } from './voice-input';
 
 type Modal = { type: 'exercise' | 'series' | 'addSeries'; sessionId: string; exerciseId: string }
@@ -18,12 +22,12 @@ type Modal = { type: 'exercise' | 'series' | 'addSeries'; sessionId: string; exe
   | { type: 'overview' | 'voice' };
 type SavePayload = { operationId: string; planId: string | null; expectedVersionId: string | null; document: PlanEditorDocument };
 
-export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog }: {
-  initial?: PlanEditorDocument; planId: string | null; expectedVersionId: string | null; catalog: CatalogExercise[];
+export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog, initialVoice = false }: {
+  initial?: PlanEditorDocument; planId: string | null; expectedVersionId: string | null; catalog: CatalogExercise[]; initialVoice?: boolean;
 }) {
   const [document, setDocument] = useState(() => withReviewIds(initial ?? emptyDocument()));
   const [activeId, setActiveId] = useState(document.sessions[0].reviewId!);
-  const [modal, setModal] = useState<Modal | null>(null);
+  const [modal, setModal] = useState<Modal | null>(initialVoice ? { type: 'voice' } : null);
   const [dirty, setDirty] = useState(false);
   const [formDirty, setFormDirty] = useState(false);
   const [error, setError] = useState('');
@@ -116,40 +120,30 @@ export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog 
   const modalExercise = modal && 'exerciseId' in modal ? modalSession?.exercises.find(exercise => exercise.reviewId === modal.exerciseId) : undefined;
   const voicePlan = voiceResult?.proposal as { document: PlanEditorDocument; issues: { path: string; message: string }[] } | undefined;
   function card(exercise: PlanEditorExercise, session: PlanEditorSession, readonly = false) {
-    const blocks = seriesBlocks(exercise), index = session.exercises.indexOf(exercise);
-    return <article className="review-exercise-card plan-exercise-card" key={exercise.reviewId} data-exercise-id={exercise.reviewId}>
-      <div className="review-card-heading"><div><span className="small-muted">Ćwiczenie {index + 1}</span><h3>{exercise.name || 'Uzupełnij ćwiczenie'}</h3>
-        {[exercise.variant, exercise.equipment].filter(Boolean).length > 0 && <p className="review-hint">{[exercise.variant, exercise.equipment].filter(Boolean).join(' · ')}</p>}</div>
-        {!readonly && <div className="editor-actions"><button type="button" aria-label={`Przesuń w górę: ${exercise.name || 'ćwiczenie'}`} disabled={index === 0} onClick={() => moveExercise(session.reviewId!, exercise.reviewId!, -1)}>↑</button><button type="button" aria-label={`Przesuń w dół: ${exercise.name || 'ćwiczenie'}`} disabled={index === session.exercises.length - 1} onClick={() => moveExercise(session.reviewId!, exercise.reviewId!, 1)}>↓</button></div>}
-      </div>
-      <p className="review-prescription">{exerciseSummary(exercise)}</p>
-      <div className="plan-blocks">{blocks.map(block => <div className="plan-block" key={block.sets[0].reviewId}><span>{blocks.length > 1 && <strong>Serie {block.sets[0].position}–{block.sets.at(-1)!.position}: {goalLabel(block.sets[0], true)} · </strong>}{loadLabel(block.sets[0])} · {restLabel(block.sets[0])}</span>
-        {additionalSetLabel(block.sets[0]) && <small>{additionalSetLabel(block.sets[0])}</small>}</div>)}</div>
-      {optionalLabel(exercise) && <p className="review-hint">{optionalLabel(exercise)}</p>}
-      {exercise.originalName && exercise.originalName !== exercise.name && <p className="source-original">W źródle: {exercise.originalName}</p>}
-      {(exercise.note || exercise.sets.some(set => set.note)) && <details className="review-more plan-notes"><summary>Uwagi{exercise.note ? ` — ${exercise.note.slice(0, 90)}${exercise.note.length > 90 ? '…' : ''}` : ' do serii'}</summary>{exercise.note && <p>{exercise.note}</p>}{exercise.sets.filter(set => set.note).map(set => <p key={set.reviewId}><strong>Seria {set.position}:</strong> {set.note}</p>)}</details>}
-      {!readonly && <div className="plan-card-actions"><button type="button" onClick={() => open({ type: 'exercise', sessionId: session.reviewId!, exerciseId: exercise.reviewId! })}>Edytuj ćwiczenie</button><button type="button" onClick={() => open({ type: 'series', sessionId: session.reviewId!, exerciseId: exercise.reviewId! })}>Edytuj serie</button>
-        <button type="button" className="review-link" disabled={exercise.sets.length >= 30} onClick={() => open({ type: 'addSeries', sessionId: session.reviewId!, exerciseId: exercise.reviewId! })}>+ Dodaj blok serii</button></div>}
-    </article>;
+    const blocks = seriesBlocks(exercise);
+    const shortGoal = blocks.slice(0, 2).map(block => `${block.minimum === block.maximum ? block.maximum : `${block.minimum}–${block.maximum}`} × ${goalLabel(block.sets[0], true)}`).join(' + ') + (blocks.length > 2 ? ` + ${blocks.length - 2} ${blocks.length === 3 ? 'blok' : 'bloków'}` : '');
+    const content = <><div className={styles.cardTop}><ExerciseIllustration className={styles.thumb} name={exercise.name} variant={exercise.variant} equipment={exercise.equipment} /><div><h3>{exercise.name || 'Uzupełnij ćwiczenie'}</h3>{[exercise.variant, exercise.equipment, optionalLabel(exercise)].filter(Boolean).length > 0 && <small>{[exercise.variant, exercise.equipment, optionalLabel(exercise)].filter(Boolean).join(' · ')}</small>}</div>{!readonly && <Icon name="chevronRight" size={18} />}</div><PrescriptionFacts metrics={{ ...planMetrics(exercise), series: shortGoal }} /></>;
+    return <article className="review-exercise-card plan-exercise-card" key={exercise.reviewId} data-exercise-id={exercise.reviewId}>{readonly ? <div className={styles.cardOpen}>{content}</div> : <button type="button" className={styles.cardOpen} aria-label={`Edytuj ćwiczenie: ${exercise.name || 'Uzupełnij ćwiczenie'}`} onClick={() => open({ type: 'exercise', sessionId: session.reviewId!, exerciseId: exercise.reviewId! })}>{content}</button>}</article>;
   }
   function trainingCards(session: PlanEditorSession, readonly = false) {
     return <div className="review-cards">{sessionGroups(session).map(group => group.label ? <section className="review-superset" key={group.id}><div className="review-superset-heading"><div><strong>Superseria {group.label}</strong><span>{group.exercises.length} ćwiczeń</span></div>{!readonly && <button type="button" onClick={() => open({ type: 'group', sessionId: session.reviewId!, group: group.label })}>Edytuj superserię</button>}</div>{group.exercises.map(exercise => card(exercise, session, readonly))}</section> : card(group.exercises[0], session, readonly))}</div>;
   }
   const titles: Record<Modal['type'], string> = { exercise: 'Edytuj ćwiczenie', addExercise: 'Dodaj ćwiczenie', series: 'Edytuj serie', addSeries: 'Dodaj blok serii', day: 'Edytuj trening', addDay: 'Dodaj trening', deleteDay: 'Usuń trening', deleteExercise: 'Usuń ćwiczenie', group: 'Edytuj superserię', overview: 'Podgląd całego planu', voice: 'Dyktuj fragment planu' };
-  return <div className="editor compact-plan-editor">
+  return <div className={`editor compact-plan-editor ${styles.editor}`}>
     <fieldset disabled={saving} className="plan-workspace" onChange={() => { if (modal) setFormDirty(true); }} onClick={event => {
       if (modal?.type === 'group' && (event.target as Element).closest('button[aria-label^="W górę"],button[aria-label^="W dół"]')) setFormDirty(true);
     }}>
       <section className="editor-card plan-toolbar"><label className="editor-field">Nazwa planu<input maxLength={120} value={document.name} placeholder="Np. Fundament siły" onChange={event => edit(draft => { draft.name = event.target.value; })} /></label>
-        <div className="plan-toolbar-actions"><button type="button" onClick={() => open({ type: 'overview' })}>Podgląd całego planu</button><button type="button" onClick={() => open({ type: 'voice' })}>Dyktuj fragment planu</button></div>
-        <label className="editor-field">Wybierz trening<select value={active.reviewId} onChange={event => select(event.target.value)}>{document.sessions.map(session => <option value={session.reviewId} key={session.reviewId}>Tydzień {session.weekNumber} · {session.dayLabel || 'Bez nazwy'} · {session.exercises.length} ćw.</option>)}</select></label>
+
+        <label className="editor-field">Wybierz trening<select value={active.reviewId} onChange={event => select(event.target.value)}>{document.sessions.map(session => <option value={session.reviewId} key={session.reviewId}>{document.sessions.indexOf(session) + 1}. {session.dayLabel || 'Bez nazwy'} · {session.exercises.length} ćw.</option>)}</select></label>
       </section>
-      <section className="plan-training"><div className="plan-training-heading"><div><span className="eyebrow">Tydzień {active.weekNumber}</span><h2 ref={heading} tabIndex={-1} data-review-heading>{active.dayLabel || 'Trening bez nazwy'}</h2><p className="small-muted">{active.exercises.length} ćwiczeń · {active.exercises.reduce((sum, exercise) => sum + exercise.sets.length, 0)} serii</p></div><button type="button" onClick={() => open({ type: 'day', sessionId: active.reviewId! })}>Edytuj trening</button></div>
-        {active.note && <details className="review-more plan-day-notes"><summary>Uwagi do treningu — {active.note.slice(0, 90)}</summary><p>{active.note}</p></details>}
+      <section className="plan-training"><div className="plan-training-heading"><h2 ref={heading} tabIndex={-1} data-review-heading>{active.dayLabel || 'Trening bez nazwy'}</h2><span className="small-muted">{active.exercises.length} ćwiczeń</span></div>
         {trainingCards(active)}
+        {!!active.exercises.length && <details className={styles.organization}><summary>Kolejność i ustawienia treningu</summary><button type="button" onClick={() => open({ type: 'day', sessionId: active.reviewId! })}>Edytuj trening</button>{active.note && <p className="review-hint">{active.note}</p>}{active.exercises.map((exercise, index) => <div key={exercise.reviewId} className={styles.orderRow}><span>{index + 1}. {exercise.name}</span><button type="button" aria-label={`Przesuń w górę: ${exercise.name || 'ćwiczenie'}`} disabled={index === 0} onClick={() => moveExercise(active.reviewId!, exercise.reviewId!, -1)}><Icon name="chevronLeft" size={18} /></button><button type="button" aria-label={`Przesuń w dół: ${exercise.name || 'ćwiczenie'}`} disabled={index === active.exercises.length - 1} onClick={() => moveExercise(active.reviewId!, exercise.reviewId!, 1)}><Icon name="chevronRight" size={18} /></button></div>)}</details>}
         {!active.exercises.length && <p className="review-hint">Dodaj ćwiczenie, aby uzupełnić ten trening.</p>}
         <div className="plan-add-actions"><button type="button" className="button button-outline" disabled={active.exercises.length >= 50} onClick={() => open({ type: 'addExercise', sessionId: active.reviewId!, exercise: newReviewExercise('') })}>+ Dodaj ćwiczenie</button><button type="button" onClick={() => open({ type: 'group', sessionId: active.reviewId!, group: null })} disabled={active.exercises.length < 2}>+ Utwórz superserię</button></div>
       </section>
+        <div className="plan-toolbar-actions"><button type="button" onClick={() => open({ type: 'overview' })}>Podgląd całego planu</button><button type="button" onClick={() => open({ type: 'voice' })}>Dyktuj fragment planu</button></div>
       <button type="button" className="button button-outline" disabled={document.sessions.length >= 52} onClick={() => open({ type: 'addDay', session: { reviewId: crypto.randomUUID(), weekNumber: active.weekNumber, dayLabel: '', note: null, exercises: [] } })}>+ Dodaj trening</button>
       {modal && <ReviewDialog key={`${modal.type}:${'exerciseId' in modal ? modal.exerciseId : 'sessionId' in modal ? modal.sessionId : ''}`} title={titles[modal.type]} onClose={close}>
         {(modal.type === 'exercise' || modal.type === 'addExercise') && modalSession && <PlanExerciseEdit exercise={modal.type === 'addExercise' ? modal.exercise : modalExercise!} document={document} sessionId={modal.sessionId} catalog={catalog} onApply={replaceExercise} onCancel={close}

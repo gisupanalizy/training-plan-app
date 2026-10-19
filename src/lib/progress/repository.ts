@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { summarizeProgress, type ExerciseInfo, type ProgressExercise, type ProgressSet, type ProgressWorkout } from "./summary";
+import { analyzeProgress } from "./analytics";
 
 const isoDate = /^\d{4}-\d{2}-\d{2}$/;
 export function validDate(value: string | undefined) {
@@ -26,10 +27,8 @@ export async function getProgress(from?: string, to?: string) {
     }
   };
   const workouts = await readAll<ProgressWorkout>((offset) => {
-    let query = client.from("workout_sessions").select("id,performed_on,status,created_at")
+    const query = client.from("workout_read_model").select("id,performed_on,performed_at,time_zone,status,created_at,name")
       .eq("owner_id", ownerId).order("performed_on", { ascending: false }).order("id").range(offset, offset + 499);
-    if (checkedFrom) query = query.gte("performed_on", checkedFrom);
-    if (checkedTo) query = query.lte("performed_on", checkedTo);
     return query;
   });
   const info = await readAll<ExerciseInfo>((offset) => client.from("exercises")
@@ -45,8 +44,12 @@ export async function getProgress(from?: string, to?: string) {
   for (let index = 0; index < performed.length; index += 100) {
     const ids = performed.slice(index, index + 100).map((item) => item.id);
     sets.push(...await readAll<ProgressSet>((offset) => client.from("performed_sets")
-      .select("performed_exercise_id,source_kind,status,target_optional_snapshot,target_load_type_snapshot,target_dumbbell_basis_snapshot,actual_reps,actual_kg")
+      .select("id,position,performed_exercise_id,source_kind,status,target_optional_snapshot,target_kind_snapshot,target_load_type_snapshot,target_dumbbell_basis_snapshot,target_bodyweight_adjustment_snapshot,target_bodyweight_delta_kg_snapshot,target_duration_seconds_snapshot,target_duration_seconds_max_snapshot,target_distance_meters_snapshot,actual_duration_seconds,actual_distance_meters,actual_reps,actual_kg")
       .eq("owner_id", ownerId).in("performed_exercise_id", ids).order("id").range(offset, offset + 499)));
   }
-  return { ...summarizeProgress(workouts, performed, sets, info), exercises: info };
+  // Zgodność T08: entries/sessions są w żądanym zakresie włącznie. PR i punkty
+  // nowej analityki zawsze pochodzą z pełnej autoryzowanej historii.
+  const selectedWorkouts = workouts.filter(w => (!checkedFrom || w.performed_on >= checkedFrom) && (!checkedTo || w.performed_on <= checkedTo));
+  return { ...summarizeProgress(selectedWorkouts, performed, sets, info), exercises: info,
+    analytics: analyzeProgress(workouts, performed, sets, info), timeZone: workouts[0]?.time_zone ?? "Europe/Warsaw" };
 }

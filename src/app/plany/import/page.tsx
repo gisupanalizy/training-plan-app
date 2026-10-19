@@ -1,3 +1,5 @@
+import { Icon } from "@/components/ui";
+import styles from "@/components/plan-authoring.module.css";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
@@ -8,9 +10,9 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
   const config = getSupabaseConfig();
   if (!config) notFound();
   const { id } = await searchParams;
-  return <AppShell section="Plany"><Link className="back-link" href="/plany">← Wróć do planów</Link>
-    <div className="eyebrow">PRYWATNY PLAN / IMPORT</div><div className="page-heading"><div><h1>Import planu<span className="accent">.</span></h1>
+  return <AppShell section="Plany"><div className={styles.importSurface}><Link className={styles.back} href="/plany"><Icon name="arrowLeft" size={18} />Wróć do planów</Link>
+    <div className={styles.heading}><div><h1>Import planu</h1>
       <p>Wybierz źródło, popraw szkic i zatwierdź go świadomie.</p></div></div>
     <ImportWorkspace initialId={id ?? null} supabaseUrl={config.url} supabaseKey={config.key} />
-  </AppShell>;
+  </div></AppShell>;
 }

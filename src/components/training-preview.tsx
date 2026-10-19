@@ -1,44 +1,30 @@
-"use client";
+'use client';
+import { useRef, useState } from 'react';
+import Link from 'next/link';
+import type { DemoDay } from '@/lib/demo-plan';
+import { ExerciseIllustration, Icon } from '@/components/ui';
+import { PrescriptionFacts } from './exercise-summary';
+import styles from './workout-editor.module.css';
+import card from './exercise-summary.module.css';
+import ui from './plan-workout.module.css';
 
-import { useState } from "react";
-import type { DemoDay } from "@/lib/demo-plan";
-
+export function DemoPlanPreview({ day }: { day: DemoDay }) {
+  const [selected, setSelected] = useState<number | null>(null);
+  const scroll = useRef(0);
+  const exercise = selected == null ? null : day.exercises[selected];
+  function choose(position: number | null) { const previous = selected; if (position != null) scroll.current = window.scrollY; setSelected(position); requestAnimationFrame(() => { if (position != null) { window.scrollTo(0, 0); document.getElementById('demo-detail')?.focus(); } else { window.scrollTo(0, scroll.current); document.getElementById(`demo-card-${previous}`)?.focus({ preventScroll: true }); } }); }
+  if (exercise) return <section className={card.detail}><button className={card.back} onClick={() => choose(null)}><Icon name="arrowLeft" size={18} />Wróć do ćwiczeń</button><div className={card.detailTitle}><ExerciseIllustration name={exercise.name} /><div><h2 id="demo-detail" tabIndex={-1}>{exercise.name}</h2><p>{day.label} · {exercise.category}</p></div></div><PrescriptionFacts large metrics={{ series: `${exercise.sets.length} serii`, load: exercise.sets.every(set => set.load === exercise.sets[0].load) ? exercise.sets[0].load : 'Różne obciążenia', rest: 'Niepodana osobno' }} /><h3>Serie w planie</h3><ol>{exercise.sets.map((set, index) => <li className={card.source} key={index}>Seria {index + 1} · {set.repetitions} · {set.load}{set.note ? ` · ${set.note}` : ''}</li>)}</ol>{exercise.note && <p className={card.note}>{exercise.note}</p>}</section>;
+  return <><div className={ui.heading}><h2>{day.title}</h2><p>{day.exercises.length} ćwiczenia</p></div><div className={styles.demoPlan}>{day.exercises.map((item, index) => <article className={card.card} key={item.name}><button id={`demo-card-${index}`} className={card.open} onClick={() => choose(index)} aria-label={`Szczegóły: ${item.name}`}><div className={card.top}><ExerciseIllustration className={card.thumb} name={item.name} /><div><h3>{item.name}</h3><small>{item.category}</small></div><Icon name="chevronRight" size={18} /></div><PrescriptionFacts metrics={{ series: `${item.sets.length} × ${item.sets[0].repetitions}`, load: item.sets.every(set => set.load === item.sets[0].load) ? item.sets[0].load : 'Różne obciążenia', rest: 'Niepodana osobno' }} /></button></article>)}</div><div className={ui.split}><Link href={`/trening/${day.id}`} className={ui.primary}>Zobacz trening<Icon name="arrowRight" size={18} /></Link></div></>;
+}
 export function TrainingPreview({ day }: { day: DemoDay }) {
   const [exerciseIndex, setExerciseIndex] = useState(0);
   const [setIndex, setSetIndex] = useState(0);
-  const [repetitions, setRepetitions] = useState("");
-  const [load, setLoad] = useState("");
-  const exercise = day.exercises[exerciseIndex];
-  const set = exercise.sets[setIndex];
-  const totalSets = day.exercises.reduce((sum, item) => sum + item.sets.length, 0);
-  const ordinal = day.exercises.slice(0, exerciseIndex).reduce((sum, item) => sum + item.sets.length, 0) + setIndex + 1;
-
-  function select(exerciseNumber: number, setNumber: number) {
-    setExerciseIndex(exerciseNumber);
-    setSetIndex(setNumber);
-    setRepetitions("");
-    setLoad("");
-  }
-
-  function next() {
-    if (setIndex + 1 < exercise.sets.length) select(exerciseIndex, setIndex + 1);
-    else if (exerciseIndex + 1 < day.exercises.length) select(exerciseIndex + 1, 0);
-  }
-
-  function previous() {
-    if (setIndex > 0) select(exerciseIndex, setIndex - 1);
-    else if (exerciseIndex > 0) select(exerciseIndex - 1, day.exercises[exerciseIndex - 1].sets.length - 1);
-  }
-
-  return <div className="training-layout">
-    <div className="training-primary">
-      <div className="progress-heading"><span>PRZEGLĄD SERII</span><strong>{String(ordinal).padStart(2, "0")} / {String(totalSets).padStart(2, "0")}</strong></div>
-      <div className="progress-track"><span style={{ width: `${(ordinal / totalSets) * 100}%` }} /></div>
-      <section className="current-exercise"><div className="exercise-kicker"><span className="status-dot" /> ĆWICZENIE {String(exerciseIndex + 1).padStart(2, "0")} / {String(day.exercises.length).padStart(2, "0")}</div><h2>{exercise.name}</h2><p>{exercise.category} · seria {setIndex + 1} z {exercise.sets.length}</p></section>
-      <section className="target-card"><div className="target-label">CEL Z PLANU</div><div className="target-values"><div><strong>{set.repetitions}</strong><small>powtórzeń / czas</small></div><div className="target-divider" /><div><strong>{set.load}</strong><small>obciążenie</small></div></div>{exercise.note && <p>{exercise.note}</p>}</section>
-      <section className="form-preview"><div className="form-title"><div><div className="eyebrow">PODGLĄD FORMULARZA</div><h3>Twój wynik</h3></div><span className="outline-tag">NIEZAPISANY</span></div><div className="form-fields"><label>Powtórzenia / czas<input inputMode="decimal" type="text" value={repetitions} onChange={(event) => setRepetitions(event.target.value)} placeholder="Wpisz wynik" /></label><label>Obciążenie (kg)<input inputMode="decimal" type="text" value={load} onChange={(event) => setLoad(event.target.value)} placeholder="Wpisz ciężar" /></label></div><p>Możesz sprawdzić pola, ale prototyp nie zapisuje wyniku. Przejście do innej serii czyści wpisy.</p></section>
-      <div className="step-actions"><button type="button" className="button button-outline" onClick={previous} disabled={ordinal === 1}>← Poprzednia</button><button type="button" className="button button-dark" onClick={next} disabled={ordinal === totalSets}>Następna seria →</button></div>
-    </div>
-    <aside className="training-side"><div className="eyebrow">W TYM TRENINGU</div><h3>Plan dnia</h3><div className="training-exercises">{day.exercises.map((item, index) => <button type="button" key={item.name} className={`training-exercise ${index === exerciseIndex ? "selected" : ""}`} onClick={() => select(index, 0)}><span>0{index + 1}</span><strong>{item.name}</strong><small>{item.sets.length} serie</small></button>)}</div><div className="previous-box"><span>POPRZEDNI WYNIK</span><strong>Brak danych</strong><p>Historia pojawi się po wdrożeniu zapisu treningów.</p></div></aside>
-  </div>;
+  const [repetitions, setRepetitions] = useState('');
+  const [load, setLoad] = useState('');
+  const [notice, setNotice] = useState('');
+  const exercise = day.exercises[exerciseIndex], set = exercise.sets[setIndex];
+  function select(index: number, position: number) { setExerciseIndex(index); setSetIndex(position); setRepetitions(''); setLoad(''); setNotice(''); }
+  function next() { if (setIndex + 1 < exercise.sets.length) select(exerciseIndex, setIndex + 1); else if (exerciseIndex + 1 < day.exercises.length) select(exerciseIndex + 1, 0); }
+  function previous() { if (setIndex > 0) select(exerciseIndex, setIndex - 1); else if (exerciseIndex > 0) select(exerciseIndex - 1, day.exercises[exerciseIndex - 1].sets.length - 1); }
+  return <div className={`${styles.ui} ${styles.demoDetail}`}><div className={styles.detailTitle}><ExerciseIllustration name={exercise.name} /><div><h2>{exercise.name}</h2><p>{day.label} · ćwiczenie {exerciseIndex + 1} z {day.exercises.length}</p></div></div><h3>Seria {setIndex + 1} z {exercise.sets.length}</h3><div className={styles.progress}>{exercise.sets.map((_, index) => <span key={index} className={index === setIndex ? styles.current : ''} />)}</div><div className={styles.goal}><small>Cel w planie · seria {setIndex + 1}</small><strong>{set.repetitions} · {set.load}</strong>{exercise.note && <p className={styles.helper}>{exercise.note}</p>}</div><p className={styles.previous}>Poprzedni wynik: <strong>{exercise.previous ?? 'brak'}</strong></p><form onSubmit={event => { event.preventDefault(); setNotice('Podgląd demonstracyjny. Wynik nie został zapisany.'); }}><div className={styles.resultHeading}><h3>Twój wynik</h3><span>Wpisz wykonanie</span></div><div className={styles.demoFields}><label>Powtórzenia / czas<input inputMode="decimal" value={repetitions} onChange={event => setRepetitions(event.target.value)} placeholder="Wpisz wynik" /></label><label>Obciążenie (kg)<input inputMode="decimal" value={load} onChange={event => setLoad(event.target.value)} placeholder="Wpisz ciężar" /></label></div><p className={styles.helper}>Cel nie jest zapisanym wynikiem. Podgląd nie zapisuje danych; zmiana serii czyści wpisy.</p><button className={ui.primary} type="submit">Sprawdź formularz<Icon name="check" /></button>{notice && <p role="status" className={styles.helper}>{notice}</p>}</form><div className={ui.split}><button type="button" className={ui.secondary} disabled={exerciseIndex === 0 && setIndex === 0} onClick={previous}>Poprzednia seria</button><button type="button" className={ui.secondary} disabled={exerciseIndex === day.exercises.length - 1 && setIndex === exercise.sets.length - 1} onClick={next}>Następna seria</button></div><h3 className={ui.sectionTitle}>W tym treningu</h3>{day.exercises.map((item, index) => <button key={item.name} className={ui.row} style={{ width: '100%', background: 'none', color: 'var(--ink)', border: 0, borderBottom: '1px solid var(--line)', textAlign: 'left' }} onClick={() => select(index, 0)}><span className={ui.letter}>{index + 1}</span><div><strong>{item.name}</strong><small>{item.sets.length} serie</small></div><Icon name="chevronRight" /></button>)}</div>;
 }

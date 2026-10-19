@@ -1,6 +1,6 @@
 # Plan zadań
 
-Aktualizacja: 2026-10-16. Jedyne źródło statusów poszczególnych zadań. STATUS opisuje kontekst sesji, bez kopiowania całego backlogu.
+Aktualizacja: 2026-10-17. Jedyne źródło statusów poszczególnych zadań. STATUS opisuje kontekst sesji, bez kopiowania całego backlogu.
 
 Statusy: `todo`, `in_progress`, `blocked`, `review`, `done`, `deferred`. `todo` z niespełnionymi zależnościami nie jest gotowe do rozpoczęcia. `blocked` wymaga konkretnego blokera i kroku odblokowania. `done` wymaga spełnienia kryteriów, weryfikacji i handoffu.
 
@@ -171,6 +171,62 @@ Aktualizacja T11 po D031: Auth minimum12 i URL-e zapisane po zgodzie; cron200 na
 - Odbiór: rzeczywisty stary revision i sprzeczny payload wracają szybko jako 409; poprawny retry nadal idempotentny, bez zmiany danych, snapshotów i grantów.
 - Wynik: migracja21 zastosowana po zgodzie użytkownika, kod ddaceb3 wypchnięty i Ready. Lokalnie T04/T05, 171 testów, build/typy; poHTTPS rzeczywisty stary revision daje PT409/409, retry idempotentny i pełny ręczny smoke przeszedł. Dwie pierwsze próby wykazały400/timeout; trzecią zatrzymało błędne oczekiwanie testu historii, po jego poprawie sukces. T11 pozostaje w toku z powodu UI/Auth/cron/restore.
 
+## T13 — mobilny plan i dziennik po feedbacku właściciela
+
+Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](T13_MOBILE_WORKOUT.md). A/B/C mają lokalne bramki przyjęte i pozostają review do E; D–E to prace przyszłe. Sam zapis dokumentacji nie upoważnia do ich uruchomienia; potrzebne osobne zlecenie użytkownika. Domyślnie sekwencyjnie, jeden integrator, bez agentów w tle.
+
+### T13 — Wygodne planowanie i prowadzenie treningu na telefonie
+
+- Status: done lokalnie po G i D046 (2026-10-19). Właściciel: Codex — integrator T13. Zależności: T13-P i lokalne T03/T04/T05/T06-R1/T04-R1/T09/T11-C1 — spełnione. Telefon/Safari i publikacja zostają poza tym done; T10-R1 i T11 bez zmiany.
+- Zakres: pełne R01–R16 z uzgodnionego planu, zachowane w specyfikacji. ID nadrzędne pozostaje po podziale; żadne wymaganie nie znika.
+- Odbiór: bramki A–D oraz niezależny E, bez krytycznych błędów utraty/duplikacji danych, własności lub historycznych celów; prawdziwa lokalna aplikacja mobile. Fizyczny T10-R1 i hosting T11 pozostają osobno.
+
+### T13-P — Podział i kontrakty przekazania
+
+- Status: done. Właściciel: Codex — integrator dokumentacji (2026-10-17). Zależności: uzgodniony plan w chacie „Opisz możliwości aplikacji” oraz jawne zlecenie podziału — spełnione.
+- Zakres: rejestr wymagań, etapy A–E, zależności, właściciele plików, usuwanie/retry, datowanie i niezmienność celów, osobne prompty i karty przyszłych handoffów.
+- Odbiór: pełne pokrycie wymagań, spójne kontrakty i linki; tylko dokumentacja, bez implementacji/agentów. Wyniki w [handoffie podziału](handoffs/2026-10-17-T13-podzial-etapow.md).
+
+- Wynik: R01–R16, kontrakty i podział gotowe; kontrola 23 plików/184 linków, promptów i szablonów oraz git diff --check przeszła. Bez implementacji.
+
+### T13-A — Sesje/API/datowanie
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: Codex — wykonawca A i integrator (2026-10-17); lokalna bramka przyjęta wcześniej, zamknięta z E. Zależności: T13-P, T03/T04/T05/T06-R1/T11-C1; osobne zlecenie implementacji.
+- Pliki: API/repozytorium treningów, wspólny czas i daty postępu, nowe migracje i testy; szczegółowy wyłączny przydział w specyfikacji.
+- Kontrakt/odbiór: R09–R13/R16 i bramka A — owner lock, jeden nowy aktywny, legacy indywidualnie, atomowy replace, delete z późnym retry bez odtworzenia, spójny GET, korekta czasu bez zmiany snapshotów/1RM. Rzeczywiste lokalne A/B/anon, concurrency/rollback/retry/legacy, regresje, build/typy.
+- Wynik/przekazanie: [rzeczywisty handoff A](handoffs/2026-10-17-T13-A-sesje-api-datowanie.md); lokalne RPC/HTTP A/B/anon, migracja/replay, concurrency/rollback/retry/legacy/daty/snapshoty, regresje, 180 passed/9 skipped, build/typy PASS. Integrator przyjął bramkę A, a B wykonano po osobnym zleceniu 2026-10-18. Done dopiero po E. [Prompt A](prompts/T13-A.md) i [karta szablonowa](handoffs/planned/T13-A.md) zachowane jako materiały historyczne.
+
+### T13-B — Podgląd planu
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: Codex — wykonawca B i integrator (2026-10-18); lokalna bramka przyjęta wcześniej, zamknięta z E. Zależności: T13-A, T04-R1/T06-R1 done; osobne zlecenie B.
+- Pliki: strona/podgląd planu, wspólne podsumowania i style przejęte od integratora; bez zmian kontraktu zapisu.
+- Odbiór: R01–R03/R15/R16 i bramka B — selektor bez tygodni, krótkie karty/rozwijanie, wierne bloki i warianty, cały plan i wersje; 360/390/430 px, cztery karty 390×844, regresja edytora/importu, testy/build/typy.
+- Wynik/przekazanie: [rzeczywisty handoff B](handoffs/2026-10-18-T13-B-podglad-planu.md); lokalne Auth/DB/UI, mobile360/390/430, cztery pełne karty390×844, wybór/wersje/cele44/fokus, regresje edytora i syntetycznego importu,190 passed/9 skipped, build/typy PASS. Integrator przyjmuje bramkę dla C; B review do E, C wymaga osobnego zlecenia. [Prompt B](prompts/T13-B.md) i [karta szablonowa](handoffs/planned/T13-B.md) pozostają materiałem historycznym.
+
+### T13-C — Prowadzenie treningu
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: Codex — jedyny wykonawca C i integrator (2026-10-18); przejęte pliki C, globals.css oraz runner scripts/test-t13c-browser.mjs, bez zmian SQL/API. Zależności: A/B po przyjętych bramkach, T09 done; osobne zlecenie C.
+- Pliki: start, edytor/komponenty treningu, głos i widok szczegółów, przejęte style; kontrakty A i podsumowania B bez samowolnych zmian.
+- Odbiór: R04–R11/R13/R15/R16 i bramka C — jedna seria, superserie/opcjonalne, szkice/retry/409/głos, bez reload, konflikt/finish/delete/legacy i korekta czasu przy finish; prawdziwa lokalna aplikacja 360/390/430 px oraz API/testy/build/typy.
+- Wynik/przekazanie: [rzeczywisty handoff C](handoffs/2026-10-18-T13-C-prowadzenie-treningu.md). Pełna lokalna bramka C PASS: rzeczywiste Chrome/API, szkice/retry/409/głos mock, superserie/null/0/poprawka, konflikt/legacy/replace/finish/delete,360/390/430 px i cztery karty390×844,198 passed/9 skipped, build/typy. Integrator przyjmuje bramkę dla D i zwalnia style. C review do E; D tylko po osobnym zleceniu. [Prompt C](prompts/T13-C.md) i [karta szablonowa](handoffs/planned/T13-C.md) pozostają materiałami historycznymi.
+
+### T13-D — Kalendarz historii
+
+- Status: done lokalnie wraz z T15-D, po G (2026-10-19). Właściciel: /root/foundation. Zależności: A/C po przyjętych bramkach, sekwencyjnie także B, T08 done; osobne zlecenie D.
+- Pliki: historia, komponenty/testy kalendarza, przejęte style; rozszerzenie repozytorium tylko po przydziale przez integratora.
+- Odbiór: R14–R16 i bramka D — miesiąc pon.–niedz., Dzisiaj, wiele sesji, Wznów osobno, otwieranie C, legacy/nieznana godzina, północ/DST i korekta zgodna z filtrami; lokalny mobile i testy/build/typy.
+- Przekazanie: [prompt D](prompts/T13-D.md), [karta handoffu D](handoffs/planned/T13-D.md). Review do E.
+- W planie wybranego UI T15 realizować razem z [T15-D](prompts/T15-D.md); nie zlecać dwóch niezależnych kalendarzy.
+
+### T13-E — Niezależny odbiór
+
+- Status: done lokalnie (2026-10-19). Właściciel: niezależny recenzent G, pliki zwolnione. Zależności odbioru spełnione. D046: zasłonięcie dołu karty przez nav nie jest błędem.
+- Pliki: osobny raport odbioru i handoff, ewentualne niezależne testy; poprawki produkcyjne wracają do właścicieli przez jednego integratora.
+- Odbiór: niezależne R01–R16, A/B/anon, concurrency/delete/late retry/rollback/daty/1RM/szkice oraz klikalny lokalny mobile, zintegrowane testy/build/typy. Wynik każdego R i ograniczenia jawnie. Integrator zamyka A–D/T13 dopiero po spełnieniu kryteriów; T11/T10-R1 bez pozornego done.
+- Wynik: odbiór razem z T15-G, bramka przyjęta po D046. Pomiar 786,95 wobec nav 768 zostaje w raporcie jako fakt, nie jako wada. Powtórzony T15-B i T13-C PASS. [Raport](reports/2026-10-19-T13-acceptance.md), [handoff](handoffs/2026-10-19-T13-E-niezalezny-odbior.md). Telefon/Safari otwarte.
+- Przekazanie: [prompt E](prompts/T13-E.md), [karta handoffu E](handoffs/planned/T13-E.md).
+- W planie T15 niezależny odbiór obejmuje [T15-G](prompts/T15-G.md); zachować pełne kryteria T13-E bez dublowania wykonania.
+
 ## Po testach bety
 
 ### T12 — Eksperyment Decisions / Jev / głos na żywo
@@ -179,3 +235,154 @@ Aktualizacja T11 po D031: Auth minimum12 i URL-e zapisane po zgodzie; cron200 na
 - Zakres: porównanie prostego przepływu z klasyfikacją OpenAI Decisions i TypeSafe Jev przez Vercel AI Gateway oraz ewentualną sesją Live/Realtime. Brak obowiązku wdrożenia dodatkowego dostawcy.
 - Odbiór: decyzja oparta na jakości, liczbie poprawek, koszcie i czasie; wybrany wariant zachowuje wspólne komendy, uprawnienia i zatwierdzanie.
 - Weryfikacja: powtarzalne porównanie na tym samym zestawie przypadków i zapis decyzji w DECISIONS.
+
+
+## T14 — Czytelność UI i warianty mobilnych ekranów
+
+- Status: review. Właściciel: Codex — projektant mock-upów (2026-10-18), jedyny wykonawca; trzy warianty gotowe do wyboru użytkownika.
+- Zależności: istniejący interfejs i dokumentacja T04/T05/T13-B oraz jawne zlecenie użytkownika przygotowania opcji — spełnione. Nie wymaga ukończenia C/D; nie przejmuje ich plików.
+- Zakres: analiza obecnego UI, trzy propozycje mobilnych układów głównych ekranów, czytelne ikony ćwiczeń, skróty serii/obciążeń/przerw i rozdzielone szczegóły. Wyłącznie dokumentacja i niezależne mock-upy na danych syntetycznych.
+- Pliki: docs/design/t14-*, nowy handoff T14, wpisy w ROADMAP/STATUS/CHANGELOG/DECISIONS. Bez edycji src, migracji i konfiguracji usług.
+- Odbiór: trzy porównywalne warianty obejmujące listę planów, podgląd treningu, szczegóły ćwiczenia i zapis serii; przegląd w przeglądarce, brak poziomego overflow wewnątrz ekranów 360/390/430 px, klawiatura i czytelne jednostki. Wybór i wdrożenie dopiero po decyzji użytkownika.
+
+- Wynik T14: [galeria czterech ekranów × trzy warianty](design/t14-mockupy.html), [analiza i ograniczenia](design/t14-analiza-i-warianty.md), 126 kontroli szerokości bez overflow i zaliczone interakcje syntetyczne. A ma 2 px obrysu czwartej karty poza widokiem; C pokazuje dwie pełne karty — przed wdrożeniem zachować/uzgodnić bramkę T13. Bez zmiany aplikacji i bez wybranego kierunku.
+
+
+### T14-S — Połączenie wybranych ekranów i swipe planów
+
+- Status: review. Właściciel: Codex — jedyny projektant mock-upu (2026-10-18). Zależności: gotowe T14 i jawny wybór użytkownika A/A/A/C — spełnione.
+- Zakres: jeden spójny mock-up: Plany/Podgląd/Szczegóły A, Zapis serii C. Przy wielu planach poziomy swipe lewo/prawo, z przyciskami i wskaźnikiem pozycji jako uzupełnieniem. Bez automatycznego przesuwania.
+- Pliki: nowe docs/design/t14-selected*, dokumentacja wyboru, rzeczywisty handoff. Oryginalna galeria A/B/C zostaje zachowana. Bez src, usług i migracji.
+- Odbiór: cztery wybrane ekrany, trzy syntetyczne plany w karuzeli, działające gesty/przyciski/klawiatura i spójna nazwa wybranego planu; 360/390/430px, cztery pełne karty w Podglądzie390×844.
+
+
+### T14-P — Prywatny plan PDF i pełna galeria pozostałych ekranów
+
+- Status: review. Właściciel: Codex — jedyny wykonawca (2026-10-18). Zależności: wybór A/A/A/C i jawne zlecenie użycia wskazanego PDF oraz pełnego zestawu pozostałych ekranów — spełnione.
+- Zakres: prywatny podgląd rzeczywistego planu z PDF; trzy warianty Startu, Importu, Korekty importu, Edytora, Historii, Postępu, Profilu i Logowania. Zachować wybrane cztery ekrany i swipe planów T14-S.
+- Prywatność: treść PDF, odczyt, prywatny HTML/zrzuty/raport wyłącznie poza repo. W repo generyczne narzędzia, publiczne makiety na syntetycznych danych i dokumentacja bez treści prywatnego planu. Wyniki/historia tylko demonstracyjne, bez udawania odczytu konta.
+- Odbiór: komplet ośmiu ekranów × trzy warianty, przełączanie i zapis preferencji lokalnie, trzy realne jednostki ze źródła w prywatnej galerii, brak zgadywania kg/1RM/niejasnych celów; Chrome360/390/430px, kliknięcia i syntetyzowany swipe. Bez wdrożenia produktu/API/AI.
+
+- Wynik T14-S/P: [specyfikacja wyboru](design/t14-selected-spec.md), [pełna galeria syntetyczna](design/t14-full-gallery.html), prywatna galeria poza repo. Po trzy warianty ośmiu nowych ekranów, zachowane A/A/A/C.192 publiczne i372 prywatne kontrole szerokości PASS; syntetyczny touch/klawiatura i interakcje PASS. Cztery pełne karty390×844, brak zmiany bramki T13. Review czeka na wybory pozostałych ekranów.
+
+
+### T14-R2 — Czytelne kroki importu, gesty, ilustracje i wykresy
+
+- Status: review. Właściciel: Codex — jedyny projektant (2026-10-18). Zależności: gotowa galeria T14-P i jawny feedback użytkownika — spełnione.
+- Zakres: odrębna treść kroków Ćwiczenia/Serie/Podsumowanie, rzeczywisty gest przesuwania także myszą w mock-upie, pełna klikalność kart, zastąpienie szkicowanych symboli gotową biblioteką po sprawdzeniu pochodzenia/licencji, trzy warianty Postępu z wykresami i danymi potrzebnymi do interpretacji.
+- Pliki: generyczny generator/runner T14, zasoby publiczne z atrybucją, dokumentacja i nowy handoff; prywatny HTML/obrazy nadal poza repo. Bez src, usług, płatności lub płatnego AI.
+- Odbiór: różne zadania i treści w trzech etapach importu, drag/touch bez przypadkowego otwierania, karty otwierane także przez parametry, każdy wariant Postępu z opisanym wykresem, publiczna/prywatna galeria360/390/430px i cztery karty390×844.
+- Wynik: odrębne etapy, pełne karty, gesty i trzy warianty z wykresami gotowe do oceny. Workout Guide z lokalnymi zasobami/atrybucją; brakujące warianty mają neutralny znacznik.564 kontrole szerokości i prywatne interakcje R2 PASS. Publiczny runner R2 zatrzymał się na drag myszą; diagnozę blokuje limit automatycznej kontroli uprawnień Chrome. To otwarte sprawdzenie, nie zaliczony test. [Handoff R2](handoffs/2026-10-18-T14-R2-import-gesty-wykresy.md).
+
+### T14-K — Osobne porównanie kolorystyki
+
+- Status: review. Właściciel: Codex — jedyny projektant (2026-10-18). Zależności: gotowe mock-upy i jawne zlecenie wariantów kolorystycznych — spełnione.
+- Zakres: osobna galeria palet na tych samych mobilnych układach, z obecną paletą jako odniesieniem, podglądem ekranów i lokalnym wyborem. Zachować A/A/A/C i prywatne dane poza repo.
+- Pliki: docs/design/t14-color-*, odsyłacz w pełnej galerii, dokumentacja i handoff. Bez wdrażania kolorystyki produktu.
+- Odbiór: różne spójne palety jasne i ciemna, identyczna treść/układ przy porównaniu, czytelny tekst/akcje/wykresy, mobilna galeria i jawny brak zatwierdzonego wyboru.
+- Wynik: sześć palet, wszystkie ekrany, porównanie/pojedynczy podgląd, lokalna preferencja i skala szarości. Publiczne216 + prywatne216 kontroli szerokości, bramka czterech kart, kontrast tokenów i interakcje PASS. [Handoff K](handoffs/2026-10-18-T14-K-kolorystyka.md). Po przywróceniu kontroli uprawnień ponowiony publiczny R2 także PASS; wcześniejszy błąd drag nie odtworzył się, przyczyna pozostaje nieustalona. Bez zmiany kodu gestu w tej sesji.
+
+### T14-U — Konsultacja standardów i kolejności wyborów UI/UX
+
+- Status: done (konsultacja, bez wdrożenia). Właściciel: Codex, jeden konsultant (2026-10-18). Zależności: gotowe galerie T14-P/K i pytanie użytkownika — spełnione.
+- Zakres: rekomendacja procesu wyboru, zasad mobilnego UX i bibliotek; bez zmian makiet lub aplikacji.
+- Odbiór: odpowiedź oparta na aktualnej dokumentacji dostawców, rozróżnienie propozycji i zatwierdzonych wyborów, handoff.
+
+### T14-R3 — Kolejne wybory, edycja ćwiczenia i Postęp
+
+- Status: review. Właściciel: Codex — jedyny projektant (2026-10-18). Zależności: galeria T14-K i jawne decyzje/feedback użytkownika — spełnione.
+- Zakres: utrwalić Start A, Import C z wyśrodkowanymi ikonami i ikoną ręcznej edycji, Korekta A z doprecyzowaniem nagłówka, Edytor A z edycją całego ćwiczenia, Historia A i Logowanie C. Postęp: trzy propozycje ciężaru/powtórzeń, szersze daty i gest przybliżania po researchu źródeł pierwotnych. Profil: wyjaśnić i pokazać propozycję jednej historii wyników oraz rzeczywistego1RM do obliczeń.
+- Pliki: docs/design/t14-r3-*, generyczny generator/galerie, dokumentacja/handoff. Prywatne dane poza repo. Bez src/API/DB/produkcji.
+- Odbiór: wybrane ekrany dostępne jako potwierdzone; formularz całego ćwiczenia z parametrami i anulowaniem; wykresy pokazują faktyczne kg i powtórzenia z kontekstem, zakres cały/własny, gesty i alternatywne kontrolki; mobile360/390/430 i cztery karty390×844.
+- Wynik: wybory utrwalone w danych galerii, edytor całego ćwiczenia i nowe propozycje Postępu A/B/C, źródła producentów, ręczny zmierzony1RM zachowany po doprecyzowaniu użytkownika (D042).192 publiczne +372 prywatne kontrole szerokości i interakcje PASS, syntetyczny pinch in/out oraz pionowy gest PASS.216 prywatnych kontroli palet i ciemny formularz PASS. [Handoff R3](handoffs/2026-10-18-T14-R3-wybory-edytor-postep.md). Postęp, układ Profilu i paleta czekają na wybór; bez implementacji src.
+
+### T14-R4 — Uproszczony Postęp i edycja samą kartą
+
+- Status: review. Właściciel: Codex — jedyny projektant (2026-10-18). Zależności: gotowe makiety R3 i szczegółowy brief użytkownika — spełnione.
+- Zakres: usunąć osobny przycisk edycji; Postęp jako jeden jasny układ w wariancie z ciężarem i z masą ciała, metryki nad wykresem liniowym, daty pod osią X i rekordy osobiste. Domyślna analityczna metryka szacowanego1RM według nowego briefu, odrębna od rzeczywistego1RM profilu.
+- Pliki: docs/design/t14-r4-*, generator i powiązana galeria, dokumentacja/handoff. Prywatne dane poza repo, bez src/API/DB.
+- Odbiór: minimalny układ bez żółtego bannera/wyboru ciężaru/bąbelków, poprawne metryki i PR dla obu typów ćwiczeń, kontrolki i pinch, mobile360/390/430, pełna klikalność kart i zachowanie wcześniejszych wyborów.
+- Wynik: jeden jasny Postęp z dwoma przykładami, pojedynczy wykres, metryki i zakresy w wskazanych miejscach, rekordy całej historii z datami; edycja wyłącznie całą kartą.192 publiczne +372 prywatne kontrole szerokości i interakcje R4 PASS;216 prywatnych kontroli palet PASS. D043 oddziela analityczny szacunek od ręcznego1RM profilu. [Handoff R4](handoffs/2026-10-18-T14-R4-minimalny-postep.md). Do oceny użytkownika, bez implementacji src.
+
+### T14-R5 — Pochodzenie punktów, pomoc 1RM i domyślna Noc
+
+- Status: review. Właściciel: Codex — jedyny wykonawca (2026-10-18). Zależności: R4 i feedback użytkownika — spełnione.
+- Zakres: wyjaśnić punkt jako faktyczny wpis treningu (w makiecie syntetyczny), dodać dostępny dymek metody szacowania1RM i odczyt punktu, sprawdzić dotykowy swipe PR; Noc jako domyślna paleta wszystkich bieżących makiet.
+- Odbiór: brak interpolowanych punktów, data/wartość/źródłowa seria po tap, pomoc przez klik/klawiaturę, PR przesuwane dotykiem, ciemny motyw po ponownym otwarciu; bez src/API/DB.
+- Wynik: Noc i Profil A potwierdzone (D044), pomoc obliczeń i dokładny odczyt punktu; po dodatkowym feedbacku tylko punkt otwiera informację, klik poza nim zamyka. Publiczny/prywatny R5 i natywny swipe CDP104→0px PASS. Regresja192+372 szerokości i216 prywatnych kontroli palet przed ostatnią korektą hit-test PASS; końcowy R5 po korekcie PASS. Wszystkie wybory układów zamknięte; makiety do oceny, bez src.
+
+### T14-R6 — Widoczna informacja po kliknięciu punktu myszą
+
+- Status: review. Właściciel: Codex — jeden wykonawca (2026-10-18). Zależności: R5 i zgłoszenie użytkownika — spełnione.
+- Zakres: naprawić konflikt kliknięcia punktu z przesuwaniem wykresu; zachować dotyk, zamykanie poza punktem i wszystkie wybory. Test rzeczywistego kliknięcia myszy w iframe, nie tylko focus/touch.
+- Odbiór: data/metryka/seria są widoczne po kliknięciu, klik poza punktem zamyka, drag nie otwiera dymku i nie blokuje następnego kliknięcia; oba ćwiczenia, mobile i główna galeria. Bez src/API/DB.
+- Wynik: pointer capture dopiero po progu drag, bez przejmowania zwykłego kliknięcia. Publiczny/prywatny R6:5 metryk w iframe, oba ćwiczenia, zamykanie, drag→klik,6 stanów360/390/430px, klawiatura i pierwszy tap po pinch PASS. Prywatna regresja R5 dotyku/pomocy/swipe PASS. [Handoff R6](handoffs/2026-10-18-T14-R6-klik-punktu-mysza.md). Bez zmiany wymagań D044 lub startu T15.
+
+### T15-P — Plan wdrożenia wybranego UI
+
+- Status: review. Właściciel: Codex — jeden planista/integrator (2026-10-18). Zależności: potwierdzone wybory T14 i jawne pytanie użytkownika o planowanie — spełnione.
+- Zakres: sprawdzić istniejące moduły i zależności T13, przygotować etapy, własność plików, kryteria/testy, planowane handoffy i gotowe prompty; wskazać pozostałe decyzje.
+- Odbiór: wykonalny plan bez powielania T13-D/E, odrębne zakresy autorów, jeden integrator, warunki rozpoczęcia. Bez uruchamiania innych agentów lub implementacji produktu w tej sesji.
+- Wynik: [plan T15](T15_UI_IMPLEMENTATION.md), siedem promptów i siedem kart przyszłego handoffu. A–G niewykonane; do A potrzebne zlecenie implementacji, bez kolejnych decyzji o wyglądzie. W E pozostaje do zapisania techniczny kontrakt analityki. [Rzeczywisty handoff R5/P](handoffs/2026-10-18-T14-R5-T15-P-interakcje-i-plan.md).
+
+### T15-U — Konsultacja delegowania i wznowienia
+
+- Status: done (konsultacja). Właściciel: Codex — jeden konsultant (2026-10-18). Zależności: gotowy plan T15-P i pytanie użytkownika — spełnione.
+- Zakres: ocena podziału A–G, udziału użytkownika i odzyskania pracy po limicie użycia. Bez implementacji lub uruchamiania subagentów.
+- Odbiór: konkretna rekomendacja organizacji, granice autonomii i procedura wznowienia; propozycje nie zatwierdzają wdrożenia. [Handoff T15-U](handoffs/2026-10-18-T15-U-delegowanie-i-limity.md).
+
+### T15-A — Fundament UI i domyślna Noc
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/foundation, pliki zwolnione. Zależności: T15-P, zlecenie implementacji, manifest zastanych zmian.
+- Zakres/odbiór/własność: [etap A](T15_UI_IMPLEMENTATION.md#a--fundament-noc-nawigacja-i-zasoby). Tokeny, AppShell, nawigacja, font/ilustracje, dostępne wspólne UI, kontrakty dla reszty. Bez przebudowy funkcji B–F.
+- Przekazanie: [prompt A](prompts/T15-A.md), [karta A](handoffs/planned/T15-A.md). Medium; typy/testy/build i mobilny odbiór fundamentu.
+
+### T15-B — Start, Plany i prowadzenie treningu
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/workout_ui, zakres zwolniony. Zależności: bramka A, lokalne T13-A/B/C i zlecenie B.
+- Zakres/odbiór/własność: [etap B](T15_UI_IMPLEMENTATION.md#b--start-plany-podgląd-szczegóły-i-zapis). Przenieść UI na działające komendy, zachować retry/szkice/konflikty i cztery karty.
+- Przekazanie: [prompt B](prompts/T15-B.md), [karta B](handoffs/planned/T15-B.md). High; lokalne HTTP/Chrome i regresje T13-C.
+
+### T15-C — Import, Korekta i Edytor
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/workout_ui, źródła zwolnione. Zależności: bramka A, istniejące T04-R1/T07-R1, zlecenie C.
+- Zakres/odbiór/własność: [etap C](T15_UI_IMPLEMENTATION.md#c--import-korekta-i-edytor-całego-ćwiczenia). Układy C/A/A, pełna karta/formularz, różne etapy korekty; bez parserów/API.
+- Przekazanie: [prompt C](prompts/T15-C.md), [karta C](handoffs/planned/T15-C.md). High; regresje edytora/importu na mocku AI.
+
+### T15-D — Historia A razem z T13-D
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/foundation, pliki zwolnione. Zależności: bramki A/B i T13-A/C, jawne zlecenie D. To alias tej samej pracy funkcjonalnej T13-D, nie drugi kalendarz.
+- Zakres/odbiór/własność: [etap D](T15_UI_IMPLEMENTATION.md#d--historia-a-realizowana-razem-z-t13-d). Kalendarz według wybranego UI z projekcją czasu A i przeglądem B/C, pełne R14–R16.
+- Przekazanie: [prompt D](prompts/T15-D.md), [karta D](handoffs/planned/T15-D.md). Medium; oba ID review do G/T13-E.
+
+### T15-E — Postęp z rzeczywistych wyników
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/progress, źródła zwolnione. Zależności: bramka A, datowanie T13-A, zlecenie E i zapis kontraktu obliczeń przez E/I przed agregacją.
+- Zakres/odbiór/własność: [etap E](T15_UI_IMPLEMENTATION.md#e--postęp-z-rzeczywistych-wyników). Własne autoryzowane dane, rzeczywiste punkty, metryki/PR całej historii, pomoc i gesty, zachowana semantyka T08 i brak zapisu szacunku do profilu.
+- Przekazanie: [prompt E](prompts/T15-E.md), [karta E](handoffs/planned/T15-E.md). High; domena, paginacja, izolacja A/B/anon, lokalny UI/API.
+
+### T15-F — Profil A i Logowanie C
+
+- Status: done lokalnie po G (2026-10-19). Właściciel: integrator /root, pliki zwolnione. Zależności: bramka A i zlecenie F.
+- Zakres/odbiór/własność: [etap F](T15_UI_IMPLEMENTATION.md#f--profil-a-i-logowanie-c). Istniejące Auth i ręczny datowany1RM, zachowane historyczne cele, nowe układy bez zmiany kontraktów.
+- Przekazanie: [prompt F](prompts/T15-F.md), [karta F](handoffs/planned/T15-F.md). Medium; formularze/Auth/klawiatura i właściwe regresje T04.
+
+### T15-G — Integracja i niezależny odbiór z T13-E
+
+- Status: done lokalnie (2026-10-19). Właściciel: niezależny recenzent G, pliki zwolnione. Zależności A–F spełnione, HEAD 11d66bc. D046 zamyka spór o cztery karty.
+- Zakres/odbiór/własność: [etap G](T15_UI_IMPLEMENTATION.md#g--integracja-i-niezależny-odbiór-wraz-z-t13-e). Cały przepływ, rzeczywiste lokalne API/DB, bramki T13-E, oddzielne ograniczenia urządzeń; bez samoczynnej publikacji.
+- Wynik: unit 251/9 skip, typy, build, lokalne A/B/anon i Chrome przepływu PASS. Pierwsza asercja czterech kart podglądu padła na 786,95 wobec nav 768; po D046 powtórzony cały T15-B i T13-C PASS. [Raport](reports/2026-10-19-T15-G-acceptance.md), [handoff](handoffs/2026-10-19-T15-G-niezalezny-odbior.md). Telefon/Safari otwarte. Publikacji brak.
+- Przekazanie: [prompt G](prompts/T15-G.md), [karta G](handoffs/planned/T15-G.md). High; recenzent nie jest autorem A–F i nie poprawia src po cichu.
+
+### GIT-S1 — Lokalny punkt kontrolny
+
+- Status: done. Właściciel: Codex (2026-10-18), jawne zlecenie zapisania aktualnych zmian w Git.
+- Zakres: bieżący kod T13, dokumentacja, publiczne makiety/generatory/zasoby T14 i plan T15, wraz z najnowszą konsultacją T15-U. Prywatne źródła poza repo; bez push/publikacji.
+- Sprawdzenia: zakres, wykluczenia, skan wzorców danych wrażliwych i diff-check. Bez nowych testów funkcjonalnych dla samego zapisu. [Handoff](handoffs/2026-10-18-GIT-S1-zapis-stanu.md).
+
+### T15-U2 — Prompt integratora CLI po konsultacji
+
+- Status: done. Właściciel: Codex — jeden konsultant (2026-10-18). Zależności: T15-U i przekazana przez użytkownika rozmowa CLI — spełnione.
+- Zakres: ocenić uwagi i przygotować pełne przyszłe zlecenie A–G z subagentami, bramkami, checkpointami i procedurą wznowienia. Nie uruchamiać implementacji lub delegowania podczas pisania promptu.
+- Odbiór: gotowy prompt startowy i pełna instrukcja w repo, jawne pierwszeństwo zbiorczego zlecenia nad osobnymi zleceniami etapów; maksymalnie dwóch wykonawców, niezależny G, ochrona wspólnych testów i danych. A–G nadal todo.
+- Wynik: [instrukcja integratora](prompts/T15-ORCHESTRATOR.md) i [handoff U2](handoffs/2026-10-18-T15-U2-prompt-cli.md), krótki prompt startowy do ręcznego użycia. Bez kodowania lub uruchamiania agentów w tej sesji.

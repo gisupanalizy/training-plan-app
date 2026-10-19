@@ -16,7 +16,8 @@ test("edytuje A/B i wysyła nową wersję z różnymi seriami", async () => {
   const fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ planId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" }) });
   vi.stubGlobal("fetch", fetch);
   render(<PlanEditor initial={initial} planId="aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" expectedVersionId="bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" catalog={[]} />);
-  fireEvent.click(screen.getByRole("button", { name: "+ Dodaj blok serii" }));
+  fireEvent.click(screen.getByRole("button", { name: "Edytuj ćwiczenie: Przysiad" }));
+  fireEvent.click(screen.getByRole("button", { name: "+ Dodaj serię" }));
   fireEvent.click(screen.getByRole("button", { name: "Zastosuj zmiany" }));
   fireEvent.click(screen.getByRole("button", { name: "Opublikuj nową wersję" }));
   await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));

@@ -1,0 +1,199 @@
+{
+  "date": "2026-10-18",
+  "environment": "Chrome headless, lokalne samodzielne makiety; bez API aplikacji",
+  "checks": [
+    "42 stany przy 360px bez overflow",
+    "42 stany przy 390px bez overflow",
+    "42 stany przy 430px bez overflow",
+    "Wybór B → właściwe ćwiczenie → pełna rampa",
+    "Wybrane wiosłowanie ma własne szczegóły i kg / ręka",
+    "Uzupełnienie celu i symulacja zapisu bez API",
+    "Oryginał i źródło rozwijają się natywnie",
+    "Lokalny wybór i czyszczenie preferencji",
+    "Galeria przy390px, przyciski dostępne z klawiatury"
+  ],
+  "failed": [],
+  "errors": [],
+  "measurements": [
+    {
+      "variant": "focus",
+      "scrollBottom": 701,
+      "cards": [
+        384,
+        490,
+        597,
+        703
+      ],
+      "buttons": [
+        {
+          "height": 44,
+          "width": 171
+        },
+        {
+          "height": 44,
+          "width": 171
+        },
+        {
+          "height": 56,
+          "width": 352
+        },
+        {
+          "height": 56,
+          "width": 352
+        },
+        {
+          "height": 56,
+          "width": 352
+        },
+        {
+          "height": 56,
+          "width": 352
+        },
+        {
+          "height": 48,
+          "width": 354
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        }
+      ]
+    },
+    {
+      "variant": "table",
+      "scrollBottom": 701,
+      "cards": [
+        411,
+        506,
+        602,
+        697
+      ],
+      "buttons": [
+        {
+          "height": 44,
+          "width": 171
+        },
+        {
+          "height": 44,
+          "width": 171
+        },
+        {
+          "height": 64,
+          "width": 354
+        },
+        {
+          "height": 64,
+          "width": 354
+        },
+        {
+          "height": 64,
+          "width": 354
+        },
+        {
+          "height": 64,
+          "width": 354
+        },
+        {
+          "height": 48,
+          "width": 354
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        }
+      ]
+    },
+    {
+      "variant": "cards",
+      "scrollBottom": 701,
+      "cards": [
+        507,
+        683,
+        859,
+        1035
+      ],
+      "buttons": [
+        {
+          "height": 44,
+          "width": 171
+        },
+        {
+          "height": 44,
+          "width": 171
+        },
+        {
+          "height": 96,
+          "width": 354
+        },
+        {
+          "height": 96,
+          "width": 354
+        },
+        {
+          "height": 96,
+          "width": 354
+        },
+        {
+          "height": 96,
+          "width": 354
+        },
+        {
+          "height": 48,
+          "width": 354
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        },
+        {
+          "height": 51,
+          "width": 54
+        }
+      ]
+    }
+  ]
+}

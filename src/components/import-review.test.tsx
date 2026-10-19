@@ -33,7 +33,7 @@ it('edytuje cały blok, zachowuje ID/uwagi/optional i odrzuca niezastosowany for
 });
 it('pozostaje w kroku pierwszym po błędzie zapisu i pozwala ponowić',async()=>{
  const fetch=vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValue({ok:true,json:async()=>({saved:true})});vi.stubGlobal('fetch',fetch);
- render(<ImportReview {...props()}/>);fireEvent.click(screen.getByRole('button',{name:'Potwierdź ćwiczenia'}));await screen.findByRole('alert');expect(screen.getByRole('heading',{name:'Ćwiczenia'})).toBeTruthy();
+ render(<ImportReview {...props()}/>);fireEvent.click(screen.getByRole('button',{name:'Potwierdź ćwiczenia'}));await screen.findByRole('alert');expect(screen.getByRole('heading',{name:'Nazwy ćwiczeń i kolejność'})).toBeTruthy();
  fireEvent.click(screen.getByRole('button',{name:'Potwierdź ćwiczenia'}));await screen.findByRole('heading',{name:'Serie i superserie'});expect(fetch).toHaveBeenCalledTimes(2);
 });
 it('wybór ankiety jest etapowy, ma podgląd i nie zmienia danych przed zastosowaniem',async()=>{

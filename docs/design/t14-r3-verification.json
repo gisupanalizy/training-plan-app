@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-18",
+  "private": false,
+  "frames": 64,
+  "widthChecks": 192,
+  "checks": [
+    "192 kontroli szerokości",
+    "Sześć nowych wyborów utrwalonych niezależnie od localStorage",
+    "Import C: ikony wyśrodkowane i ikona ręcznej edycji",
+    "Edytor: cała karta, fokus/cancel, serie/powtórzenia, 0 kg, tempo, różne serie, ponowne otwarcie i Escape",
+    "Postęp A/B/C: daty, całość/własny/błędny zakres, zoom +/- i rzeczywista seria; masa ciała bez 0 kg",
+    "Syntetyczny dotyk: rozsuwanie i zsuwanie dwóch palców zmienia zakres; jeden palec przewija stronę"
+  ],
+  "bad": [],
+  "errors": [],
+  "measurements": [
+    {
+      "key": "plan:a:0:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    },
+    {
+      "key": "plan:a:1:0:0",
+      "fourth": 677.359375,
+      "end": 701
+    }
+  ],
+  "pinch": {
+    "initial": 29980800000,
+    "pinched": 9539346116.176514,
+    "expanded": 29980799999.99951,
+    "scrollBefore": 0,
+    "scrollAfter": 88
+  },
+  "engine": "Chrome headless; viewport, mysz/klawiatura i syntetyzowany multitouch; bez fizycznego telefonu/Safari"
+}

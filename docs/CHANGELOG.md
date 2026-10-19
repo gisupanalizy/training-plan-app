@@ -184,3 +184,160 @@ Głos: systemowy say/Zosia wygenerował syntetyczne2,91775s WAV97464B. Hostowana
 Obie flagi true, szacunki aplikacji import4/głos1USD w24h;5USD łącznie na start obejmuje obie funkcje. To nie twardy łączny limit rachunku ani zgoda na codzienny nowy budżet. Użytkownik otrzymał instrukcję limitu projektu OpenAI, zapis niepotwierdzony. Krótkie nagrania można testować;5MiB wobec4,5MB Vercel pozostaje ograniczeniem dużych plików przed pełną betą. Stary smoke wymagał503AIoff — nie uruchamiać go bez dostosowania do obecnego stanu.
 
 Kontrole końcowe dotyczą tylko dokumentacji i niezmienionego manifestu C1; bez ponawiania szerokiej regresji aplikacji.
+
+## 2026-10-17 — T13-P: podział uzgodnionego planu, bez implementacji
+
+Na jawne zlecenie użytkownika odtworzono pełny plan T13 z chatu „Opisz możliwości aplikacji”, którego wcześniej nie było w repo. Powód podziału: mniejsze sekwencyjne zadania z kontraktami pozwalają ograniczyć koszt i uniknąć sprzecznej pracy nad sesją/stanem UI. Zachowano nadrzędne T13 i wszystkie R01–R16; wydzielono dokumentacyjne T13-P oraz A sesje/API/datowanie → B podgląd → C wykonanie → D kalendarz → E niezależny odbiór. Zależności dotychczasowych T01–T12 bez zmian, T12 nadal deferred; pełny T11 i fizyczny T10-R1 pozostają otwarte.
+
+D033 utrwala zakres i jednego integratora, D034 projektuje delete/late retry bez odtworzenia oraz korektę daty bez zmiany historycznych celów/1RM. Wskazano właścicieli plików, lokalne bramki i zasady review do E bez cyklu zależności. Dodano specyfikację, pięć promptów i pięć kart przyszłych handoffów (wyraźnie szablony), zaktualizowano README, STATUS, ROADMAP i właściwe specyfikacje. T13-P przeszło in_progress → done po kontroli dokumentacji; T13/A–E nadal todo i bez przypisanych wykonawców. Nie uruchomiono agentów, aplikacji, testów wykonawczych, migracji ani wdrożenia. Wyniki kontroli dokumentacji i prompt następnej sesji w handoffie podziału.
+
+
+## 2026-10-17 — T13-A: sesje/API/datowanie lokalnie
+
+Bieżące osobne zlecenie uruchomiło wyłącznie A. Jeden wykonawca/integrator Codex przejął przydział A; zachował zastaną dokumentację T13-P, bez innych agentów. D035 doprecyzowuje FK: odłączenie nullable kotwicy receipts, minimalny tombstone i osobny wewnętrzny receipt rewizji przy replace/finish. Nowa migracja22 zachowuje legacy i stare hashe, serializuje wszystkie komendy konta, wprowadza globalny konflikt, atomowe replace, trwałe delete/410, spójny read_workout i datowanie z niezmiennym snapshot_on. Repozytorium historii i filtry postępu korzystają ze wspólnej projekcji strefy. Dodano wyłącznie moduły A, GET, testy/runner npm bez zależności.
+
+Lokalna bramka A przyjęta: replay21→legacy→22, wymuszony rollback, rzeczywiste RPC/HTTP A/B/anon, concurrency/retry/legacy/DST/snapshoty, regresje T04/T05/T06-R1/T08/T09, 180 passed/9 skipped, build/typy. Pierwszą błędną asercję testu poprawiono; zachowano fakty i ograniczenia w TESTING/handoffie. T13 in_progress, A review do E, B–E todo; zależności bez zmian. B jest gotowe dopiero po osobnym zleceniu. Dokumentacja wykonania zastępuje wcześniejsze opisy A jako wyłącznie projektu; T13-P i karty planned pozostają historią/szablonami. Bez commit/push, produkcji, płatnego AI, nowych usług i pozornego zamykania T11/T10-R1.
+
+
+## 2026-10-18 — T13-B: podgląd planu lokalnie
+
+Osobne zlecenie uruchomiło wyłącznie B; jeden wykonawca/integrator Codex przejął przydzielone pliki B i globals.css, zachowując wszystkie zastane zmiany A/T13-P. Selektor biblioteki bez tygodni zapamiętuje ID jednostki per plan/wersja; fallback nie scala nazw. Dodano krótkie karty, pełne Wszystkie serie i podgląd całości; oryginały/źródła/uwagi/rampy/AMRAP/opcjonalność/null/0 zachowane. Wersje i istniejący start są na żądanie; archiwum bez startu. D036 utrwala lokalną preferencję i wspólne czyste podsumowania planu/snapshotów dla C.
+
+Integrator przypisał nowy syntetyczny runner Chrome B do wymaganej bramki; bez zależności i zmian package.json. R03 nie wymagał zmian edytora/importu: rzeczywisty syntetyczny przepływ zachował osobne A/A, tygodnie i16serii. Ręczny edytor Chrome, HTTP importu i B Auth/DB/UI PASS;360/390/430 px bez overflow, cztery pełne karty390×844, fokus/cele44.190 passed/9 skipped, finalny build i następujące typy PASS. Wcześniejsze błędy/pomiary/ograniczenia zapisano w TESTING i rzeczywistym handoffie.
+
+B in_progress → review; lokalna bramka przyjęta, C gotowe po osobnym zleceniu. A/B review do niezależnego E, C–E niewykonane. Zwolniono pliki B/style dla C, zależności i zakres bez zmian. Zaktualizowano README, STATUS, ROADMAP, T13, UX, DATA_MODEL, ARCHITECTURE, PRODUCT, DECISIONS i TESTING oraz handoff. Bez SQL/API/C, produkcji, płatnego AI, commit/push i pozornego zamknięcia T11/T10-R1.
+
+
+## 2026-10-18 — T13-C: prowadzenie treningu lokalnie
+
+Osobne zlecenie uruchomiło tylko C. Codex jako jeden wykonawca/integrator przejął pliki C, globals.css i nowy runner Chrome, zachowując zastane A/B/T13-P. Zrealizowano przegląd i pojedynczą serię, rundy superserii, liczniki, Wszystkie serie/poprawkę, szkice i pełną komendę retry z GET po ACK, rozstrzygnięcie409 oraz ochronę powrotu/fokusu/scrolla. Start ma automatyczny czas i konflikty/legacy, finish korektę czasu/DST, delete dodatkowe potwierdzenie, replace korzysta z atomowego API A. Głos zachowuje zatwierdzenie i kotwicę. D037 utrwala klienta; bez zmian SQL/API i wymagań produktu.
+
+Powód nowych plików C: rozdzielenie transportu od projekcji/szkiców i współdzielenie finish/dialogu między startem i sesją. Bramka C przyjęta po rzeczywistym lokalnym Chrome/API:360/390/430, cztery karty390×844, retry/409/GET failure, szkice/Wstecz, mock głosu, historyczna poprawka, legacy/replace/delete, korekta bez zmiany null i120/90, ponowne logowanie. Regresje T13-A/T05/T08/T09,198 passed/9 skipped, build/typy PASS. Wcześniejsze błędy jawnie w TESTING/handoffie.
+
+C in_progress → review, A/B/C review do E; D–E niewykonane. Zależności/ID zachowane, D dopiero po osobnym zleceniu. Zaktualizowano README, STATUS, ROADMAP, T13, UX, DATA_MODEL, ARCHITECTURE, DECISIONS i TESTING; dodano rzeczywisty handoff z promptem D. Pliki C i style zwolniono. Bez commit/push, produkcji, płatnego AI, zmian usług lub pozornego odbioru T11/T10-R1. Pojawione podczas sesji .codex/hooks.json/.cursor/hooks.json pozostawiono bez edycji.
+
+
+## 2026-10-18 — T14: opcje UI przed wyborem
+
+Na jawne zlecenie użytkownika wydzielono T14 — analizę czytelności oraz trzy mobilne mock-upy do porównania przed wyborem kierunku. Użytkownik potwierdził priorytet telefonu i zestaw ekranów. To materiał projektowy, nie wdrożenie; T13 zachowuje ID, zależności i zastane statusy (w ROADMAP C jest już in_progress mimo starszego opisu w STATUS/handoffie B). Nie przejmujemy plików C ani globals.css. Wymaganie ikon i wyraźnego rozdzielenia parametrów zapisujemy jako cel projektu; konkretny układ pozostaje propozycją.
+
+
+## 2026-10-18 — T14: gotowe mock-upy, review użytkownika
+
+Przygotowano samodzielną galerię A/B/C, każdy wariant z czterema ekranami, siedmioma ikonami ruchów i danymi syntetycznymi. Analiza wiąże problemy hierarchii z rzeczywistymi komponentami B oraz uwzględnia ukończone w oddzielnej pracy C. T14 in_progress → review; decyzja użytkownika pozostaje otwarta (D038). Chrome:126 kontroli szerokości bez overflow, zaliczone interakcje, zrzuty i raport. Jawnie zapisano brak pełnej bramki czterech kart w A (2px obrysu) i C (dwie pełne); bez cichej zmiany T13. Nie zmieniano src, migracji ani usług. Zastane i równolegle pojawione zmiany C zachowano. Handoff: [T14](handoffs/2026-10-18-T14-mockupy-ui.md).
+
+
+## 2026-10-18 — T14-S: wybór użytkownika A/A/A/C
+
+Użytkownik wybrał Plany A z przewijaniem wielu planów gestem lewo/prawo, Podgląd A, Szczegóły A i Zapis serii C. Usuwa to bloker braku wyboru T14. Wydzielono T14-S do połączenia makiet i doprecyzowania swipe, zachowując oryginalne warianty oraz ID/zależności T13. To etap projektu, bez automatycznej implementacji produktu.
+
+
+## 2026-10-18 — T14-P: prywatny PDF i pozostałe ekrany
+
+Po wyborze A/A/A/C i dopisaniu swipe planów użytkownik zlecił użycie własnego PDF oraz warianty pozostałych ekranów; pełny zestaw potwierdził w pytaniu strukturalnym. T14-P rozwija prezentację, nie zakres backendu. Dodano D039; dokumentacja prywatnego źródła ogranicza się do lokalizacji/ograniczeń bez treści planu. Impeccable i pdf używane do projektu/odczytu. Bez innych agentów i implementacji aplikacji.
+
+
+## 2026-10-18 — T14-S/P: gotowy pełny zestaw, prywatne dane poza repo
+
+Połączono A/A/A/C, dodano swipe oraz po trzy warianty Startu/Importu/Korekty/Edytora/Historii/Postępu/Profilu/Logowania. Prywatne źródło, model, HTML i obrazy są w osobnym lokalnym katalogu; repo zawiera wyłącznie generyczne narzędzia i makiety syntetyczne. Stan S/P → review.192 publiczne i372 prywatne kontrole szerokości, przejścia i syntetyczny touch/klawiatura PASS. Cztery pełne karty390×844 naprawiają dawne2px A bez zmiany kryterium. D039 utrwala wybór; pozostałe osiem wyborów pozostaje otwartych. [Handoff](handoffs/2026-10-18-T14-pelna-galeria-prywatny-plan.md). Bez implementacji src, AI, bazy i produkcji.
+
+
+## 2026-10-18 — T14-R2: feedback o importowaniu i obsłudze
+
+Użytkownik wskazał zbyt podobne kroki Ćwiczenia/Serie, wymaga gestu swipe w mock-upie, gotowych ilustracji ćwiczeń, wykresów we wszystkich wariantach Postępu i klikalności całych kart. T14-R2 dopracowuje makiety w tym zakresie; zachowuje A/A/A/C oraz granice prywatnych danych. Wybór biblioteki wymaga sprawdzenia jej aktualnego pochodzenia i licencji. Bez wdrożenia aplikacji.
+
+Wynik R2: odrębne treści trzech kroków i jawne potwierdzenia, pełne przyciski kart, przeciąganie myszą z ochroną kliknięcia, natywny swipe oraz trzy propozycje wykresów z jednostkami, filtrami i lukami danych. Dodano 17 oryginalnych SVG Workout Guide, manifest SHA/pochodzenia, lokalne licencje i atrybucję; niepełne pokrycie oznaczono neutralnie. Bez pakietu npm lub płatności. Zasoby/makiety prywatne pozostają poza repo.
+
+T14-R2 in_progress → review.564 kontrole szerokości i cztery karty390×844 PASS; prywatny R2 siedem grup interakcji PASS. Publiczny R2 zatrzymał się na drag myszą, a dalszą diagnozę Chrome przerwał limit automatycznego review uprawnień. Przyczyna nieustalona; nie zapisano pełnego PASS. D040/specyfikacja/STATUS/ROADMAP i [handoff R2](handoffs/2026-10-18-T14-R2-import-gesty-wykresy.md) dokumentują granice. Bez src, migracji, backendu, AI, agentów, commit/push lub produkcji.
+
+## 2026-10-18 — T14-K: osobna galeria kolorystyki
+
+Na zlecenie użytkownika wydzielono porównanie palet, z obecną jako punktem odniesienia. Celem jest wybór kolorów przy stałym układzie A/A/A/C, bez utożsamiania nowej propozycji z zatwierdzonym motywem. Osobny artefakt i prywatny wariant poza repo, bez src i wdrożenia.
+
+T14-K in_progress → review: Las/Kobalt/Miedź/Morska/Grafit/Noc, wszystkie ekrany i lokalna preferencja niezależna od układu. Dodano odsyłacz z głównej galerii i powrót, panel rozwijany na telefonie, porównanie/pojedynczą paletę i skalę szarości.432 kontrole szerokości, cztery karty w każdej palecie/jednostce,72 pary kontrastu tokenów i celowane interakcje PASS. Zrzuty końcowe uwzględniają malowanie dolnych iframe przez wysoki viewport. D041/specyfikacja/README/STATUS/ROADMAP i handoff K opisują propozycje. Po przywróceniu kontroli uprawnień publiczny R2 ponowiono z sukcesem; wcześniejsza przyczyna drag nieustalona, bez poprawiania gestu na podstawie przypuszczeń. Bez src, backendu, agentów, płatnego AI lub publikacji.
+
+
+## 2026-10-18 — T14-U: konsultacja UI/UX
+
+Wydzielono i zakończono konsultację na pytanie użytkownika o standardy, skille, biblioteki i kolejność wyborów. Zalecenie: ocenić pełny przepływ przed zatwierdzeniem wszystkich osobnych ekranów. Bez nowych zależności produkcyjnych, zmiany wymagań, makiet lub wyborów D039/D041. Aktualne źródła i granice w handoffie U.
+
+## 2026-10-18 — T14-R3: kolejne decyzje i dopracowanie
+
+Użytkownik wybrał Start A, Import C, Korektę A, Edytor A, Historię A i Logowanie C oraz zlecił dopracowanie ikon/nagłówka/edycji całego ćwiczenia. Postęp wymaga nowych propozycji z gestami i datami oraz researchu internetowego; Profil wymaga wyjaśnienia jednej prawdy o wynikach. Nowe T14-R3, bez samoczynnej zmiany modelu1RM, źródeł danych lub implementacji produktu. Paleta, Postęp i Profil pozostają bez wyboru.
+
+Po doprecyzowaniu użytkownika zachowano ręczny rzeczywisty1RM z datą; bez automatycznego powiązania/estymowania z serii. Utrwalono sześć nowych wyborów niezależnie od localStorage i w galerii kolorów. Import C centruje ikony i ma ikonę ręcznego tworzenia; Korekta A doprecyzowuje nagłówek. Nowy formularz Edytora A ma całość ćwiczenia, indywidualne serie, anulowanie/fokus i lokalne zachowanie zmian. Termin „Powtórzenia” zależy od rodzaju zadania, bez błędnego zamieniania sekund na powtórzenia.
+
+Postęp R3: trzy propozycje ciężaru/powtórzeń po researchu źródeł Hevy/Strong/Fitbod, szersze daty z całą historią, gest pinch, kontrolki i konkretne serie. Bez szacowania1RM lub historii właściciela. T14-R3 → review.192+372 kontrole i celowane interakcje PASS;216 prywatnych kontroli palet PASS. Pierwszy błąd runnera wynikał z wielokrotnego użycia document.write w jednym środowisku JS; poprawiono zakres skryptów w samym probe i powtórzono. D042/specyfikacja/README/STATUS/ROADMAP/TESTING oraz handoff R3 zapisują fakty. Bez src, API, DB, płatnego AI, agentów i publikacji.
+
+## 2026-10-18 — T14-R4: szczegółowy brief Postępu
+
+Użytkownik usunął wymaganie osobnego przycisku „Edytuj ćwiczenie” i wskazał jeden uproszczony układ Postępu z dwiema odmianami ćwiczeń. Nowy brief jawnie dodaje szacowany1RM jako domyślną metrykę analityczną; nie zastępuje rzeczywistego pomiaru do zaleceń procentowych. T14-R4 dopracowuje makiety, bez automatycznej zmiany obliczeń aplikacji lub profilu. Usuwamy stare propozycje A/B/C z bieżącego wyboru Postępu, zachowując historyczne opisy.
+
+T14-R4 in_progress → review. Jasny Postęp z Inter, pojedynczą linią, metrykami nad wykresem, zakresami pod osią X i rekordami całej historii. Dwa przykłady ćwiczeń, zachowane pinch i sterowanie alternatywne; przycisk edycji usunięty, cała karta nadal otwiera pełny formularz. D043/specyfikacja/PRODUCT/README/STATUS/ROADMAP/TESTING i handoff R4 zapisują oddzielenie szacunku od ręcznego1RM i proponowaną metodę.192+372 kontrole szerokości i interakcje R4 PASS,216 prywatnych kontroli palet PASS. Dodano Inter/OFL1.1 z przypiętym źródłem i manifestem. Prywatne dane poza repo; bez zmian src/API/DB, agentów, płatnego AI, commit/push i publikacji.
+
+## 2026-10-18 — T14-R5 i T15-P: wyjaśnienie danych i plan wdrożenia
+
+Użytkownik wybrał domyślną paletę Noc, zlecił chmurkę metody1RM i dotykowe przesuwanie rekordów oraz zapytał o gotowość do wdrożenia i podział pracy. Dodano T14-R5 do makiet i T15-P do przygotowania etapów; nie stanowi to rozpoczęcia implementacji produktu lub automatycznego zlecenia innym agentom. Punkty istniejącej makiety pochodzą z syntetycznych treningów, podpisy osi są orientacyjnymi datami; doprecyzowanie dotyczy czytelności, nie wytwarzania nowych pomiarów.
+
+Potwierdzono Profil A, zamykając wybory układów. R5 wprowadza Noc w głównej galerii, pomoc1RM i odczyt punktu. Po kolejnym feedbacku usunięto wybieranie najbliższego wpisu z całego SVG: wyłącznie punkt otwiera, klik poza punktem zamyka. Natywny swipe obu rzędów PR104→0px i końcowy publiczny/prywatny R5 PASS. Regresja192+372 szerokości i216 prywatnych palet PASS przed ostatnią korektą hit-test; po niej celowany R5 PASS. Wyodrębniono wspólne tokeny `t14-themes.py` bez zmiany palet.
+
+R5/P → review. Plan T15 ma siedem etapów A–G, siedem promptów i siedem kart przyszłego handoffu, odrębnych autorów i jednego I. T15-D realizuje jednocześnie T13-D; G obejmuje T13-E, aby nie powielać zaległych prac. Stare ID i ich niewykonane statusy zachowane. Techniczny kontrakt analityki do zapisania w E/I; zaobserwowano filtrowanie dat w obecnym getProgress przed agregacją, więc PR całej historii wymagają niezależnego zakresu. D044 i dokumentacja zapisują decyzje/propozycje. Bez src/API/DB, agentów, commit/push, płatnego AI i publikacji.
+
+## 2026-10-18 — T14-R6: klik myszy a przesuwanie wykresu
+
+Użytkownik zgłosił brak informacji po kliknięciu punktu. Odtworzono na prawdziwym kliknięciu Chrome: pointerdown trafia w circle, ale pointerup/click w SVG wskutek natychmiastowego pointer capture. Test R5 obejmował dotyk i klawiaturę, nie wykrył regresji myszy. Dodano R6 do poprawy i celowanej regresji; zakres wymagań D044 pozostaje bez zmian.
+
+R6 → review: capture dopiero przy drag, zwykły klik trafia w marker; nowy celowy klik/tap resetuje blokadę gestu. Publiczny/prywatny R6 PASS (5 metryk w iframe, zamykanie, drag→klik, mobile/klawiatura, tap po pinch). Prywatny R5 dotyku/pomocy/swipe PASS. Pierwszy setup R6 zasłaniał wykres pomocą otwieraną kliknięciem aktywnej metryki; poprawiono sam test. Obejrzano zrzuty widocznych informacji w desktopowej galerii i390px. Wygenerowano publiczne/prywatne galerie, dokumentacja i handoff aktualne. Bez CSS/src/API/DB, agentów, publikacji lub rozpoczęcia T15.
+
+## 2026-10-18 — T15-U: konsultacja delegowania i limitów
+
+Na pytanie użytkownika wydzielono konsultację T15-U (in_progress → done), aby oddzielić ocenę sposobu pracy od zlecenia implementacji. Rekomendacje i procedura wznowienia są w handoffie; A–G, zależności i wybory produktu bez zmian. Bez src, uruchamiania subagentów, commit/push lub publikacji.
+
+## 2026-10-18 — GIT-S1: lokalny zapis aktualnej pracy
+
+Na jawne zlecenie użytkownika zapisano bieżący kod/dokumentację/publiczne mockupy i zasoby w Git, z zachowaniem zastanych zmian i nowej konsultacji T15-U. Prywatny PDF/galeria i sekrety wyłączone. Sprawdzono zakres, wykluczenia, wzorce prywatnych danych oraz diff-check. Bez push, publikacji lub nowych bramek funkcjonalnych; samego zapisu nie utożsamia się z odbiorem T13/T15.
+
+## 2026-10-18 — T15-U2: prompt zbiorczego zlecenia CLI
+
+Po odczycie przekazanej rozmowy CLI przygotowano pełny szablon integratora i krótki prompt startowy. Zawiera przyszłą autoryzację A–G i delegowania, max2 wykonawców, pierwszeństwo nad oczekiwaniem osobnych zleceń, bramki, kontrakty B/D i E, wyłączność plików, kolejkę testów oraz checkpointy i bezpieczne wznowienie. Zgoda zaczyna działać dopiero po użyciu promptu przez użytkownika, nie przez zapis pliku. Oficjalne dokumenty subagentów/CLI/limitów sprawdzone, bez gwarancji automatycznego restartu. T15-U2 done jako konsultacja; A–G todo. Bez implementacji, uruchamiania agentów, konfiguracji CLI, commitu lub push.
+
+## 2026-10-18 — T15: zbiorcze zlecenie implementacji
+
+Użytkownik zlecił lokalne A–G z integratorem i maksymalnie dwoma wykonawcami, niezależnym G, checkpointami i lokalnymi commitami. Zgoda zastępuje osobne zlecenia etapów. A in_progress; reszta czeka na bramki. Bez zmiany wymagań lub publikacji.
+
+T15 — przed B zapisano kontrakt przekazania przeglądu do D: jeden WorkoutEditor i walidowane historyMonth/historyDay dla powrotu do kalendarza, bez dowolnego returnUrl. Doprecyzowanie R14, zależności bez zmian.
+
+T15-A review po przyjętej lokalnej bramce (204 testy/9skip, typy/build, Chrome21 stanów i desktop). B/E rozpoczęte równolegle. Poprawiono overflow profilu z długim emailem360 w fundamencie. Wymagania bez zmian; telefon/Safari nadal osobno.
+
+### 2026-10-18 — T15-F lokalny Profil A i konto
+
+- Prezentacja Profil A/Logowanie C/hasła w Nocy; rzeczywiste datowane1RM i historia, istniejące Auth bez zmian usług/SQL. Pending i fokus błędu, blokada pól podczas zapisu.
+- F2unit, lokalny Chrome360/390/430 z prawdziwym login/error/1RM/krokiem/hasłem/logout/relogin oraz T04 PASS. Build/typy B/E/F PASS; dwie stare asercje demo w pełnej suite naprawia B.
+- Stary T08 HTTP zawężony do jawnej filtrowanej sekcji historii, ponieważ nowe PR all-time prawidłowo zawierają daty spoza filtra. Zakres i izolacja nadal sprawdzane; ponowienie oczekuje kolejki.
+
+### 2026-10-18 — T15-B lokalna bramka
+
+- Start/karuzela planów/podgląd/szczegóły tabelaryczne/prowadzenie treningu w Nocy; zachowane komendy i bezpieczny kontekst powrotu dla D.
+- Naprawiono początkowe wyrównanie drugiego planu i klawiaturę po drag. Chrome wykrył czwartą kartę aktywnego treningu pod nav; przeniesiono CTA pod listę, pełna powtórka PASS.
+-32unitPASS, nowe powierzchnie360/390/430 i pełny niezmieniony T13-C PASS, build/typyPASS. D może korzystać z kontraktu B→D. Bez API/SQL/push.
+
+### 2026-10-19 — T15-E odebrane lokalnie, start C
+
+- Domknięto checkpoint99433b8 rzeczywistym ChromePASS wykonanym przez I; źródła/PR/paginacja i prywatność wcześniejPASS w API. Bez zmian wymagań; E review do G.
+- B odebrane w60fcf41. Wykonawca /root/workout_ui przejmuje odrębny C po zwolnieniu B; E kończy dokumenty, następnie slot dla D. Zachowano limit2 wykonawców.
+
+### 2026-10-19 — T15-D/T13-D odebrane lokalnie
+
+Jeden kalendarz Historia A/Noc oparty o istniejący odczyt i projekcję T13-A; aktywne osobno, legacy bez wymyślonej godziny, walidowany powrót B i autoryzowany profil dla strefy/Dzisiaj. Bez zmian repozytorium/API/SQL.6testów, build/typy i realne API/Chrome3szerokości/klawiatura/daty/delete/privacyPASS. Oba ID review do G/T13-E.
+
+### 2026-10-19 — T15-C odebrane lokalnie
+
+Import C, odrębne kroki Korekty A i pełna karta Edytora A w Nocy. Całe ćwiczenie edytowane na lokalnej kopii; apply/cancel obejmuje serie i metadane, stabilneID/źródła/opcjonalność zachowane. Naprawiono counts oraz przywracanie flag nowych serii po rozszerzeniu zakresu.42unit, realne lokalne HTTP/editor/importPDF-XLSX i QA4kart390PASS, build/typyPASS. Bez zmian API/domain/SQL. A–F gotowe do niezależnego G/T13-E.
+
+### 2026-10-19 — widoczne superserie w treningu
+
+Podgląd treningu rysował każde ćwiczenie osobną kartą, a jedyną informacją o grupie był drobny podpis. Ramka w zapisie i edytorze używała tego samego szarego obrysu co karty, więc na Nocy grupa znikała. Co najmniej dwa ćwiczenia o tej samej grupie są teraz wspólnym blokiem ze złotą ramką i tytułem. Bez zmiany danych ani reguł grupowania.
+
+### 2026-10-19 — T15-G zamknięty lokalnie
+
+Niezależny odbiór na `11d66bc` zaliczył testy, typy, build, lokalne A/B/anon i Chrome. Pierwsza asercja wymagała, żeby czwarta karta podglądu kończyła się nad nawigacją; pomiar dał 786,95 wobec 768. D046: użytkownik uznał przewinięcie dłuższej listy za właściwe zachowanie, nie za wadę. Asercja sprawdza teraz, że kartę da się doskrolować. Powtórzony T15-B razem z T13-C przeszedł. T13 i T15-A–G są done lokalnie. Telefon, Safari i publikacja bez zmiany.

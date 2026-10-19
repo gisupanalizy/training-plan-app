@@ -11,7 +11,7 @@ Trening / Plany / Historia / Postęp / Profil. Mikrofon jest dostępny w edycji 
 1. **Start i logowanie:** dostęp testera, powrót do rozpoczętego treningu, wybór planu i jednostki.
 2. **Plany:** ręczne utworzenie, import PDF/XLSX/zdjęcia, aparat, wklejenie tekstu, dyktowanie. Widoczny status szkiców i importów.
 3. **Przegląd importu:** źródło i rozpoznana struktura; na telefonie przełącznik widoków. Braki przy odpowiednich polach oraz pytania z zamkniętym wyborem lub wpisaniem ilości. Zmiana kolejności, przypisanie nazw ćwiczeń, dodanie brakującej serii. Zapis szkicu lub zatwierdzenie po odpowiedziach.
-4. **Plan:** tygodnie i jednostki, cele, uwagi; edycja tworzy nową wersję, nie zmienia zakończonych treningów.
+4. **Plan (lokalny T13-B):** selektor jednostki bez tygodni, krótkie karty i Wszystkie serie, kontekst źródła na żądanie; edycja tworzy nową wersję, nie zmienia zakończonych treningów.
 5. **Aktywny trening:** aktualne ćwiczenie, planowane serie, poprzedni wynik, pola numeryczne, duży przycisk zapisania. Mikrofon, dodanie serii/ćwiczenia, notatka i pominięcie. Wyraźne rozróżnienie zapisanych i niezapisanych zmian.
 6. **Podgląd głosu:** transkrypcja dostępna do korekty, karta zmian i jeden przycisk zatwierdzenia. Niejasności prowadzą do wyboru konkretnego ćwiczenia/pola.
 7. **Podsumowanie i historia:** wykonane/pominięte serie, komentarze, dodatkowe ćwiczenia, czas; historia wybranego ćwiczenia z filtrem wariantu.
@@ -60,3 +60,28 @@ Nowe i istniejące plany pokazują jeden trening wybrany z listy tygodnia/dnia/l
 Okno jest modalne na desktopie i pełnoekranowe na telefonie. Zastosowanie waliduje fragment i aktualizuje szkic; anulowanie/Escape/zamknięcie odrzucają formularz. Fokus wraca do karty. Dodawanie działa na kopii, a usunięcie ćwiczenia lub treningu wymaga potwierdzenia. Edycja treningu obejmuje także kolejność; nazwa i pozycja są stosowane razem. Przeniesienie ostatniego ćwiczenia zostawia jawnie pusty trening do uzupełnienia lub usunięcia; nie kasuje jego uwag automatycznie.
 
 Dyktowanie jest w osobnym oknie i wymaga świadomego dodania propozycji. Pasek zapisu pokazuje stan zmian; na telefonie pozostaje w toku strony, żeby nie zasłaniać kart, na desktopie jest przyklejony. Link wyjścia i przeładowanie ostrzegają o zmianach; Chrome używa również Navigation API dla przycisku Wstecz. Publikacja waliduje cały dokument i tworzy całą wersję; błąd wskazuje niekompletny trening. Podczas wysyłania edycja jest zablokowana, retry używa identycznych danych/ID. Nie ma trwałego autosave. Trzy kroki importu pozostają bez zmian.
+
+## T13 — A/B/C lokalnie, kalendarz planowany
+
+D033 i [specyfikacja R01–R16](T13_MOBILE_WORKOUT.md) opisują uzgodniony podgląd z selektorem treningu, zwarte karty, osobne szczegóły ćwiczenia/jedną serię, jawne rozstrzygnięcie aktywnej sesji oraz kalendarz. A/B/C są lokalnie w review po przyjętych bramkach; kalendarz D pozostaje planowany. Rewizja pozostaje w kontrakcie, znika z głównego UI. Odrzucenie szkicu formularza i trwałe usunięcie sesji to różne działania. Korekta czasu przy finish nie przelicza celów. Dokładne stany, kolejność superserii, dostępność, ochronę szkiców i wymagania 360/390/430 px utrzymuje specyfikacja T13.
+
+
+### T13-B — wykonany lokalny podgląd planu
+
+Pierwszy trening otwiera się domyślnie; jawny wybór zapisuje tylko ID jednostki w lokalnej pamięci dla planu/wersji. Nieprawidłowy/usunięty wybór wraca do pierwszej jednostki; odmowa pamięci nie blokuje wyboru. Identyczne nazwy rozróżnia kolejność, bez scalania. Wersje są pod rozwijanym wyborem; archiwalna nie oferuje startu ani wznowienia. Start otwiera dotychczasowy formularz T05 na żądanie, z osobnym stanem dla jednostki; automatyczny czas/rozstrzyganie konfliktu dopiero C.
+
+Karta ma nazwę, skrót sąsiadujących bloków, obciążenie/przerwę oraz jawne oznaczenie opcjonalności i superserii. Dłuższy cel pokazuje dwa pierwsze bloki i liczbę dalszych; „Wszystkie serie” pokazują każdy cel, notatkę i źródło, oryginał, wariant/sprzęt i zakres serii. „Kontekst treningu i źródła” zachowuje tydzień oraz uwagi i datę podglądu 1RM. „Podgląd całego planu” zawiera wszystkie jednostki z krótkimi zaleceniami i przejściem do wyboru; fokus trafia w nagłówek wybranego treningu. Natywne details/summary obsługują klawiaturę i stan rozwinięcia. Faktyczny odbiór oraz ograniczenia: handoff B wskazany w STATUS. Edytor i import zachowują dotychczasowe kontrolki kontekstu tygodnia; nie zmieniono ich dokumentów ani parsera.
+
+
+### T13-C — wykonany lokalny widok sesji
+
+Przegląd pokazuje nazwę, datę/godzinę lub „godzina nieznana”, osobne liczniki i cztery zwarte karty na typowym390×844. Grupa superserii prowadzi rundami, nie uzupełnia braków. Szczegóły pokazują jedną serię, historyczny cel, poprzedni wynik, właściwe pola oraz dodatkowe RPE/RIR/komentarz. Istniejące dodatkowe wartości otwierają sekcję. Wszystkie serie pozwalają wybrać również historyczną poprawkę. Opcjonalne wymagają wyboru; pominięcie pozostaje osobnym stanem.
+
+ACK i aktualny GET poprzedzają przejście. Błąd sieci zachowuje pełną komendę retry; nieudany GET ponawia tylko odczyt.409 zachowuje szkic do odczytu i świadomego rozstrzygnięcia. Komentarz i dodatkowe ćwiczenie mają formularze na żądanie; zapis serii zachowuje inny szkic. Powrót z brudnej serii i wyjście z karty dają zapisz/odrzuć/zostań; Chrome Wstecz zachowuje dokument i pozycję. Przeładowanie/zamknięcie używa natywnego ostrzeżenia przeglądarki. Trwałości szkiców po zamknięciu nie obiecujemy.
+
+Start zapisuje czas automatycznie. Konflikt pokazuje własne sesje i jawne powrót/finish/delete; wiele legacy rozstrzyga się indywidualnie. Delete ma dodatkowe potwierdzenie z nazwą i ostrzeżeniem. Replace jest jedną komendą A. Finish pozwala skorygować datę/godzinę w strefie profilu i wymaga jawnego offsetu podwójnej godziny, bez zmiany historycznych celów. Głos jest propozycją z kotwicą serii i rewizji. Lokalny odbiór: handoff C w STATUS; telefon/Safari i kalendarz pozostają osobnymi pracami.
+
+
+## T14 — zatwierdzony kierunek wizualny, makiety
+
+D039: Plany A z poziomym swipe wielu planów, Podgląd A, Szczegóły A, Zapis serii C. Równoważna obsługa strzałkami/wskaźnikiem/klawiaturą, bez automatycznej rotacji. Właściciel przegląda po trzy warianty pozostałych ośmiu ekranów. [Specyfikacja i ograniczenia](design/t14-selected-spec.md), [galeria syntetyczna](design/t14-full-gallery.html). To projekt UI, nie wdrożenie; prywatny podgląd źródła pozostaje poza repo. Kontrakty T13 i niezmienność historii nadal obowiązują.

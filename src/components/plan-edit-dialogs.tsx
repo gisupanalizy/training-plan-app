@@ -1,5 +1,6 @@
 "use client";
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import type { PlannedSetInput } from '@/lib/domain/model';
 import { emptySet, type PlanEditorExercise, type PlanEditorDocument, type PlanEditorSession } from '@/lib/domain/plan-editor';
 import { validateEditorExercise, synchronizeSetCounts } from '@/lib/domain/compact-editor';
 import { seriesBlocks, patchSeries, resizeSeriesBlock, exerciseSummary, goalLabel } from '@/lib/imports/review';
@@ -14,23 +15,70 @@ export function PlanExerciseEdit({ exercise, document, sessionId, catalog, onApp
   const [draft, setDraft] = useState(() => structuredClone(exercise));
   const [target, setTarget] = useState(sessionId);
   const [error, setError] = useState('');
-  return <form onSubmit={event => { event.preventDefault(); try { validateEditorExercise(draft); onApply(draft, target); } catch (cause) { setError((cause as Error).message); } }}>
+  const [seriesValid, setSeriesValid] = useState(true);
+  return <form onSubmit={event => { event.preventDefault(); try { if (!seriesValid) throw new Error('Podaj poprawną liczbę serii.'); validateEditorExercise(draft); onApply(draft, target); } catch (cause) { setError((cause as Error).message); } }}>
+    <label className="editor-field">Nazwa ćwiczenia<input maxLength={120} value={draft.name} onChange={event => setDraft({ ...draft, name: event.target.value })} /></label>
+    <h3>Serie i parametry</h3><FullExerciseSeries exercise={draft} onChange={setDraft} onValidity={setSeriesValid} />
+    <details className="review-more"><summary>Katalog, wariant i przypisanie do treningu</summary>
     <label className="editor-field">Zapisane ćwiczenie<select value={draft.exerciseId ?? ''} onChange={event => {
       const item = catalog.find(entry => entry.id === event.target.value);
       setDraft(current => ({ ...current, exerciseId: item?.id ?? null, ...(item ? { name: item.name, variant: item.variant, equipment: item.equipment } : {}) }));
     }}><option value="">Własne ćwiczenie</option>{catalog.map(item => <option key={item.id} value={item.id}>{item.name}{item.variant && ` · ${item.variant}`}</option>)}</select></label>
-    <label className="editor-field">Nazwa ćwiczenia<input maxLength={120} value={draft.name} onChange={event => setDraft({ ...draft, name: event.target.value })} /></label>
     <details className="review-more"><summary>Znajdź nazwę w słowniku</summary><ExerciseNamePicker original={draft.originalName ?? draft.name} onSelect={name => setDraft({ ...draft, originalName: draft.originalName ?? (draft.name || null), name })} /></details>
     <div className="editor-grid"><label className="editor-field">Wariant<input maxLength={120} value={draft.variant ?? ''} disabled={draft.exerciseId !== null} onChange={event => setDraft({ ...draft, variant: event.target.value || null })} /></label>
       <label className="editor-field">Sprzęt<input maxLength={120} value={draft.equipment ?? ''} disabled={draft.exerciseId !== null} onChange={event => setDraft({ ...draft, equipment: event.target.value || null })} /></label></div>
     <label className="editor-field">Przypisanie do treningu<select value={target} onChange={event => setTarget(event.target.value)}>{document.sessions.map(session => <option key={session.reviewId} value={session.reviewId}>Tydzień {session.weekNumber} · {session.dayLabel || 'Bez nazwy'}</option>)}</select></label>
     {target !== sessionId && draft.supersetGroup && <p className="review-hint">Po przeniesieniu przypisz ćwiczenie do superserii w nowym treningu.</p>}
+    </details>
     <label className="editor-field">Uwagi do ćwiczenia<textarea maxLength={2000} value={draft.note ?? ''} onChange={event => setDraft({ ...draft, note: event.target.value || null })} /></label>
     {draft.originalName && draft.originalName !== draft.name && <p className="review-hint">W źródle: {draft.originalName}</p>}
     {draft.sourceRef && <details className="review-more"><summary>Odwołanie do źródła</summary><p>{draft.sourceRef}</p></details>}
     {error && <p className="auth-error" role="alert">{error}</p>}
     <div className="review-dialog-footer">{onDelete && <button type="button" className="review-danger" onClick={onDelete}>Usuń ćwiczenie</button>}<button type="button" onClick={onCancel}>Anuluj</button><button className="button button-dark" type="submit">Zastosuj zmiany</button></div>
   </form>;
+}
+
+/** Wszystkie zmiany należą do roboczej kopii całego ćwiczenia; bez zagnieżdżonych formularzy. */
+function FullExerciseSeries({ exercise, onChange, onValidity }: { exercise: PlanEditorExercise; onChange: (exercise: PlanEditorExercise) => void; onValidity: (valid: boolean) => void }) {
+  const [mode, setMode] = useState<'block' | 'individual'>('block');
+  const [selected, setSelected] = useState(exercise.sets[0]?.reviewId ?? '');
+  const optionalBeforeWhole = useRef(new Map(exercise.sets.map((set, index) => [set.reviewId!, exercise.isOptional ? index >= (exercise.setCountMin ?? exercise.sets.length) : !!set.isOptional])));
+  const blocks = seriesBlocks(exercise);
+  const blockIndex = Math.max(0, blocks.findIndex(block => block.sets.some(set => set.reviewId === selected)));
+  const index = Math.max(0, exercise.sets.findIndex(set => set.reviewId === selected));
+  const block = blocks[blockIndex];
+  const original = mode === 'individual' ? exercise.sets[index] : block?.sets[0];
+  function choose(next: string) { onValidity(true); setSelected(next); }
+  if (!original || !block) return <p>Brak serii. Dodaj serię, aby uzupełnić ćwiczenie.</p>;
+  function update(value: PlannedSetInput) {
+    const next = structuredClone(exercise);
+    if (mode === 'individual') { next.sets[index] = { ...value, reviewId: original.reviewId, position: original.position }; if (value.isOptional !== original.isOptional) { try { synchronizeSetCounts(next); onValidity(true); } catch { onValidity(false); } } }
+    else patchSeries(next, block.sets.map(set => set.reviewId!), original, value);
+    onChange(next);
+  }
+  return <>
+    <div className="plan-mode" role="group" aria-label="Zakres edycji"><button type="button" aria-pressed={mode === 'block'} onClick={() => { setMode('block'); choose(exercise.sets[0].reviewId!); }}>Cały blok</button><button type="button" aria-pressed={mode === 'individual'} onClick={() => { setMode('individual'); choose(exercise.sets[0].reviewId!); }}>Pojedyncza seria</button></div>
+    <label className="editor-field">{mode === 'block' ? 'Blok serii' : 'Wybierz serię'}<select value={mode === 'block' ? blockIndex : index} onChange={event => choose((mode === 'block' ? blocks[Number(event.target.value)].sets[0] : exercise.sets[Number(event.target.value)]).reviewId!)}>{mode === 'block' ? blocks.map((item, position) => <option key={item.sets[0].reviewId} value={position}>Serie {item.sets[0].position}–{item.sets.at(-1)!.position} · {goalLabel(item.sets[0])}</option>) : exercise.sets.map((set, position) => <option key={set.reviewId} value={position}>Seria {set.position} · {goalLabel(set)}</option>)}</select></label>
+    <FullSeriesFields key={`${mode}:${selected}`} exercise={exercise} mode={mode} original={original} block={block} onChange={onChange} onValidity={onValidity} update={update} />
+    {mode === 'individual' && <label className="editor-check"><input type="checkbox" checked={!!original.isOptional} disabled={exercise.isOptional} onChange={event => { update({ ...original, isOptional: event.target.checked }); }} />Seria opcjonalna</label>}
+    <details className="review-more"><summary>Opcjonalność ćwiczenia</summary><label className="editor-check"><input type="checkbox" checked={!!exercise.isOptional} onChange={event => { const next = structuredClone(exercise); if (!exercise.isOptional) optionalBeforeWhole.current = new Map(exercise.sets.map(set => [set.reviewId!, !!set.isOptional])); next.isOptional = event.target.checked; next.sets.forEach((set, index) => { set.isOptional = next.isOptional || (optionalBeforeWhole.current.get(set.reviewId!) ?? index >= (exercise.setCountMin ?? exercise.sets.length)); }); try { synchronizeSetCounts(next); onValidity(true); } catch { onValidity(false); } onChange(next); }} />Całe ćwiczenie opcjonalne</label></details>
+    <button type="button" className="button button-outline" disabled={exercise.sets.length >= 30} onClick={() => { const next = structuredClone(exercise); const set = { ...emptySet(next.sets.length + 1), reviewId: crypto.randomUUID(), isOptional: !!next.isOptional }; next.sets.push(set); synchronizeSetCounts(next); onChange(next); setMode('individual'); choose(set.reviewId); }}>+ Dodaj serię</button>
+    {mode === 'individual' && <button type="button" className="review-danger" disabled={exercise.sets.length === 1} onClick={() => { const next = structuredClone(exercise); next.sets.splice(index, 1); synchronizeSetCounts(next); onChange(next); choose(next.sets[0].reviewId!); }}>Usuń serię</button>}
+  </>;
+}
+function FullSeriesFields({ exercise, mode, original, block, onChange, onValidity, update }: { exercise: PlanEditorExercise; mode: 'block' | 'individual'; original: PlannedSetInput; block: ReturnType<typeof seriesBlocks>[number]; onChange: (exercise: PlanEditorExercise) => void; onValidity: (valid: boolean) => void; update: (set: PlannedSetInput) => void }) {
+  const [count, setCount] = useState<number | null>(block.minimum);
+  const [maximum, setMaximum] = useState<number | null>(block.maximum !== block.minimum ? block.maximum : null);
+  return <>
+    {mode === 'block' && <RangeField label="Liczba serii" upperLabel="Liczba serii do" value={count} maximum={maximum} min={0} onChange={(lower, upper) => {
+      setCount(lower); setMaximum(upper);
+      const max = upper ?? lower;
+      const valid = lower != null && max != null && Number.isInteger(lower) && Number.isInteger(max) && lower >= 0 && max >= 1 && max >= lower && exercise.sets.length - block.sets.length + max <= 30;
+      onValidity(valid);
+      if (valid) { const next = structuredClone(exercise); try { resizeSeriesBlock(next, block.sets.map(set => set.reviewId!), lower, max); onChange(next); } catch { onValidity(false); } }
+    }} />}
+    <PlanSetFields value={original} onChange={update} equipment={exercise.equipment} individual={mode === 'individual'} />
+  </>;
 }
 
 export function PlanSeriesEdit({ exercise, adding = false, onApply, onCancel }: {

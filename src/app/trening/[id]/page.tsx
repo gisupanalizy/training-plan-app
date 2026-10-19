@@ -2,19 +2,24 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppShell, DemoNotice } from "@/components/app-shell";
 import { TrainingPreview } from "@/components/training-preview";
-import { demoDays, getDemoDay } from "@/lib/demo-plan";
+import { getDemoDay } from "@/lib/demo-plan";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import { getWorkout } from "@/lib/workouts/repository";
+import { historyReturnHref } from "@/lib/workouts/presentation";
+import styles from "@/components/plan-workout.module.css";
+import { Icon } from "@/components/ui";
 import { WorkoutEditor } from "@/components/workout-editor";
 
-export default async function TrainingPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function TrainingPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ historyMonth?: string | string[]; historyDay?: string | string[] }> }) {
   const { id } = await params;
+  const { historyMonth, historyDay } = await searchParams;
+  const returnHref = historyReturnHref(historyMonth, historyDay);
   if (getSupabaseConfig()) {
     const loaded = await getWorkout(id);
     if (!loaded) notFound();
-    return <AppShell section="Trening"><Link className="back-link" href="/historia">← Historia treningów</Link><div className="eyebrow">PRYWATNY TRENING / {loaded.workout.status === "completed" ? "ZAKOŃCZONY" : "W TOKU"}</div><div className="page-heading"><div><h1>Trening<span className="accent">.</span></h1><p>{loaded.workout.performed_on} · cele zapisane przy rozpoczęciu</p></div></div><WorkoutEditor loaded={loaded} /></AppShell>;
+    return <AppShell section="Trening"><div className={styles.workoutPage}><Link className="back-link workout-history-back" href={returnHref}>← Historia treningów</Link><WorkoutEditor key={loaded.workout.id} loaded={loaded} /></div></AppShell>;
   }
   const day = getDemoDay(id);
   if (!day) notFound();
-  return <AppShell section="Trening"><Link className="back-link" href={`/plany/${day.id}`}>← Wróć do planu</Link><div className="eyebrow">PODGLĄD TRENINGU / {day.label.toUpperCase()}</div><div className="page-heading"><div><h1>{day.label}<span className="accent">.</span> {day.title}</h1><p>{day.focus}</p></div><span className="outline-tag">PODGLĄD</span></div><DemoNotice /><TrainingPreview day={day} /></AppShell>;
+  return <AppShell section="Trening"><div className={styles.surface}><Link className={styles.back} href={`/plany/${day.id}`}><Icon name="arrowLeft" size={18} />Wróć do planu</Link><DemoNotice /><TrainingPreview day={day} /></div></AppShell>;
 }

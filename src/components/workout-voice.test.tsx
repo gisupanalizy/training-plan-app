@@ -73,3 +73,18 @@ test("dyktowany komentarz dopisuje się do poprzedniego po zatwierdzeniu", async
   fireEvent.click(screen.getByRole("button", { name: "Zatwierdź i zapisz" }));
   expect(issue).toHaveBeenCalledWith("comment", { comment: "Dobry początek\nDziś słabszy chwyt" });
 });
+
+test('opóźniona propozycja po zmianie serii lub rewizji jest odrzucona', async () => {
+  let deliver!: (value: unknown) => void;
+  vi.stubGlobal('fetch', vi.fn().mockImplementation(() => new Promise(resolve => { deliver = resolve; })));
+  const issue = vi.fn();
+  const common = { workoutId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa', intent: 'set' as const, blocked: false, issue };
+  const view = render(<WorkoutVoice {...common} revision={1} setId="s1" position={1} />);
+  fireEvent.click(screen.getByRole('button', { name: 'Dyktuj serię 1' }));
+  fireEvent.change(screen.getByRole('textbox', { name: /Transkrypcja/ }), { target: { value: 'Pięć po sto' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Przygotuj propozycję' }));
+  view.rerender(<WorkoutVoice {...common} revision={2} setId="s2" position={2} />);
+  deliver({ ok: true, json: async () => ({ transcript: 'Pięć po sto', target: { workoutId: common.workoutId, revision: 1, setId: 's1' }, proposal: { intent: 'set', reps: 5, kg: 100 } }) });
+  await waitFor(() => expect(screen.queryByText('Propozycja do zatwierdzenia')).toBeNull());
+  expect(issue).not.toHaveBeenCalled();
+});
