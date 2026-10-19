@@ -177,7 +177,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T13 — Wygodne planowanie i prowadzenie treningu na telefonie
 
-- Status: in_progress. Właściciel: Codex — integrator T13 (2026-10-17). Zależności: T13-P i lokalne T03/T04/T05/T06-R1/T04-R1/T09/T11-C1 — gotowe; realizacja przez A–E poniżej, bez zależności od odłożonego T12.
+- Status: done lokalnie po G i D046 (2026-10-19). Właściciel: Codex — integrator T13. Zależności: T13-P i lokalne T03/T04/T05/T06-R1/T04-R1/T09/T11-C1 — spełnione. Telefon/Safari i publikacja zostają poza tym done; T10-R1 i T11 bez zmiany.
 - Zakres: pełne R01–R16 z uzgodnionego planu, zachowane w specyfikacji. ID nadrzędne pozostaje po podziale; żadne wymaganie nie znika.
 - Odbiór: bramki A–D oraz niezależny E, bez krytycznych błędów utraty/duplikacji danych, własności lub historycznych celów; prawdziwa lokalna aplikacja mobile. Fizyczny T10-R1 i hosting T11 pozostają osobno.
 
@@ -191,28 +191,28 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T13-A — Sesje/API/datowanie
 
-- Status: review. Właściciel: Codex — wykonawca A i integrator (2026-10-17); lokalna bramka przyjęta, zamknięcie po E. Zależności: T13-P, T03/T04/T05/T06-R1/T11-C1; osobne zlecenie implementacji.
+- Status: done lokalnie po G (2026-10-19). Właściciel: Codex — wykonawca A i integrator (2026-10-17); lokalna bramka przyjęta wcześniej, zamknięta z E. Zależności: T13-P, T03/T04/T05/T06-R1/T11-C1; osobne zlecenie implementacji.
 - Pliki: API/repozytorium treningów, wspólny czas i daty postępu, nowe migracje i testy; szczegółowy wyłączny przydział w specyfikacji.
 - Kontrakt/odbiór: R09–R13/R16 i bramka A — owner lock, jeden nowy aktywny, legacy indywidualnie, atomowy replace, delete z późnym retry bez odtworzenia, spójny GET, korekta czasu bez zmiany snapshotów/1RM. Rzeczywiste lokalne A/B/anon, concurrency/rollback/retry/legacy, regresje, build/typy.
 - Wynik/przekazanie: [rzeczywisty handoff A](handoffs/2026-10-17-T13-A-sesje-api-datowanie.md); lokalne RPC/HTTP A/B/anon, migracja/replay, concurrency/rollback/retry/legacy/daty/snapshoty, regresje, 180 passed/9 skipped, build/typy PASS. Integrator przyjął bramkę A, a B wykonano po osobnym zleceniu 2026-10-18. Done dopiero po E. [Prompt A](prompts/T13-A.md) i [karta szablonowa](handoffs/planned/T13-A.md) zachowane jako materiały historyczne.
 
 ### T13-B — Podgląd planu
 
-- Status: review. Właściciel: Codex — wykonawca B i integrator (2026-10-18); lokalna bramka przyjęta, zamknięcie po E. Zależności: T13-A w review z przyjętą bramką/kontraktem, T04-R1/T06-R1 done; osobne zlecenie B.
+- Status: done lokalnie po G (2026-10-19). Właściciel: Codex — wykonawca B i integrator (2026-10-18); lokalna bramka przyjęta wcześniej, zamknięta z E. Zależności: T13-A, T04-R1/T06-R1 done; osobne zlecenie B.
 - Pliki: strona/podgląd planu, wspólne podsumowania i style przejęte od integratora; bez zmian kontraktu zapisu.
 - Odbiór: R01–R03/R15/R16 i bramka B — selektor bez tygodni, krótkie karty/rozwijanie, wierne bloki i warianty, cały plan i wersje; 360/390/430 px, cztery karty 390×844, regresja edytora/importu, testy/build/typy.
 - Wynik/przekazanie: [rzeczywisty handoff B](handoffs/2026-10-18-T13-B-podglad-planu.md); lokalne Auth/DB/UI, mobile360/390/430, cztery pełne karty390×844, wybór/wersje/cele44/fokus, regresje edytora i syntetycznego importu,190 passed/9 skipped, build/typy PASS. Integrator przyjmuje bramkę dla C; B review do E, C wymaga osobnego zlecenia. [Prompt B](prompts/T13-B.md) i [karta szablonowa](handoffs/planned/T13-B.md) pozostają materiałem historycznym.
 
 ### T13-C — Prowadzenie treningu
 
-- Status: review. Właściciel: Codex — jedyny wykonawca C i integrator (2026-10-18); przejęte pliki C, globals.css oraz nowy runner scripts/test-t13c-browser.mjs, bez zmian SQL/API. Zależności: A/B w review po przyjętych bramkach, T09 done; osobne zlecenie C.
+- Status: done lokalnie po G (2026-10-19). Właściciel: Codex — jedyny wykonawca C i integrator (2026-10-18); przejęte pliki C, globals.css oraz runner scripts/test-t13c-browser.mjs, bez zmian SQL/API. Zależności: A/B po przyjętych bramkach, T09 done; osobne zlecenie C.
 - Pliki: start, edytor/komponenty treningu, głos i widok szczegółów, przejęte style; kontrakty A i podsumowania B bez samowolnych zmian.
 - Odbiór: R04–R11/R13/R15/R16 i bramka C — jedna seria, superserie/opcjonalne, szkice/retry/409/głos, bez reload, konflikt/finish/delete/legacy i korekta czasu przy finish; prawdziwa lokalna aplikacja 360/390/430 px oraz API/testy/build/typy.
 - Wynik/przekazanie: [rzeczywisty handoff C](handoffs/2026-10-18-T13-C-prowadzenie-treningu.md). Pełna lokalna bramka C PASS: rzeczywiste Chrome/API, szkice/retry/409/głos mock, superserie/null/0/poprawka, konflikt/legacy/replace/finish/delete,360/390/430 px i cztery karty390×844,198 passed/9 skipped, build/typy. Integrator przyjmuje bramkę dla D i zwalnia style. C review do E; D tylko po osobnym zleceniu. [Prompt C](prompts/T13-C.md) i [karta szablonowa](handoffs/planned/T13-C.md) pozostają materiałami historycznymi.
 
 ### T13-D — Kalendarz historii
 
-- Status: review wraz z T15-D — lokalna bramka przyjęta przez I (2026-10-19). Właściciel: /root/foundation. Zależności: A/C w review po przyjętych bramkach, sekwencyjnie także B, T08 done; osobne zlecenie D.
+- Status: done lokalnie wraz z T15-D, po G (2026-10-19). Właściciel: /root/foundation. Zależności: A/C po przyjętych bramkach, sekwencyjnie także B, T08 done; osobne zlecenie D.
 - Pliki: historia, komponenty/testy kalendarza, przejęte style; rozszerzenie repozytorium tylko po przydziale przez integratora.
 - Odbiór: R14–R16 i bramka D — miesiąc pon.–niedz., Dzisiaj, wiele sesji, Wznów osobno, otwieranie C, legacy/nieznana godzina, północ/DST i korekta zgodna z filtrami; lokalny mobile i testy/build/typy.
 - Przekazanie: [prompt D](prompts/T13-D.md), [karta handoffu D](handoffs/planned/T13-D.md). Review do E.
@@ -220,9 +220,10 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T13-E — Niezależny odbiór
 
-- Status: todo. Właściciel: — (recenzent inny niż wykonawca A–D, ręcznie zlecony nowy chat). Zależności: A–D w review po bramkach i rzeczywiste handoffy; osobne zlecenie E. Bez automatycznego uruchamiania.
+- Status: done lokalnie (2026-10-19). Właściciel: niezależny recenzent G, pliki zwolnione. Zależności odbioru spełnione. D046: zasłonięcie dołu karty przez nav nie jest błędem.
 - Pliki: osobny raport odbioru i handoff, ewentualne niezależne testy; poprawki produkcyjne wracają do właścicieli przez jednego integratora.
 - Odbiór: niezależne R01–R16, A/B/anon, concurrency/delete/late retry/rollback/daty/1RM/szkice oraz klikalny lokalny mobile, zintegrowane testy/build/typy. Wynik każdego R i ograniczenia jawnie. Integrator zamyka A–D/T13 dopiero po spełnieniu kryteriów; T11/T10-R1 bez pozornego done.
+- Wynik: odbiór razem z T15-G, bramka przyjęta po D046. Pomiar 786,95 wobec nav 768 zostaje w raporcie jako fakt, nie jako wada. Powtórzony T15-B i T13-C PASS. [Raport](reports/2026-10-19-T13-acceptance.md), [handoff](handoffs/2026-10-19-T13-E-niezalezny-odbior.md). Telefon/Safari otwarte.
 - Przekazanie: [prompt E](prompts/T13-E.md), [karta handoffu E](handoffs/planned/T13-E.md).
 - W planie T15 niezależny odbiór obejmuje [T15-G](prompts/T15-G.md); zachować pełne kryteria T13-E bez dublowania wykonania.
 
@@ -332,44 +333,45 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-A — Fundament UI i domyślna Noc
 
-- Status: review — bramka lokalna A przyjęta przez I (2026-10-18). Właściciel: /root/foundation, pliki zwolnione do I. Zależności: T15-P, zlecenie implementacji, manifest zastanych zmian.
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/foundation, pliki zwolnione. Zależności: T15-P, zlecenie implementacji, manifest zastanych zmian.
 - Zakres/odbiór/własność: [etap A](T15_UI_IMPLEMENTATION.md#a--fundament-noc-nawigacja-i-zasoby). Tokeny, AppShell, nawigacja, font/ilustracje, dostępne wspólne UI, kontrakty dla reszty. Bez przebudowy funkcji B–F.
 - Przekazanie: [prompt A](prompts/T15-A.md), [karta A](handoffs/planned/T15-A.md). Medium; typy/testy/build i mobilny odbiór fundamentu.
 
 ### T15-B — Start, Plany i prowadzenie treningu
 
-- Status: review — lokalna bramka B przyjęta przez I (2026-10-18). Właściciel: /root/workout_ui, zakres zwolniony do I. Zależności: bramka A, lokalne T13-A/B/C i zlecenie B.
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/workout_ui, zakres zwolniony. Zależności: bramka A, lokalne T13-A/B/C i zlecenie B.
 - Zakres/odbiór/własność: [etap B](T15_UI_IMPLEMENTATION.md#b--start-plany-podgląd-szczegóły-i-zapis). Przenieść UI na działające komendy, zachować retry/szkice/konflikty i cztery karty.
 - Przekazanie: [prompt B](prompts/T15-B.md), [karta B](handoffs/planned/T15-B.md). High; lokalne HTTP/Chrome i regresje T13-C.
 
 ### T15-C — Import, Korekta i Edytor
 
-- Status: review — lokalna bramka C przyjęta przez I (2026-10-19). Właściciel: /root/workout_ui, źródła zwolnione do I. Zależności: bramka A, istniejące T04-R1/T07-R1, zlecenie C.
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/workout_ui, źródła zwolnione. Zależności: bramka A, istniejące T04-R1/T07-R1, zlecenie C.
 - Zakres/odbiór/własność: [etap C](T15_UI_IMPLEMENTATION.md#c--import-korekta-i-edytor-całego-ćwiczenia). Układy C/A/A, pełna karta/formularz, różne etapy korekty; bez parserów/API.
 - Przekazanie: [prompt C](prompts/T15-C.md), [karta C](handoffs/planned/T15-C.md). High; regresje edytora/importu na mocku AI.
 
 ### T15-D — Historia A razem z T13-D
 
-- Status: review — lokalna bramka D przyjęta przez I (2026-10-19). Właściciel: /root/foundation, pliki zwolnione. Zależności: bramki A/B i T13-A/C, jawne zlecenie D. To alias tej samej pracy funkcjonalnej T13-D, nie drugi kalendarz.
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/foundation, pliki zwolnione. Zależności: bramki A/B i T13-A/C, jawne zlecenie D. To alias tej samej pracy funkcjonalnej T13-D, nie drugi kalendarz.
 - Zakres/odbiór/własność: [etap D](T15_UI_IMPLEMENTATION.md#d--historia-a-realizowana-razem-z-t13-d). Kalendarz według wybranego UI z projekcją czasu A i przeglądem B/C, pełne R14–R16.
 - Przekazanie: [prompt D](prompts/T15-D.md), [karta D](handoffs/planned/T15-D.md). Medium; oba ID review do G/T13-E.
 
 ### T15-E — Postęp z rzeczywistych wyników
 
-- Status: review — lokalna bramka E przyjęta przez I (2026-10-19). Właściciel: /root/progress, źródła zwolnione do I. Zależności: bramka A, datowanie T13-A, zlecenie E i zapis kontraktu obliczeń przez E/I przed agregacją.
+- Status: done lokalnie po G (2026-10-19). Właściciel: /root/progress, źródła zwolnione. Zależności: bramka A, datowanie T13-A, zlecenie E i zapis kontraktu obliczeń przez E/I przed agregacją.
 - Zakres/odbiór/własność: [etap E](T15_UI_IMPLEMENTATION.md#e--postęp-z-rzeczywistych-wyników). Własne autoryzowane dane, rzeczywiste punkty, metryki/PR całej historii, pomoc i gesty, zachowana semantyka T08 i brak zapisu szacunku do profilu.
 - Przekazanie: [prompt E](prompts/T15-E.md), [karta E](handoffs/planned/T15-E.md). High; domena, paginacja, izolacja A/B/anon, lokalny UI/API.
 
 ### T15-F — Profil A i Logowanie C
 
-- Status: review — lokalna bramka F przyjęta przez I (2026-10-18). Właściciel: integrator /root, pliki zwolnione. Zależności: bramka A i zlecenie F.
+- Status: done lokalnie po G (2026-10-19). Właściciel: integrator /root, pliki zwolnione. Zależności: bramka A i zlecenie F.
 - Zakres/odbiór/własność: [etap F](T15_UI_IMPLEMENTATION.md#f--profil-a-i-logowanie-c). Istniejące Auth i ręczny datowany1RM, zachowane historyczne cele, nowe układy bez zmiany kontraktów.
 - Przekazanie: [prompt F](prompts/T15-F.md), [karta F](handoffs/planned/T15-F.md). Medium; formularze/Auth/klawiatura i właściwe regresje T04.
 
 ### T15-G — Integracja i niezależny odbiór z T13-E
 
-- Status: todo. Właściciel: nieprzypisany, integrator I i niezależny recenzent G. Zależności: A–F review po bramkach, integracja I i zlecenie G.
+- Status: done lokalnie (2026-10-19). Właściciel: niezależny recenzent G, pliki zwolnione. Zależności A–F spełnione, HEAD 11d66bc. D046 zamyka spór o cztery karty.
 - Zakres/odbiór/własność: [etap G](T15_UI_IMPLEMENTATION.md#g--integracja-i-niezależny-odbiór-wraz-z-t13-e). Cały przepływ, rzeczywiste lokalne API/DB, bramki T13-E, oddzielne ograniczenia urządzeń; bez samoczynnej publikacji.
+- Wynik: unit 251/9 skip, typy, build, lokalne A/B/anon i Chrome przepływu PASS. Pierwsza asercja czterech kart podglądu padła na 786,95 wobec nav 768; po D046 powtórzony cały T15-B i T13-C PASS. [Raport](reports/2026-10-19-T15-G-acceptance.md), [handoff](handoffs/2026-10-19-T15-G-niezalezny-odbior.md). Telefon/Safari otwarte. Publikacji brak.
 - Przekazanie: [prompt G](prompts/T15-G.md), [karta G](handoffs/planned/T15-G.md). High; recenzent nie jest autorem A–F i nie poprawia src po cichu.
 
 ### GIT-S1 — Lokalny punkt kontrolny

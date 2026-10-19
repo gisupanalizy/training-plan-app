@@ -12,7 +12,7 @@ Aplikacja webowa do importowania planów treningowych i zapisywania ich wykonani
 
 **Plan T15 gotowy do review:** [etapy A–G, pliki i bramki](docs/T15_UI_IMPLEMENTATION.md), [prompt startowy A](docs/prompts/T15-A.md), [handoff R5/P](docs/handoffs/2026-10-18-T14-R5-T15-P-interakcje-i-plan.md). Jeden integrator, siedem promptów i kart przyszłych handoffów; D/E starego T13 nie są dublowane. Implementacja i inni agenci nie zostali uruchomieni.
 
-**T15 lokalnie w toku:** A ma przyjętą bramkę Nocy/fontu/nawigacji i wspólnych komponentów ([handoff A](docs/handoffs/2026-10-18-T15-A-fundament.md)). B/E są w implementacji. Nie jest to publikacja. Aktualny stan i właściciele: [checkpoint](docs/checkpoints/T15/STATE.md).
+**T15 lokalnie zamknięte:** A–G i odbiór T13-E są done lokalnie po D046. Przewinięcie listy, także gdy pasek zasłania dół karty, nie jest błędem. [Handoff](docs/handoffs/2026-10-19-T15-G-niezalezny-odbior.md). Telefon, Safari i publikacja pozostają osobno.
 
 ## Zacznij tutaj
 

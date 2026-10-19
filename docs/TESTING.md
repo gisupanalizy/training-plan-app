@@ -303,3 +303,13 @@ I wykonał `DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_
 - Własne syntetyczne `test-t15c-editor.mjs` i `test-t15c-import.mjs` przez run-local-t05 na3005 z T15C_PLAYWRIGHT_MODULE:PASS. Pełna regresjaT04-R1, lokalny zapis/retry/historia, PDF2strony/XLSX2arkusze/mockdraft, trzy odrębne kroki korekty/źródła/blokady/retry. `test-t15c-http.mjs`:pełne HTTP T06/T07PASS z CRON_SECRET z tymczasowego pliku poza repo.
 - Po pierwszymPASS oględziny wykazały za duży narzut układu; jedna paczka QA przeniosła narzędzia pod karty i drugorzędne pola po parametrach. Build/typyPASS; końcowe editor/importPASS sesje41675/10716,4pełne karty390 przy scroll0 przed nav,360/430 bez overflow. HTTP zachowano bez powtórki, kontrakty nie zmienione. I obejrzał finalne editor390/reviewPDF390/import390.
 - Dane syntetyczne, płatneAIoff; konta i Storage sprzątnięte. Fizyczny telefon/Safari osobno niewykonane. Pełną suite po finalnej paczce powtórzy niezależny G.
+
+### T15-G / T13-E — odbiór 2026-10-19, zamknięty lokalnie po D046
+
+HEAD `11d66bc`, Node 26.4.0, Next 16.4.0, Supabase CLI 2.120.0, produkcyjny Next na 3005 zbudowany w tej sesji, Chrome CDP. AI off. Dev na 3002 nienaruszony. Po powtórce 3005 zatrzymany.
+
+- `npm test`: 251 passed / 9 skipped. Następnie `npm run typecheck` i `node scripts/run-local-app.mjs build`: PASS.
+- `T13A_HTTP_BASE=http://localhost:3005 npm run test:t13a:local`: RPC i HTTP PASS. `npm run test:t04:local`, `test:t06r1:local`: PASS.
+- Drugi przebieg `T08_HTTP_BASE=http://localhost:3005 npm run test:t08:local`: PASS, 940→1140 kg i filtr. Pierwszy przebieg T08 w sesji nie potwierdza HTTP.
+- `node scripts/run-local-t05.mjs scripts/test-t15e-api.mjs` oraz `T15C_HTTP_BASE=http://localhost:3005 node scripts/run-local-t05.mjs scripts/test-t15c-http.mjs`: PASS. Importowy szkic jest mockiem.
+- Chrome z modułem Playwright runtime: F, edytor, import, D, E i A PASS. Pierwszy `test-t15b-browser.mjs` przerwał się na `cards[3].bottom < nav.y` (786,95 > 768). D046 wycofuje ten próg. Powtórka tego runnera, już z ogonkiem i wbudowanym T13-C: PASS, log `/private/tmp/t15g-t15b-rerun.log`. Telefon/Safari niewykonane. Szczegóły: [raport G](reports/2026-10-19-T15-G-acceptance.md).

@@ -35,7 +35,15 @@ try {
       if (route.includes(created[0].planId)) {
         const cards = await page.locator('.preview-exercise').evaluateAll(items => items.map(item => ({ top: item.getBoundingClientRect().top, bottom: item.getBoundingClientRect().bottom })));
         const nav = await page.locator('.mobile-nav').boundingBox();
-        if (width === 390) assert.ok(cards[3].bottom < nav.y, `cztery karty ${JSON.stringify({ cards, nav })}`);
+        if (width === 390) {
+          assert.ok(cards.length >= 4, 'cztery karty');
+          const reachable = await page.evaluate(() => {
+            const bar = document.querySelector('.mobile-nav').getBoundingClientRect().top;
+            const bottom = document.querySelectorAll('.preview-exercise')[3].getBoundingClientRect().bottom;
+            return bottom - (document.documentElement.scrollHeight - innerHeight) < bar + 1;
+          });
+          assert.ok(reachable, `czwarta karta niedostępna przewinięciem ${JSON.stringify({ cards, nav })}`);
+        }
         measures.push({ width, cards, navTop: nav.y });
       }
       await page.screenshot({ path: `/private/tmp/t15b-${width}-${route === '/' ? 'start' : route === '/plany' ? 'plans' : 'preview'}.png` });

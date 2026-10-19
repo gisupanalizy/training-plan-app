@@ -356,3 +356,10 @@ Uzupełnienie D035 po wykonaniu: migracja22 zastosowana tylko lokalnie; odtworzo
 - Data: 2026-10-18. Status: confirmed dla zbiorczego zlecenia użytkownika A–G; accepted technical dla kontraktu I w granicach D043/D044. Nie oznacza wdrożenia/odbioru.
 - Jeden integrator, do dwóch wykonawców, niezależny G, lokalne commity, checkpointy i kolejka współdzielonych testów; bez push/publikacji/płatnego AI/zdalnych migracji.
 - [Kontrakt E](T15_PROGRESS_CONTRACT.md) zapisano przed agregacją: tabela reference-table-v1, jawne źródła i statusy, konserwatywna porównywalność T08, PR pełnej historii, null/0 i paginacja. Ręczny1RM i snapshoty pozostają oddzielne. Wykonawca zgłasza I sprzeczność danych/wymagań przed rozszerzeniem semantyki.
+
+## D046 — lista treningu może wystawać pod nawigację
+
+- Data: 2026-10-19. Status: confirmed. Użytkownik rozstrzygnął po pomiarze T15-G.
+- Dół karty może wchodzić pod dolną nawigację. Dłuższy trening ma więcej kart i jest przewijany; przesunięcie odsłania zasłonięty fragment. To nie jest błąd odbioru i nie gubi treści.
+- Warunek „cztery pełne karty kończą się nad nav przy 390×844” przestaje być bramką. Zostaje zakaz poziomego wylewania oraz wymóg, że zasłoniętą kartę da się doskrolować. Ramka superserii zostaje.
+- Nie zmienia danych, grupowania, snapshotów, API ani publikacji. Telefon i Safari pozostają osobnym, niewykonanym odbiorem.

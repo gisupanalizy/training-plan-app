@@ -138,6 +138,10 @@ Osobny recenzent po ręcznym zleceniu, bez automatycznego uruchamiania. Czyta A�
 
 Kryterium: brak krytycznych błędów własności, utraty/duplikacji danych i przeliczenia historii; wszystkie uzgodnione lokalne kryteria spełnione. Usterki wracają do właściciela A/B/C/D przez I i podlegają ponownemu sprawdzeniu E; niespełnione kryterium nie znika przez zmianę dokumentacji. Fizyczny telefon/Safari oraz wdrożenie mają osobne niewykonane statusy; lokalny odbiór nie zamyka T10-R1/T11 ani nie upoważnia do publikacji.
 
+### Niezależny odbiór E razem z T15-G — 2026-10-19
+
+Odbiór zamknięty lokalnie. Pierwszy pomiar R15 dał dół czwartej karty podglądu 786,95 przy nav 768. D046 uznaje przewinięcie za właściwe zachowanie, więc ten pomiar nie jest wadą. Powtórzony runner planów i T13-C przeszedł. [Raport](reports/2026-10-19-T13-acceptance.md). Telefon i Safari niewykonane. To nie zamyka T10-R1 ani T11.
+
 ## Prompty, handoffy i modele
 
 Osobne gotowe prompty: [A](prompts/T13-A.md), [B](prompts/T13-B.md), [C](prompts/T13-C.md), [D](prompts/T13-D.md), [E](prompts/T13-E.md). Są materiałem do ręcznego uruchomienia przez użytkownika po spełnieniu zależności. Nie są wysłane do innych chatów.

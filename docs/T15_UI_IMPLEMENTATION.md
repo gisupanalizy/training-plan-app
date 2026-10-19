@@ -98,4 +98,4 @@ Wspólnym przeglądem pozostaje istniejący `WorkoutEditor({loaded})` pod `/tren
 
 ## Stan programu — 2026-10-19
 
-Zbiorcze zlecenie A–G jest aktywne. A–F mają lokalne bramki przyjęte przez I; G jeszcze niewykonane. Rzeczywiste wyniki i nieudane próby: checkpoint STATE oraz handoffy etapów. T13-D odebrane lokalnie razem z D, bez drugiego kalendarza. Dotychczasowe wybory i wymagania pozostają bez zmian; lokalne PASS nie oznacza publikacji, telefonu/Safari ani końcowego niezależnego odbioru.
+Zbiorcze zlecenie A–G jest wykonane lokalnie. G/T13-E zamknięte 2026-10-19 po D046: przewinięcie listy nie jest wadą, nawet gdy dół karty wchodzi pod nawigację. Pomiar 786,95 wobec 768 zostaje w [raporcie](reports/2026-10-19-T15-G-acceptance.md). Telefon, Safari i publikacja pozostają osobno.

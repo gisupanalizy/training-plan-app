@@ -2,11 +2,11 @@
 
 Aktualizacja: 2026-10-19.
 
-## T15 — implementacja lokalna w toku
+## T15-G / T13-E — odbiór lokalny zamknięty
 
-F review po lokalnym Chrome/Auth/1RM i T04 PASS; [handoff F](handoffs/2026-10-18-T15-F-profil-konto.md). B review po lokalnym odbiorze i pełnym T13-C ([handoff B](handoffs/2026-10-18-T15-B-plany-trening.md)); E review po API/Chrome ([handoff E](handoffs/2026-10-18-T15-E-postep.md)); C i D/T13-D review po lokalnym odbiorze; A–F gotowe do niezależnego G.
+Niezależny recenzent sprawdził `codex/t15-ui` na `11d66bc`. Testy 251/9 skip, typy, build, lokalne Auth/API A/B/anon i Chrome przepływu przeszły. Pierwszy pomiar podglądu przy 390×844 pokazał dół czwartej karty na 786,95 przy nawigacji od 768. Użytkownik uznał to za zwykłe przewijanie dłuższej listy, nie za błąd (D046). Po tej decyzji cały runner planów i treningu przeszedł ponownie. [Raport G](reports/2026-10-19-T15-G-acceptance.md), [raport R](reports/2026-10-19-T13-acceptance.md), [handoff](handoffs/2026-10-19-T15-G-niezalezny-odbior.md). T13 i T15-A–G są done lokalnie. Telefon, Safari i publikacja zostają otwarte. Bez kolejnego zadania wykonawczego.
 
-Użytkownik zlecił całe A–G z subagentami i lokalnymi commitami. Integrator /root, maksymalnie dwóch wykonawców. A review po przyjętej lokalnej bramce ([handoff A](handoffs/2026-10-18-T15-A-fundament.md)); A/B/E/F review po lokalnych bramkach; C i D/T13-D review po lokalnym odbiorze; A–F gotowe do niezależnego G. Bieżący rejestr: [checkpoint T15](checkpoints/T15/STATE.md), [stan początkowy](checkpoints/T15/INITIAL.md). Gałąź codex/t15-ui, baza51ea3b4; zastana konsultacja U2 zachowana. Bez push, publikacji, płatnego AI lub zdalnych migracji. Poniższe sekcje opisują historię.
+Poniższe sekcje opisują historię, w tym wstępny zapis sprzed D046.
 
 ## T15-U2 — gotowy prompt zbiorczego zlecenia CLI
 

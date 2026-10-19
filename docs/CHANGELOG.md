@@ -337,3 +337,7 @@ Import C, odrębne kroki Korekty A i pełna karta Edytora A w Nocy. Całe ćwicz
 ### 2026-10-19 — widoczne superserie w treningu
 
 Podgląd treningu rysował każde ćwiczenie osobną kartą, a jedyną informacją o grupie był drobny podpis. Ramka w zapisie i edytorze używała tego samego szarego obrysu co karty, więc na Nocy grupa znikała. Co najmniej dwa ćwiczenia o tej samej grupie są teraz wspólnym blokiem ze złotą ramką i tytułem. Bez zmiany danych ani reguł grupowania.
+
+### 2026-10-19 — T15-G zamknięty lokalnie
+
+Niezależny odbiór na `11d66bc` zaliczył testy, typy, build, lokalne A/B/anon i Chrome. Pierwsza asercja wymagała, żeby czwarta karta podglądu kończyła się nad nawigacją; pomiar dał 786,95 wobec 768. D046: użytkownik uznał przewinięcie dłuższej listy za właściwe zachowanie, nie za wadę. Asercja sprawdza teraz, że kartę da się doskrolować. Powtórzony T15-B razem z T13-C przeszedł. T13 i T15-A–G są done lokalnie. Telefon, Safari i publikacja bez zmiany.

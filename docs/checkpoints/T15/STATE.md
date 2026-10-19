@@ -1,29 +1,22 @@
 # T15 — bieżący checkpoint integratora
 
-Aktualizacja2026-10-19. Gałąź codex/t15-ui; HEAD e544425. A6c1cf10, Fdc5d631, B60fcf41, E99433b8 + odebrana bramkae544425. Bez push/publikacji.
+Aktualizacja 2026-10-19 po zamknięciu G. Gałąź codex/t15-ui, HEAD 11d66bc plus lokalna zmiana asercji D046, jeszcze bez commita. T13 i T15-A–G done lokalnie. Bez push i publikacji.
 
 ## Bieżąca własność
 
-- I /root: wspólne docs, Git, kolejka testów, globals/layout/AppShell/shared UI po A. A/B/E/F odebrane lokalnie i zwolnione do I.
-- C review po przyjętej bramce /root/workout_ui Sol/high: plany/import i edytor, komponenty i testy wskazane promptem C, własne moduły/runnery/checkpoint/handoff. B nie jest już jego aktywnym zakresem.
-- D/T13-D review po przyjętej bramce /root/foundation Sol/medium: historia/page, nowe komponenty/helpery kalendarza/CSS/testy, własne runnery/checkpoint/handoff. Repository wyłącznie po osobnym przydziale I.
-- /root/progress zakończony po E. G todo: nowy niezależny autor po A–F, high. Maksymalnie2 aktywnych wykonawców.
+Brak aktywnego wykonawcy. Recenzent G zwolnił pliki. I zamknął lokalny zakres po decyzji użytkownika.
 
 ## Bieżąca kolejka i środowisko
 
-Brak aktywnych runnerów. Build/typy/DB/Chrome przydziela I; C/D tylko czyste testy do zgody. Własny produkcyjny3005 PID9287/9357 (sesja75680), build B/E/F; nie obejmuje przyszłych C/D. Zastany dev48576/48577 i inne projekty nietykalne. Przed rebuildem obaj autorzy potwierdzają freeze, I zatrzymuje wyłącznie swój3005. Supabase lokalny, bez nowych migracji/AI. Playwright runtime: /Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs.
+Brak runnerów. Produkcyjny 3005 z odbioru zatrzymany po powtórce. Dev użytkownika na 3002 zostaje. Supabase lokalny zostaje, bez nowych migracji i bez AI.
 
-## Odebrane dowody
+## Wynik G
 
-A: build/typy,204unit/9skip,Chrome21stanów +desktop/klawiatura/kontrast, T13-A RPC+HTTP PASS.
-B:32unit, nowe UI360/390/430 +pełny niezmienionyT13-C PASS;4karty treningu390 dół750,64<nav768, plan749,36; naprawiony wcześniejszy FAIL gęstości.
-E:29unit, API505sesji/503katalogu/>500dzieci/PR/korekta/snapshoty/A-B-anon; I Chrome sesja97754 exit0,15stanów/gesty/Enter po drag/nakładające punkty/swipe134→0/korekta/desktop PASS. Raport /private/tmp/t15e-browser-report.json; I i autor obejrzeli zrzuty.
-F:2unit+Chrome login/error/fokus/1RM/krok/hasło/logout/relogin360/390/430 oraz T04 PASS. Build/typy integracyjnePASS; pełna suite239PASS/9skip przed ostatnią naprawą CTA B, która ma osobne32unit+pełnyT13-C/build/typyPASS. Finalną suite powtórzyć po C/D.
-Telefon/Safari/systemowy autofill niewykonane; G pozostaje wymaganym niezależnym odbiorem. Szczegółowe komendy/fakty/nieudane próby w handoffach etapów i TESTING.
+Unit 251/9 skip, typy i build PASS. API A/B/anon PASS. Chrome przepływu PASS. Pierwsza asercja podglądu padła na 786,95 wobec nav 768. D046 to wycofuje. Powtórka `test-t15b-browser.mjs` z ogonkiem i T13-C: PASS, `/private/tmp/t15g-t15b-rerun.log`. Telefon i Safari otwarte.
 
 ## Następny krok
 
-C/D implementacja i czyste testy, freeze→wspólny build/typy→kolejno lokalne API/Chrome→lokalne commity odebranych zakresów. Potem świeży recenzent G/T13-E. Zachować kontrakt E docs/T15_PROGRESS_CONTRACT.md i B→D w T15_UI_IMPLEMENTATION.md. Bez blokera produktu, nie dublować zakresów po limicie.
+Brak zadania wykonawczego. Telefon, Safari i publikacja startują dopiero po osobnym zleceniu.
 
 ## Historia wcześniejszych checkpointów (nie bieżące przydziały)
 
