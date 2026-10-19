@@ -344,7 +344,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-C — Import, Korekta i Edytor
 
-- Status: todo. Właściciel: nieprzypisany, rola C. Zależności: bramka A, istniejące T04-R1/T07-R1, zlecenie C.
+- Status: in_progress. Właściciel: /root/workout_ui; I /root (2026-10-19). Zależności: bramka A, istniejące T04-R1/T07-R1, zlecenie C.
 - Zakres/odbiór/własność: [etap C](T15_UI_IMPLEMENTATION.md#c--import-korekta-i-edytor-całego-ćwiczenia). Układy C/A/A, pełna karta/formularz, różne etapy korekty; bez parserów/API.
 - Przekazanie: [prompt C](prompts/T15-C.md), [karta C](handoffs/planned/T15-C.md). High; regresje edytora/importu na mocku AI.
 
@@ -356,7 +356,7 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 
 ### T15-E — Postęp z rzeczywistych wyników
 
-- Status: in_progress. Właściciel: /root/progress; I /root (2026-10-18). Zależności: bramka A, datowanie T13-A, zlecenie E i zapis kontraktu obliczeń przez E/I przed agregacją.
+- Status: review — lokalna bramka E przyjęta przez I (2026-10-19). Właściciel: /root/progress, źródła zwolnione do I. Zależności: bramka A, datowanie T13-A, zlecenie E i zapis kontraktu obliczeń przez E/I przed agregacją.
 - Zakres/odbiór/własność: [etap E](T15_UI_IMPLEMENTATION.md#e--postęp-z-rzeczywistych-wyników). Własne autoryzowane dane, rzeczywiste punkty, metryki/PR całej historii, pomoc i gesty, zachowana semantyka T08 i brak zapisu szacunku do profilu.
 - Przekazanie: [prompt E](prompts/T15-E.md), [karta E](handoffs/planned/T15-E.md). High; domena, paginacja, izolacja A/B/anon, lokalny UI/API.
 

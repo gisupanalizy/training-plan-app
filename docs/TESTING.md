@@ -286,3 +286,7 @@ Wcześniejsze próby: pierwszy build bez uprawnień nie dotarł do Dockera; pono
 - `scripts/test-t15b-browser.mjs` przez lokalny run-local-t05 z T15B_PLAYWRIGHT_MODULE: nowe powierzchnie3 szerokości, cztery karty, reload drugiego planu, keyboard/swipe/drag→Enter/history return/szkicPASS. Następnie importowany niezmieniony test-t13c-browser.mjs PASS: realne komendy/retry/ACK→GET/409/szkice/daty/delete/history/snapshoty, głos mock transportu.
 - Pierwsza próba T13-C FAIL czwarta karta802,64>nav768. Po przesunięciu Kontynuuj pod karty powtórkaPASS750,64<768; plan749,36<768. Ograniczenia telefonu/Safari pozostają otwarte.
 - E API505sesji/503katalogu/>500dzieci PASS; E Chrome jeszcze niewykonane. T08 HTTP/API po adaptacji filtra historii PASS940→1140kg/A-B-anon.
+
+### T15-E — domknięcie lokalnej bramki2026-10-19
+
+I wykonał `DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-t05.mjs scripts/test-t15e-browser.mjs`:PASS (sesja97754, exit0).15stanów360/390/430, mysz klik/drag/klik, Enter po drag/Escape, pomoc, pinch i pierwszy tap po nim, PR swipe134→0, własne daty, nakładające się sesje przez zwijaną listę, korekta→odczyt, desktop, zero błędówJS. Raport i zrzuty /private/tmp/t15e-*. I obejrzał390 zewnętrzne i masa ciała. Wcześniejsza odmowa sandbox i220s oczekiwania na eskalację agenta nie były testem; dopiero uruchomienie I przeszło. Fizyczny telefon/Safari niewykonane. API dowody i29 czystych testów w handoffie E; bez ponawiania zaliczonych testów bez zmiany kodu.

@@ -1,15 +1,15 @@
 # T15 — bieżący checkpoint integratora
 
-2026-10-18. Gałąź codex/t15-ui; ostatni commit dc5d631 — odebrany F; A zapisane w6c1cf10.
+2026-10-19. Gałąź codex/t15-ui; HEAD99433b8 checkpoint E, B odebrane60fcf41, Fdc5d631, A6c1cf10.
 
 ## Aktualni właściciele i etap
 
 - I /root: dokumenty wspólne/Git/kolejka; globals/layout/AppShell i src/components/ui, src/lib/ui po oddaniu A.
 - A review: bramka przyjęta; /root/foundation interrupted po oddaniu, nie wznawiać samoczynnie. [Handoff A](../../handoffs/2026-10-18-T15-A-fundament.md).
 - B review — lokalna bramka przyjęta: /root/workout_ui (Sol/high), strony Start/Plany/plan/trening, plan-preview/exercise-summary/workout-* i testy, workouts/presentation*, training-preview, nowe CSS Modules/plan-carousel, własny runner/checkpoint/handoff.
-- E in_progress: /root/progress (Sol/high), postep/page, lib/progress, components/progress, własne runnery/checkpoint/handoff. Kontrakt docs/T15_PROGRESS_CONTRACT.md/D045.
+- E review — bramka lokalna przyjęta2026-10-19: /root/progress (Sol/high), postep/page, lib/progress, components/progress, własne runnery/checkpoint/handoff. Kontrakt docs/T15_PROGRESS_CONTRACT.md/D045.
 - F review — lokalna bramka przyjęta: /root jako integrator, profil/logowanie/ustaw-haslo/one-rep-max-editor i nowe lokalne komponenty formularza konta/CSS; bez zmian kontraktów Auth.
-- C/D/G todo. D po B, G niezależny po wszystkich bramkach.
+- C in_progress: /root/workout_ui, import/edytor zgodnie z promptem C. D/G todo; D po B, G niezależny po wszystkich bramkach.
 
 ## Wznowienie numer2 i kolejka
 
@@ -68,3 +68,7 @@ B Chrome nowe powierzchnie PASS360/390/430, cztery karty planu390 dół749,36<na
 E kolejka odzyskana: Chrome nie wystartował (sandbox Docker odmowa, require_escalated oczekiwał220s i przerwany). I sprawdził brak procesów, przerwał oczekiwanie agenta i wznowił go tylko dla statusu. API E powtórzone po markerzePASS3,6s. B poprawka gęstości kart/CTA32unitPASS, wspólny rebuild i typyPASS; serwer3005 sesja75680. B ma teraz ponowienie Chrome/T13-C. Następnie I uruchomi E Chrome własnym narzędziem, E pozostaje freeze. Nie deklarować E ChromePASS.
 
 B finalny Chrome/T13-C PASS sesja99765;4karty treningu390 dół750,64<nav768, plan749,36. Build i typyPASS. B zwalnia źródła, finalizuje handoff; I przyjmuje bramkę. E Chrome kolejka u I po poprawce cleanup runnera.
+
+## Wznowienie2026-10-19
+
+Git czysty, zastano lokalne60fcf41 B i99433b8 checkpoint E; zachowano. B/E errored po limicie, brak runnerów; własny3005 PID9287/9357 pozostaje. E Chrome wykonany przez I sesja97754 exit0,15stanów/gesty/swipe134→0/korekta/desktopPASS, raport w tmp. E wznowiony tylko do końcowego handoffu/oględzin. B wznowiony na nowy C po odebranej bramce B i commicie; maksymalnie2 wykonawców. D po zwolnieniu E, bez duplikowania.

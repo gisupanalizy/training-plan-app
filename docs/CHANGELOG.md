@@ -320,3 +320,8 @@ T15-A review po przyjętej lokalnej bramce (204 testy/9skip, typy/build, Chrome2
 - Start/karuzela planów/podgląd/szczegóły tabelaryczne/prowadzenie treningu w Nocy; zachowane komendy i bezpieczny kontekst powrotu dla D.
 - Naprawiono początkowe wyrównanie drugiego planu i klawiaturę po drag. Chrome wykrył czwartą kartę aktywnego treningu pod nav; przeniesiono CTA pod listę, pełna powtórka PASS.
 -32unitPASS, nowe powierzchnie360/390/430 i pełny niezmieniony T13-C PASS, build/typyPASS. D może korzystać z kontraktu B→D. Bez API/SQL/push.
+
+### 2026-10-19 — T15-E odebrane lokalnie, start C
+
+- Domknięto checkpoint99433b8 rzeczywistym ChromePASS wykonanym przez I; źródła/PR/paginacja i prywatność wcześniejPASS w API. Bez zmian wymagań; E review do G.
+- B odebrane w60fcf41. Wykonawca /root/workout_ui przejmuje odrębny C po zwolnieniu B; E kończy dokumenty, następnie slot dla D. Zachowano limit2 wykonawców.
