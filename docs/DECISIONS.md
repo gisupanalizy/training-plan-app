@@ -350,6 +350,7 @@ Uzupełnienie D035 po wykonaniu: migracja22 zastosowana tylko lokalnie; odtworzo
 - Pomoc1RM jest dostępna przez ikonę informacji i klik aktywnej metryki, z wzorem, przykładem, współczynnikami i rozdzieleniem od ręcznego pomiaru profilu. Zachowano obecną propozycję tabeli1–10, sprawdzoną ponownie w źródle Hevy; algorytm produkcyjny nadal wymaga technicznego kontraktu w T15-E/I.
 - Rekordy przewijają się natywnym swipe w obie strony na telefonie. W tej rundzie sprawdzono syntetyczny dotyk Chrome, nie fizyczne urządzenie.
 - Użytkownik zlecił dopracowanie makiet i zapytał o plan wdrożenia/podział na wykonawców. T15-P przygotował etapy A–G, jeden integrator, odrębne pliki, prompty i karty przyszłych handoffów. T15-D obejmuje tę samą pracę co T13-D, a odbiór G także T13-E. Bez automatycznego uruchamiania agentów lub rozpoczęcia src.
+- Uzupełnienie 2026-10-19: D047 zastępuje wizualny wybór palety Noc jako docelowego wyglądu. Profil A, interakcje punktu, pomoc, swipe i plan T15 pozostają. T15-A–G są done lokalnie.
 
 ## D045 — T15: lokalna orkiestracja i kontrakt analityki
 
@@ -363,3 +364,12 @@ Uzupełnienie D035 po wykonaniu: migracja22 zastosowana tylko lokalnie; odtworzo
 - Dół karty może wchodzić pod dolną nawigację. Dłuższy trening ma więcej kart i jest przewijany; przesunięcie odsłania zasłonięty fragment. To nie jest błąd odbioru i nie gubi treści.
 - Warunek „cztery pełne karty kończą się nad nav przy 390×844” przestaje być bramką. Zostaje zakaz poziomego wylewania oraz wymóg, że zasłoniętą kartę da się doskrolować. Ramka superserii zostaje.
 - Nie zmienia danych, grupowania, snapshotów, API ani publikacji. Telefon i Safari pozostają osobnym, niewykonanym odbiorem.
+
+## D047 — Tempo jest jedynym wyglądem
+
+- Data: 2026-10-19. Status: confirmed dla kierunku wizualnego. Nie oznacza wdrożenia kodu. T16-A zapisuje kontrakt; T16-B i kolejne etapy wymagają osobnych zleceń.
+- Użytkownik wybrał kierunek „01 Tempo” z Figma Make `D2nF5loZrbPDqY2oco8ske` jako jedyny docelowy wygląd Formy. Zastępuje wyłącznie wizualną część D044 dotyczącą palety Noc. Aplikacja ma jeden system Tempo, bez przełącznika i bez drugiej palety utrzymywanej obok niego.
+- Zachowanie produktu zostaje: pięć tras, prywatność, model danych, kontrakty zapisu, analityka v1 z [T15_PROGRESS_CONTRACT](T15_PROGRESS_CONTRACT.md) i Auth. D046 pozostaje bez zmian: dłuższa lista może wchodzić pod dolną nawigację i musi dać się doskrolować. Cztery karty kończące się nad nawigacją nie wracają jako bramka.
+- Źródła wyglądu skopiowane do repozytorium: [brief](tempo-implementation-brief.md) i [katalog klatek](tempo-frame-catalog.md). Prototyp `src/App.tsx` w Make służy do odczytu hierarchii i stanów. Przykładowe liczby, osoby i daty z klatek nie są danymi produktu. Archiwum `public/references/tempo-extended/` w Make nie jest wzorcem.
+- Program [T16](T16_TEMPO_IMPLEMENTATION.md) ma etapy A–I. Warunkowe T16-K wdraża najmniejszą zmianę kontraktu dopiero po osobnej zgodzie na konkretną propozycję. Migracja K, jeśli zajdzie, pozostaje lokalna do kolejnej, osobnej zgody na środowisko zdalne.
+- Referencyjne tło Tempo to `#11191c`. Na `70d66e6` kod nadal ma Noc i `#11181f`. T16-A nie zmienia `src/`.

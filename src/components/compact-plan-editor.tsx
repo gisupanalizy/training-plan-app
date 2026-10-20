@@ -7,7 +7,7 @@ import { seriesBlocks, exerciseSummary, loadLabel, restLabel, optionalLabel, ses
 import { ReviewDialog } from './review-dialog';
 import { ReviewGroupEdit } from './review-group-edit';
 import { PlanExerciseEdit, PlanSeriesEdit, PlanDayEdit, type CatalogExercise } from './plan-edit-dialogs';
-import { ExerciseIllustration, Icon } from '@/components/ui';
+import { Button, ExerciseIllustration, Icon } from '@/components/ui';
 import { PrescriptionFacts } from './exercise-summary';
 import { planMetrics } from '@/lib/workouts/presentation';
 import styles from './plan-authoring.module.css';
@@ -119,6 +119,23 @@ export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog,
   const modalSession = modal && 'sessionId' in modal ? document.sessions.find(session => session.reviewId === modal.sessionId) : undefined;
   const modalExercise = modal && 'exerciseId' in modal ? modalSession?.exercises.find(exercise => exercise.reviewId === modal.exerciseId) : undefined;
   const voicePlan = voiceResult?.proposal as { document: PlanEditorDocument; issues: { path: string; message: string }[] } | undefined;
+  function applyVoice() {
+    if (!voicePlan) return;
+    edit(draft => {
+      if (!draft.name.trim()) draft.name = voicePlan.document.name;
+      const blank = draft.sessions.every(session => session.exercises.every(exercise => !exercise.name.trim()));
+      const incoming = withReviewIds(voicePlan.document);
+      incoming.sessions.forEach(session => {
+        session.reviewId = crypto.randomUUID();
+        session.exercises.forEach(exercise => {
+          exercise.reviewId = crypto.randomUUID();
+          exercise.sets.forEach(set => { set.reviewId = crypto.randomUUID(); });
+        });
+      });
+      draft.sessions = blank ? incoming.sessions : [...draft.sessions, ...incoming.sessions];
+    });
+    close();
+  }
   function card(exercise: PlanEditorExercise, session: PlanEditorSession, readonly = false) {
     const blocks = seriesBlocks(exercise);
     const shortGoal = blocks.slice(0, 2).map(block => `${block.minimum === block.maximum ? block.maximum : `${block.minimum}–${block.maximum}`} × ${goalLabel(block.sets[0], true)}`).join(' + ') + (blocks.length > 2 ? ` + ${blocks.length - 2} ${blocks.length === 3 ? 'blok' : 'bloków'}` : '');
@@ -141,10 +158,10 @@ export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog,
         {trainingCards(active)}
         {!!active.exercises.length && <details className={styles.organization}><summary>Kolejność i ustawienia treningu</summary><button type="button" onClick={() => open({ type: 'day', sessionId: active.reviewId! })}>Edytuj trening</button>{active.note && <p className="review-hint">{active.note}</p>}{active.exercises.map((exercise, index) => <div key={exercise.reviewId} className={styles.orderRow}><span>{index + 1}. {exercise.name}</span><button type="button" aria-label={`Przesuń w górę: ${exercise.name || 'ćwiczenie'}`} disabled={index === 0} onClick={() => moveExercise(active.reviewId!, exercise.reviewId!, -1)}><Icon name="chevronLeft" size={18} /></button><button type="button" aria-label={`Przesuń w dół: ${exercise.name || 'ćwiczenie'}`} disabled={index === active.exercises.length - 1} onClick={() => moveExercise(active.reviewId!, exercise.reviewId!, 1)}><Icon name="chevronRight" size={18} /></button></div>)}</details>}
         {!active.exercises.length && <p className="review-hint">Dodaj ćwiczenie, aby uzupełnić ten trening.</p>}
-        <div className="plan-add-actions"><button type="button" className="button button-outline" disabled={active.exercises.length >= 50} onClick={() => open({ type: 'addExercise', sessionId: active.reviewId!, exercise: newReviewExercise('') })}>+ Dodaj ćwiczenie</button><button type="button" onClick={() => open({ type: 'group', sessionId: active.reviewId!, group: null })} disabled={active.exercises.length < 2}>+ Utwórz superserię</button></div>
+        <div className="plan-add-actions"><Button variant="secondary" disabled={active.exercises.length >= 50} onClick={() => open({ type: 'addExercise', sessionId: active.reviewId!, exercise: newReviewExercise('') })}>+ Dodaj ćwiczenie</Button><Button variant="ghost" onClick={() => open({ type: 'group', sessionId: active.reviewId!, group: null })} disabled={active.exercises.length < 2}>+ Utwórz superserię</Button></div>
       </section>
-        <div className="plan-toolbar-actions"><button type="button" onClick={() => open({ type: 'overview' })}>Podgląd całego planu</button><button type="button" onClick={() => open({ type: 'voice' })}>Dyktuj fragment planu</button></div>
-      <button type="button" className="button button-outline" disabled={document.sessions.length >= 52} onClick={() => open({ type: 'addDay', session: { reviewId: crypto.randomUUID(), weekNumber: active.weekNumber, dayLabel: '', note: null, exercises: [] } })}>+ Dodaj trening</button>
+        <div className="plan-toolbar-actions"><Button variant="ghost" onClick={() => open({ type: 'overview' })}>Podgląd całego planu</Button><Button variant="ghost" onClick={() => open({ type: 'voice' })}>Dyktuj fragment planu</Button></div>
+      <Button variant="secondary" disabled={document.sessions.length >= 52} onClick={() => open({ type: 'addDay', session: { reviewId: crypto.randomUUID(), weekNumber: active.weekNumber, dayLabel: '', note: null, exercises: [] } })}>+ Dodaj trening</Button>
       {modal && <ReviewDialog key={`${modal.type}:${'exerciseId' in modal ? modal.exerciseId : 'sessionId' in modal ? modal.sessionId : ''}`} title={titles[modal.type]} onClose={close}>
         {(modal.type === 'exercise' || modal.type === 'addExercise') && modalSession && <PlanExerciseEdit exercise={modal.type === 'addExercise' ? modal.exercise : modalExercise!} document={document} sessionId={modal.sessionId} catalog={catalog} onApply={replaceExercise} onCancel={close}
           onDelete={modal.type === 'exercise' && modalSession.exercises.length > 1 ? () => open({ type: 'deleteExercise', sessionId: modal.sessionId, exerciseId: modalExercise!.reviewId! }) : undefined} />}
@@ -153,19 +170,17 @@ export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog,
           edit(draft => { draft.sessions = draft.sessions.filter(item => item.reviewId !== session.reviewId); draft.sessions.splice(position, 0, session); }); setActiveId(session.reviewId!); close();
         }} onDelete={modal.type === 'day' && document.sessions.length > 1 ? () => open({ type: 'deleteDay', sessionId: modal.sessionId }) : undefined} />}
         {modal.type === 'group' && modalSession && <><ReviewGroupEdit session={modalSession} group={modal.group} onApply={session => { edit(draft => { draft.sessions[draft.sessions.findIndex(item => item.reviewId === session.reviewId)] = session; }); close(); }} /><button type="button" onClick={close}>Anuluj</button></>}
-        {(modal.type === 'deleteDay' || modal.type === 'deleteExercise') && <><p>Czy usunąć {modal.type === 'deleteDay' ? `trening „${modalSession!.dayLabel}” wraz z ćwiczeniami` : `ćwiczenie „${modalExercise!.name}” wraz z seriami`} z nowej wersji planu?</p><div className="review-dialog-footer"><button type="button" onClick={close}>Anuluj</button><button type="button" className="review-danger" onClick={() => {
+        {(modal.type === 'deleteDay' || modal.type === 'deleteExercise') && <><p>Czy usunąć {modal.type === 'deleteDay' ? `trening „${modalSession!.dayLabel}” wraz z ćwiczeniami` : `ćwiczenie „${modalExercise!.name}” wraz z seriami`} z nowej wersji planu?</p><div className="review-dialog-footer"><Button variant="ghost" onClick={close}>Anuluj</Button><Button variant="danger" onClick={() => {
           edit(draft => { if (modal.type === 'deleteDay') draft.sessions = draft.sessions.filter(session => session.reviewId !== modal.sessionId); if (modal.type === 'deleteExercise') { const session = draft.sessions.find(item => item.reviewId === modal.sessionId)!; session.exercises = session.exercises.filter(item => item.reviewId !== modal.exerciseId); } }); close();
-        }}>Potwierdź usunięcie</button></div></>}
+        }}>Potwierdź usunięcie</Button></div></>}
         {modal.type === 'overview' && <><p className="review-hint">{document.sessions.length} treningów · podgląd bieżącego szkicu</p>{document.sessions.map(session => <details className="plan-overview-day" key={session.reviewId} open={session.reviewId === active.reviewId}><summary>Tydzień {session.weekNumber} · {session.dayLabel || 'Bez nazwy'} · {session.exercises.length} ćw.</summary>{session.note && <p>{session.note}</p>}{trainingCards(session, true)}{session.exercises.map(exercise => <button type="button" className="review-link" key={exercise.reviewId} onClick={() => { setActiveId(session.reviewId!); open({ type: 'exercise', sessionId: session.reviewId!, exerciseId: exercise.reviewId! }); }}>Edytuj: {exercise.name || 'Uzupełnij ćwiczenie'}</button>)}<button type="button" onClick={() => { close(); select(session.reviewId!); }}>Przejdź do treningu {session.dayLabel}</button></details>)}<button type="button" onClick={close}>Wróć do edytora</button></>}
         {modal.type === 'voice' && <><VoiceInput scope="plan" label="Plan i serie" onProposal={setVoiceResult} />{voicePlan && voiceResult && <div className="voice-proposal"><strong>Propozycja do szkicu planu</strong><p>Transkrypcja: {voiceResult.transcript}</p>
           {voicePlan.document.sessions.map((session, index) => <div key={index}><strong>{session.dayLabel}</strong>{session.exercises.map((exercise, exerciseIndex) => <p key={exerciseIndex}>{exercise.name}: {exercise.sets.map(set => `${goalLabel(set)} · ${loadLabel(set)}`).join('; ')}</p>)}</div>)}
           {voicePlan.issues.length > 0 && <p role="alert">Do sprawdzenia: {voicePlan.issues.map(issue => issue.message).join('; ')}</p>}
-          <button type="button" onClick={() => { edit(draft => { if (!draft.name.trim()) draft.name = voicePlan.document.name; const blank = draft.sessions.every(session => session.exercises.every(exercise => !exercise.name.trim()));
-            const incoming = withReviewIds(voicePlan.document); incoming.sessions.forEach(session => { session.reviewId = crypto.randomUUID(); session.exercises.forEach(exercise => { exercise.reviewId = crypto.randomUUID(); exercise.sets.forEach(set => { set.reviewId = crypto.randomUUID(); }); }); });
-            draft.sessions = blank ? incoming.sessions : [...draft.sessions, ...incoming.sessions]; }); close(); }}>Dodaj propozycję do szkicu</button><p className="small-muted">Propozycja wymaga przeglądu. Publikacja planu jest osobnym działaniem.</p></div>}<button type="button" onClick={close}>Anuluj</button></>}
+          <Button variant="primary" onClick={applyVoice}>Dodaj propozycję do szkicu</Button><p className="small-muted">Propozycja wymaga przeglądu. Publikacja planu jest osobnym działaniem.</p></div>}<Button variant="ghost" onClick={close}>Anuluj</Button></>}
       </ReviewDialog>}
     </fieldset>
-    <div className="editor-footer plan-save-bar"><div role="status" className="plan-save-status">{saving ? 'Zapisywanie…' : dirty ? 'Niezapisane zmiany' : planId ? 'Plan bez zmian' : 'Nowy szkic planu'}<small>Zapis publikuje cały plan jako {planId ? 'nową wersję' : 'pierwszą wersję'}.</small></div><button type="button" className="button button-dark" disabled={saving || !!modal} onClick={save}>{saving ? 'Zapisywanie…' : planId ? 'Opublikuj nową wersję' : 'Utwórz plan'}</button></div>
+    <div className="editor-footer plan-save-bar"><div role="status" className="plan-save-status">{saving ? 'Zapisywanie…' : dirty ? 'Niezapisane zmiany' : planId ? 'Plan bez zmian' : 'Nowy szkic planu'}<small>Zapis publikuje cały plan jako {planId ? 'nową wersję' : 'pierwszą wersję'}. Szkic nie zapisuje się sam.</small></div><Button variant="primary" disabled={saving || !!modal} onClick={save}>{saving ? 'Zapisywanie…' : planId ? 'Opublikuj nową wersję' : 'Utwórz plan'}</Button></div>
     {error && <p className="auth-error" role="alert">{error}</p>}
     <p className="small-muted">Poprzednie wersje i historyczne treningi pozostają zachowane. Procenty bez rzeczywistego 1RM mają pusty cel kg. Szkic nie jest automatycznie zapisywany.</p>
   </div>;

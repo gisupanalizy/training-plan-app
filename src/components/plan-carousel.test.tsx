@@ -18,6 +18,14 @@ test('klawiatura wybiera plan, nie pokazuje jednostek poprzedniego podczas odczy
   expect(replace).toHaveBeenLastCalledWith('/plany?plan=a', { scroll: false });
 });
 
+test('archiwum otwiera podgląd i nie oferuje startu', () => {
+  render(<PlanCarousel plans={[{ id: 'a', name: 'Stary', status: 'archived' }]} selectedPlanId="a" sessions={[]} />);
+  expect(screen.getByRole('link', { name: 'Otwórz plan' }).getAttribute('href')).toBe('/plany/a');
+  expect(screen.queryByRole('link', { name: /Rozpocznij/ })).toBeNull();
+  expect(screen.queryByRole('button', { name: /Rozpocznij/ })).toBeNull();
+  expect(screen.getByText(/nie można rozpocząć/)).toBeTruthy();
+});
+
 test('wejście bezpośrednio do drugiego planu ustawia rzeczywiste przewinięcie po mount', () => {
   vi.spyOn(HTMLElement.prototype, 'offsetLeft', 'get').mockImplementation(function (this: HTMLElement) { return this.getAttribute('aria-label')?.startsWith('2 z') ? 320 : 0; });
   render(<PlanCarousel plans={plans} selectedPlanId="b" sessions={[]} />);

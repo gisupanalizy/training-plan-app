@@ -1,6 +1,6 @@
-# Forma — system wizualny T15
+# Forma — system wizualny
 
-Status: wdrażany lokalnie w T15; szczegółowe dowody i ograniczenia w checkpointach/handoffach. Nie oznacza publikacji. Źródła: D039/D042/D043/D044 oraz [wybrane makiety](design/t14-selected-spec.md). Bieżąca specyfikacja R5/R6 ma pierwszeństwo przed historycznymi jasnymi wariantami.
+Status: docelowy wygląd to Tempo (D047, [brief](tempo-implementation-brief.md), [katalog](tempo-frame-catalog.md)). T16-B–H są w drzewie roboczym jako jeden system, bez drugiego motywu. T16-I nie przyjął bramki: główny zapis serii przy 390×844 nie kończy się nad dolną nawigacją. Nie oznacza publikacji. Historyczne wybory układów: D039/D042/D043/D044 oraz [makiety T14](design/t14-selected-spec.md).
 
 ## Cel i charakter
 
@@ -8,7 +8,7 @@ Mobilny dziennik treningowy, tryb Operate. Użytkownik wybiera trening, szybko o
 
 ## Wybrany system
 
-Domyślna Noc niezależna od systemowego motywu. Tło #11181f, powierzchnia #1c262f, tekst #f1f3f5, tekst pomocniczy #b5c1cc, akcent #f2c66b z tekstem #282012. Semantyczne tokeny w globals.css; moduły ekranów korzystają z tokenów, bez własnych konkurujących motywów. Brak przełącznika sześciu palet w produkcie.
+Jedyny docelowy wygląd to Tempo, niezależny od systemowego motywu. Tło #11191c, powierzchnia #1b2629, tekst #f2f5f1, tekst pomocniczy #9daaa7, akcent #efc45f z tekstem #25200f. Pozostałe tokeny i ich role opisuje brief. Semantyczne aliasy żyją w jednym `:root`; moduły ekranów korzystają z nich, bez własnej palety i bez przełącznika. W drzewie roboczym aliasy wskazują `--tempo-*` w jednym `:root`. Atrybutu `data-theme="night"` nie ma. Zdanie o wartościach Nocy na `70d66e6` opisuje stan sprzed T16-B.
 
 Lokalny Inter Variable z OFL; font i licencja w public/fonts, manifest pochodzenia zachowany. Spójne ikony SVG akcji. Ilustracje ćwiczeń z lokalnej biblioteki o jawnej licencji CC BY-SA4.0 i manifestach; dokładne dopasowanie ruchu albo neutralny znacznik. Licencja grafik nie jest licencją kodu. Atrybucja dostępna w aplikacji.
 
@@ -16,7 +16,7 @@ Lokalny Inter Variable z OFL; font i licencja w public/fonts, manifest pochodzen
 
 - Start/Plany/Podgląd/Szczegóły A, Zapis serii C, Import C, Korekta/Edytor/Historia/Profil A, Logowanie C. Postęp według pojedynczego R4/R5, nie historycznych wariantów A/B/C.
 - Mobilna nawigacja pięciu tras, safe-area i miejsce pod treścią; desktop ma boczną nawigację. Podstawowe akcje/cele dotykowe co najmniej44px, widoczny fokus, obsługa klawiatury.
-- Podgląd/aktywny trening: co najmniej cztery pełne krótkie karty przy390×844;360/430 bez poziomego overflow. Przewijanie poziome tylko tam, gdzie celowe: plany i rekordy, z alternatywą klawiatury.
+- Podgląd i aktywny trening używają zwartych kart. Przy 360/390/430 px treści pozostają w szerokości ekranu. Dłuższa lista przewija się także wtedy, gdy dolna nawigacja zasłania dół karty; zasłonięty fragment ma być osiągalny przewinięciem (D046). Przewijanie poziome zostaje tam, gdzie jest celowe: plany i rekordy, z alternatywą klawiatury.
 - Formularz jednej serii oddziela cel, poprzedni wynik i wykonanie; zapis dopiero po ACK i odczycie. Edytor planu otwierany całą kartą, bez utraty indywidualnych serii.
 - Postęp: jedna linia, metryki nad wykresem, zakres pod osią, rekordy całej historii poniżej. Tylko punkt otwiera informacje; poza nim zamknięcie. Mysz, klawiatura i dotyk testowane oddzielnie. Pomoc szacunku wyjaśnia źródło i brak zapisu do rzeczywistego1RM.
 

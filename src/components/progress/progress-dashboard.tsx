@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Button, InfoPopover } from "@/components/ui";
+import { Button, EmptyState, Icon, InfoPopover, Notice } from "@/components/ui";
 import type { ExerciseAnalytics, Metric, ProgressPoint, SourceSet } from "@/lib/progress/analytics";
 import { dateNumber, isoDay, moveRange, periodRange, resizeRange, type DateRange, type Period } from "@/lib/progress/ranges";
 import styles from "./progress.module.css";
@@ -21,16 +21,36 @@ function pointMoment(point: ProgressPoint) {
   return dateNumber(point.date) + (Number(parts.find(p => p.type === "hour")?.value) * 60 + Number(parts.find(p => p.type === "minute")?.value)) * 60000;
 }
 
-function ProgressChart({ points, metric, range, onRangeChange, onReset, controls }: { points: ProgressPoint[]; metric: Metric; range: DateRange; onRangeChange: (value: DateRange) => void; onReset: () => void; controls: ReactNode }) {
+/** Okno wykresu. Brak pomiaru między wynikami to przerwa. Procent z makiety nie jest metryką v1. */
+export function windowShape(points: ProgressPoint[], metric: Metric, range: DateRange) {
+  const inRange = points.filter(p => p.date >= range.from && p.date <= range.to);
+  const measured = inRange.filter(p => p.metrics[metric]);
+  let seen = false;
+  let missingAfter = false;
+  let gap = false;
+  for (const point of inRange) {
+    if (point.metrics[metric]) {
+      if (missingAfter) gap = true;
+      seen = true;
+    } else if (seen) missingAfter = true;
+  }
+  const state = measured.length === 0 ? "empty" : measured.length === 1 ? "single-point" : gap ? "gap" : "populated";
+  return { inRange, measured, gap, state, comparison: measured.length < 2 ? "none" : "basis" } as const;
+}
+
+function ProgressChart({ points, metric, range, onRangeChange, onReset, before, controls, after }: {
+  points: ProgressPoint[]; metric: Metric; range: DateRange; onRangeChange: (value: DateRange) => void; onReset: () => void; before: ReactNode; controls: ReactNode; after: ReactNode;
+}) {
   const root = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<string | null>(null);
   const drag = useRef<{ x: number; range: DateRange; moved: boolean } | null>(null);
   const suppressClick = useRef(false);
   const latest = useRef({ range, onRangeChange });
   latest.current = { range, onRangeChange };
+  const shape = windowShape(points, metric, range);
+  const shown = shape.inRange;
   const from = dateNumber(range.from), until = dateNumber(range.to) + 86400000;
-  const shown = points.filter(p => p.date >= range.from && p.date <= range.to);
-  const values = shown.map(p => p.metrics[metric]?.value).filter((n): n is number => n !== undefined);
+  const values = shape.measured.map(p => p.metrics[metric]!.value);
   const maximum = values.length ? Math.max(...values) : 0;
   const minimum = values.length ? Math.min(...values) : 0;
   const padding = Math.max(1, (maximum - minimum) * .15, maximum * .05);
@@ -44,6 +64,7 @@ function ProgressChart({ points, metric, range, onRangeChange, onReset, controls
     line += `${previous ? "L" : "M"}${x(point)},${y(measurement.value)} `;
     previous = true;
   }
+  const lineMode = shape.measured.length < 2 ? "none" : shape.gap ? "broken" : "continuous";
   const chosen = shown.find(p => p.id === selected);
   const measurement = chosen?.metrics[metric];
   useEffect(() => { setSelected(null); }, [metric, range.from, range.to, points]);
@@ -69,38 +90,46 @@ function ProgressChart({ points, metric, range, onRangeChange, onReset, controls
     return () => { element.removeEventListener("touchstart", start); element.removeEventListener("touchmove", move); element.removeEventListener("touchend", end); element.removeEventListener("wheel", wheel); };
   }, []);
   const activatePoint = (id: string, detail: number) => { if (!suppressClick.current || detail === 0) setSelected(id); };
-  return <><div ref={root} className={styles.plot} data-testid="progress-plot" data-from={range.from} data-to={range.to} tabIndex={0} role="group" aria-label="Wykres postępu. Plus i minus przybliżają, strzałki przesuwają daty."
-    onKeyDown={event => {
-      if (event.target !== event.currentTarget) return;
-      if (event.key === "Home") { event.preventDefault(); onReset(); }
-      if (["+", "=", "-", "ArrowLeft", "ArrowRight"].includes(event.key)) {
-        event.preventDefault(); onRangeChange(event.key === "ArrowLeft" ? moveRange(range, -.2) : event.key === "ArrowRight" ? moveRange(range, .2) : resizeRange(range, event.key === "-" ? 1.5 : 2 / 3));
-      }
-    }}
-    onPointerDown={event => { if (event.pointerType !== "touch" && event.button === 0) { suppressClick.current = false; drag.current = { x: event.clientX, range, moved: false }; } }}
-    onPointerMove={event => {
-      const start = drag.current;
-      if (!start || event.pointerType === "touch") return;
-      const delta = event.clientX - start.x;
-      if (Math.abs(delta) > 6 || start.moved) {
-        if (!start.moved) { start.moved = true; event.currentTarget.setPointerCapture(event.pointerId); }
-        suppressClick.current = true; setSelected(null); onRangeChange(moveRange(start.range, -delta / event.currentTarget.clientWidth));
-      }
-    }}
-    onPointerUp={event => { drag.current = null; if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); }}
-    onPointerCancel={() => { drag.current = null; }}
-    onClick={event => { if (!(event.target as Element).closest("[data-progress-point]")) setSelected(null); }}>
-    <svg viewBox="0 0 350 220" aria-hidden="true" className={styles.chart}>
-      {[0, 1, 2].map(i => { const value = low + (high - low) * i / 2; return <g key={i}><path d={`M48 ${y(value)}H332`} className={styles.grid} /><text x="40" y={y(value) + 4} textAnchor="end">{formatMetric(value, metric)}</text></g>; })}
-      <text x="8" y="15">{unit(metric)}</text>
-      <path d={line} className={styles.line} />
-      {shown.map(p => p.metrics[metric] && <circle key={p.id} cx={x(p)} cy={y(p.metrics[metric]!.value)} r="4" className={styles.dot} />)}
-      {[0, .5, 1].map(fraction => <text key={fraction} x={48 + fraction * 284} y="205" textAnchor={fraction === 0 ? "start" : fraction === 1 ? "end" : "middle"}>{shortDate(isoDay(from + (until - from - 86400000) * fraction))}</text>)}
-    </svg>
-    {shown.map(point => { const value = point.metrics[metric]; return value && <button key={point.id} type="button" data-progress-point={point.id} data-chart-point="true" className={styles.point} style={{ left: `${x(point) / 350 * 100}%`, top: `${y(value.value) / 220 * 100}%` }} aria-label={`${fullDate(point.date)}, ${pointTime(point)}, ${statusName(point.status)}: ${metricLabels[metric]} ${formatMetric(value.value, metric)} ${unit(metric)}`} aria-expanded={selected === point.id} onClick={event => { event.stopPropagation(); activatePoint(point.id, event.detail); }} />; })}
-    {!values.length && <p className={styles.noMeasurements}>Brak porównywalnych wyników w tym okresie</p>}
-    {chosen && measurement && <output className={styles.pointNote} data-testid="point-note" aria-live="polite"><strong>{fullDate(chosen.date)} · {pointTime(chosen)}</strong><span>{statusName(chosen.status)} · {chosen.timeZone}</span><strong>{metricLabels[metric]}: {formatMetric(measurement.value, metric)} {unit(metric)}</strong><span>{measurement.sources.length === 1 ? `Seria ${measurement.sources[0].position ?? "bez pozycji"}: ${seriesText(measurement.sources[0])}` : `${measurement.sources.length} serii · źródła w szczegółach wyników poniżej`}</span>{shown.filter(p => p.date === chosen.date).length > 1 && <span>Punkt {shown.filter(p => p.date === chosen.date).findIndex(p => p.id === chosen.id) + 1} z {shown.filter(p => p.date === chosen.date).length} treningów tego dnia</span>}</output>}
-  </div>{controls}<details className={styles.pointList} data-testid="progress-point-list"><summary>Wybierz punkt z listy treningów</summary><p>Także punkty o tej samej dacie i wartości są osobnymi treningami. Numer rozróżnia wpisy; nie nadaje im nieznanej godziny.</p>{shown.filter(p => p.metrics[metric]).map((point, index) => <button type="button" key={point.id} data-progress-point={point.id} aria-pressed={selected === point.id} onPointerDown={() => { suppressClick.current = false; }} onClick={event => activatePoint(point.id, event.detail)}>Punkt {index + 1} · {fullDate(point.date)} · {pointTime(point)}<span>{statusName(point.status)} · {formatMetric(point.metrics[metric]!.value, metric)} {unit(metric)}</span></button>)}</details></>;
+  return <>
+    <section className={styles.chartCard} data-testid="progress-chart" data-progress-state={shape.state} data-comparison={shape.comparison} aria-label={metricLabels[metric]}>
+      {before}
+      <div ref={root} className={styles.plot} data-testid="progress-plot" data-from={range.from} data-to={range.to} data-chart-points={shape.measured.length} data-chart-line={lineMode} data-chart-gap={shape.gap ? "true" : "false"} tabIndex={0} role="group" aria-label="Wykres postępu. Plus i minus przybliżają, strzałki przesuwają daty."
+        onKeyDown={event => {
+          if (event.target !== event.currentTarget) return;
+          if (event.key === "Home") { event.preventDefault(); onReset(); }
+          if (["+", "=", "-", "ArrowLeft", "ArrowRight"].includes(event.key)) {
+            event.preventDefault(); onRangeChange(event.key === "ArrowLeft" ? moveRange(range, -.2) : event.key === "ArrowRight" ? moveRange(range, .2) : resizeRange(range, event.key === "-" ? 1.5 : 2 / 3));
+          }
+        }}
+        onPointerDown={event => { if (event.pointerType !== "touch" && event.button === 0) { suppressClick.current = false; drag.current = { x: event.clientX, range, moved: false }; } }}
+        onPointerMove={event => {
+          const start = drag.current;
+          if (!start || event.pointerType === "touch") return;
+          const delta = event.clientX - start.x;
+          if (Math.abs(delta) > 6 || start.moved) {
+            if (!start.moved) { start.moved = true; event.currentTarget.setPointerCapture(event.pointerId); }
+            suppressClick.current = true; setSelected(null); onRangeChange(moveRange(start.range, -delta / event.currentTarget.clientWidth));
+          }
+        }}
+        onPointerUp={event => { drag.current = null; if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId); }}
+        onPointerCancel={() => { drag.current = null; }}
+        onClick={event => { if (!(event.target as Element).closest("[data-progress-point]")) setSelected(null); }}>
+        <svg viewBox="0 0 350 220" aria-hidden="true" className={styles.chart}>
+          {[0, 1, 2].map(i => { const value = low + (high - low) * i / 2; return <g key={i}><path d={`M48 ${y(value)}H332`} className={styles.grid} /><text x="40" y={y(value) + 4} textAnchor="end">{formatMetric(value, metric)}</text></g>; })}
+          <text x="8" y="15">{unit(metric)}</text>
+          <path d={line} className={styles.line} data-testid="progress-line" />
+          {shown.map(p => p.metrics[metric] && <circle key={p.id} cx={x(p)} cy={y(p.metrics[metric]!.value)} r={shape.measured.length === 1 ? 6 : 4} className={styles.dot} />)}
+          {[0, .5, 1].map(fraction => <text key={fraction} x={48 + fraction * 284} y="205" textAnchor={fraction === 0 ? "start" : fraction === 1 ? "end" : "middle"}>{shortDate(isoDay(from + (until - from - 86400000) * fraction))}</text>)}
+        </svg>
+        {shown.map(point => { const value = point.metrics[metric]; return value && <button key={point.id} type="button" data-progress-point={point.id} data-chart-point="true" className={styles.point} style={{ left: `${x(point) / 350 * 100}%`, top: `${y(value.value) / 220 * 100}%` }} aria-label={`${fullDate(point.date)}, ${pointTime(point)}, ${statusName(point.status)}: ${metricLabels[metric]} ${formatMetric(value.value, metric)} ${unit(metric)}`} aria-expanded={selected === point.id} onClick={event => { event.stopPropagation(); activatePoint(point.id, event.detail); }} />; })}
+        {!values.length && <p className={styles.noMeasurements}>Brak porównywalnych wyników w tym okresie</p>}
+        {chosen && measurement && <output className={styles.pointNote} data-testid="point-note" data-progress-state="selected-point" aria-live="polite"><strong>{fullDate(chosen.date)} · {pointTime(chosen)}</strong><span>{statusName(chosen.status)} · {chosen.timeZone}</span><strong>{metricLabels[metric]}: {formatMetric(measurement.value, metric)} {unit(metric)}</strong><span>{measurement.sources.length === 1 ? `Seria ${measurement.sources[0].position ?? "bez pozycji"}: ${seriesText(measurement.sources[0])}` : `${measurement.sources.length} serii · źródła w szczegółach wyników poniżej`}</span>{shown.filter(p => p.date === chosen.date).length > 1 && <span>Punkt {shown.filter(p => p.date === chosen.date).findIndex(p => p.id === chosen.id) + 1} z {shown.filter(p => p.date === chosen.date).length} treningów tego dnia</span>}</output>}
+      </div>
+    </section>
+    {controls}
+    {after}
+    <details className={styles.pointList} data-testid="progress-point-list"><summary>Wybierz punkt z listy treningów</summary><p>Także punkty o tej samej dacie i wartości są osobnymi treningami. Numer rozróżnia wpisy; nie nadaje im nieznanej godziny.</p>{shape.measured.map((point, index) => <button type="button" key={point.id} data-progress-point={point.id} aria-pressed={selected === point.id} onPointerDown={() => { suppressClick.current = false; }} onClick={event => activatePoint(point.id, event.detail)}>Punkt {index + 1} · {fullDate(point.date)} · {pointTime(point)}<span>{statusName(point.status)} · {formatMetric(point.metrics[metric]!.value, metric)} {unit(metric)}</span></button>)}</details>
+  </>;
 }
 
 export function ProgressDashboard({ analytics, today, initialExercise, initialRange }: { analytics: ExerciseAnalytics[]; today: string; initialExercise?: string; initialRange?: DateRange }) {
@@ -116,24 +145,37 @@ export function ProgressDashboard({ analytics, today, initialExercise, initialRa
   const touchRangeChange = (value: DateRange) => { setRange(value); setPeriod("custom"); };
   const metrics: Metric[] = selected?.mode === "bodyweight" ? ["maxReps", "totalReps"] : ["estimatedMax", "maxWeight", "volume"];
   const activeMetric = metrics.includes(metric) ? metric : metrics[0];
-  const shown = selected?.points.filter(p => p.date >= range.from && p.date <= range.to) ?? [];
-  const last = [...shown].reverse().find(p => p.metrics[activeMetric]);
+  const shape = selected ? windowShape(selected.points, activeMetric, range) : null;
+  const shown = shape?.inRange ?? [];
+  const last = shape ? [...shape.inRange].reverse().find(p => p.metrics[activeMetric]) : undefined;
   const records: Metric[] = selected?.mode === "bodyweight" ? ["maxReps", "totalReps", "setCount"] : ["estimatedMax", "maxWeight", "volume"];
   const [detailsOpen, setDetailsOpen] = useState(false);
-  if (!selected) return <div className={styles.empty}><h2>Brak zapisanych wyników</h2><p>Wykonaj trening, a jego rzeczywiste wyniki pojawią się tutaj.</p><Link className="button button-dark" href="/plany">Przejdź do planów</Link></div>;
+  if (!selected || !shape) return <EmptyState title="Brak zapisanych wyników" action={<Link className={styles.plansLink} href="/plany">Przejdź do planów</Link>}>Wykonaj trening, a jego rzeczywiste wyniki pojawią się tutaj.</EmptyState>;
+  const change = !last ? (selected.points.length ? "Zmień zakres lub zapisz wynik treningu" : "Zapisz pierwszy porównywalny wynik") : shape.comparison === "none" ? `Zmiana: brak podstawy porównania · ${shortDate(last.date)}` : `Ostatni wynik · ${shortDate(last.date)}`;
   return <div className={styles.dashboard}>
-    <label className={styles.exercise}><span className={styles.srOnly}>Ćwiczenie i wariant</span><select aria-label="Ćwiczenie i wariant" value={selected.exercise.id} onChange={event => { setExerciseId(event.target.value); setMetric(options.find(a => a.exercise.id === event.target.value)?.mode === "bodyweight" ? "maxReps" : "estimatedMax"); const url = new URL(window.location.href); url.searchParams.set("exercise", event.target.value); window.history.replaceState(null, "", url); }}>{options.map(({ exercise }) => <option key={exercise.id} value={exercise.id}>{exercise.name}{exercise.variant ? ` · ${exercise.variant}` : ""}{exercise.equipment ? ` (${exercise.equipment})` : ""}</option>)}</select></label>
-    <div className={styles.metrics} style={{ gridTemplateColumns: `repeat(${metrics.length}, minmax(0, 1fr))` }} role="group" aria-label="Metryka wykresu">{metrics.map(name => <button type="button" key={name} aria-pressed={activeMetric === name} onClick={() => setMetric(name)}>{metricLabels[name]}</button>)}</div>
-    <section aria-label={metricLabels[activeMetric]}>
-      <div className={styles.reading}><div><strong>{last ? `${formatMetric(last.metrics[activeMetric]!.value, activeMetric)} ${unit(activeMetric)}` : "Brak danych"}</strong><span>{last ? `Ostatni wynik · ${shortDate(last.date)}` : "Zmień zakres lub zapisz wynik treningu"}</span></div>{activeMetric === "estimatedMax" && <InfoPopover label="Jak liczymy szacowany 1RM"><strong>Jak liczymy szacowany 1RM?</strong><p>Ciężar serii dzielimy przez współczynnik dla 1–10 powtórzeń. Jeden punkt to najwyższy szacunek z treningu.</p><p>100 kg × 3 powt.: 100 ÷ 0,94 ≈ 106,4 kg.</p><p>1: 100% · 2: 97% · 3: 94% · 4: 92% · 5: 89% · 6: 86% · 7: 83% · 8: 81% · 9: 78% · 10: 75%.</p><p>Poza tym zakresem, przy braku kg lub nieporównywalnym obciążeniu nie szacujemy. Metoda: reference-table-v1.</p><p>To szacunek. Nie zmienia rzeczywistego 1RM wpisanego w Profilu ani historycznych celów.</p></InfoPopover>}</div>
-      <ProgressChart key={selected.exercise.id} points={selected.points} metric={activeMetric} range={range} onRangeChange={touchRangeChange} onReset={() => { setPeriod("3m"); setRange(defaultRange()); }} controls={<>
-      <div className={styles.periods} role="group" aria-label="Zakres czasu">{([["1m", "1M"], ["3m", "3M"], ["6m", "6M"], ["1y", "1R"], ["all", "Wszystko"]] as const).map(([value, label]) => <button type="button" key={value} aria-pressed={period === value} onClick={() => { setPeriod(value); setRange(periodRange(value, today, selected.points[0]?.date)); }}>{label}</button>)}</div>
-      <p className={styles.pointKey}>Punkt = trening · dotknij punktu, aby zobaczyć wynik</p>
+    <label className={styles.exercise}>
+      <span className={styles.exerciseText}><small aria-hidden="true">Ćwiczenie i wariant</small>
+        <select aria-label="Ćwiczenie i wariant" value={selected.exercise.id} onChange={event => { setExerciseId(event.target.value); setMetric(options.find(a => a.exercise.id === event.target.value)?.mode === "bodyweight" ? "maxReps" : "estimatedMax"); const url = new URL(window.location.href); url.searchParams.set("exercise", event.target.value); window.history.replaceState(null, "", url); }}>{options.map(({ exercise }) => <option key={exercise.id} value={exercise.id}>{exercise.name}{exercise.variant ? ` · ${exercise.variant}` : ""}{exercise.equipment ? ` (${exercise.equipment})` : ""}</option>)}</select>
+      </span>
+      <Icon name="chevronDown" />
+    </label>
+    <div className={styles.metrics} role="group" aria-label="Metryka wykresu">{metrics.map(name => <button type="button" key={name} aria-pressed={activeMetric === name} onClick={() => setMetric(name)}>{metricLabels[name]}</button>)}</div>
+    <ProgressChart key={selected.exercise.id} points={selected.points} metric={activeMetric} range={range} onRangeChange={touchRangeChange} onReset={() => { setPeriod("3m"); setRange(defaultRange()); }}
+      before={<>
+        <div className={styles.reading} data-testid="progress-reading"><div><strong>{last ? `${formatMetric(last.metrics[activeMetric]!.value, activeMetric)} ${unit(activeMetric)}` : "Brak danych"}</strong><span data-testid="progress-change" data-comparison={shape.comparison}>{change}</span></div>{activeMetric === "estimatedMax" && <InfoPopover label="Jak liczymy szacowany 1RM"><strong>Jak liczymy szacowany 1RM?</strong><p>Ciężar serii dzielimy przez współczynnik dla 1–10 powtórzeń. Jeden punkt to najwyższy szacunek z treningu.</p><p>100 kg × 3 powt.: 100 ÷ 0,94 ≈ 106,4 kg.</p><p>1: 100% · 2: 97% · 3: 94% · 4: 92% · 5: 89% · 6: 86% · 7: 83% · 8: 81% · 9: 78% · 10: 75%.</p><p>Poza tym zakresem, przy braku kg lub nieporównywalnym obciążeniu nie szacujemy. Metoda: reference-table-v1.</p><p>To szacunek. Nie zmienia rzeczywistego 1RM wpisanego w Profilu ani historycznych celów.</p></InfoPopover>}</div>
+        {shape.state === "single-point" && <p className={styles.stateNote}>Jeden wynik nie pokazuje trendu.</p>}
+        {shape.gap && <p className={styles.stateNote}>Przerwa na wykresie to brak pomiaru, nie wynik zero.</p>}
+      </>}
+      controls={<>
+        <div className={styles.periods} role="group" aria-label="Zakres czasu">{([["1m", "1M"], ["3m", "3M"], ["6m", "6M"], ["1y", "1R"], ["all", "Wszystko"]] as const).map(([value, label]) => <button type="button" key={value} aria-pressed={period === value} onClick={() => { setPeriod(value); setRange(periodRange(value, today, selected.points[0]?.date)); }}>{label}</button>)}</div>
+        <p className={styles.pointKey}>Punkt = trening · dotknij punktu, aby zobaczyć wynik</p>
+      </>}
+      after={<>
+        {activeMetric === "estimatedMax" && <Notice title="Szacunek to nie pomiar">Ta liczba pochodzi z wykonanych serii i nie zmienia rzeczywistego 1RM. <Link className={styles.profileLink} href="/profil">Przejdź do Profilu</Link></Notice>}
+        {selected.mode === "unsupported" && <p className={styles.explanation}>To ćwiczenie nie ma jednoznacznej semantyki porównywalnego obciążenia. Wyniki pozostają w historii; nie przypisujemy im kg ani powtórzeń innego wariantu.</p>}
+        <div className={styles.recordsHeading}><h2>Rekordy</h2><span>Cała historia</span></div>
+        <div className={styles.records} tabIndex={0} role="region" aria-label="Rekordy, przewijaj w poziomie" data-testid="progress-records" onKeyDown={event => { if (event.target === event.currentTarget && ["ArrowLeft", "ArrowRight"].includes(event.key)) { event.preventDefault(); const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches; event.currentTarget.scrollBy({ left: event.key === "ArrowRight" ? 170 : -170, behavior: reduce ? "auto" : "smooth" }); } }}>{records.map(name => { const record = selected.records[name]; return <article key={name} className={styles.record} data-metric={name}><span>{name === "setCount" ? "Najwięcej serii" : metricLabels[name]}{name === "estimatedMax" && <small>szacowany</small>}</span><strong>{record ? `${formatMetric(record.measurement.value, name)} ${unit(name)}` : "Brak danych"}</strong>{record && <><small>{name === "maxWeight" ? record.measurement.sources[0].reps === null ? "brak powtórzeń" : `${record.measurement.sources[0].reps} powt.` : `${record.measurement.sources.length} ${record.measurement.sources.length === 1 ? "seria" : "serii"}`}</small><time dateTime={record.point.date}>{fullDate(record.point.date)}</time></>}</article>; })}</div>
       </>} />
-    </section>
-    {selected.mode === "unsupported" && <p className={styles.explanation}>To ćwiczenie nie ma jednoznacznej semantyki porównywalnego obciążenia. Wyniki pozostają w historii; nie przypisujemy im kg ani powtórzeń innego wariantu.</p>}
-    <div className={styles.recordsHeading}><h2>Rekordy osobiste</h2><span>Cała historia</span></div>
-    <div className={styles.records} tabIndex={0} role="region" aria-label="Rekordy osobiste, przewijaj w poziomie" data-testid="progress-records" onKeyDown={event => { if (event.target === event.currentTarget && ["ArrowLeft", "ArrowRight"].includes(event.key)) { event.preventDefault(); event.currentTarget.scrollBy({ left: event.key === "ArrowRight" ? 170 : -170, behavior: "smooth" }); } }}>{records.map(name => { const record = selected.records[name]; return <article key={name} className={styles.record} data-metric={name}><span>{name === "setCount" ? "Najwięcej serii" : metricLabels[name]}{name === "estimatedMax" && <small>szacowany</small>}</span><strong>{record ? `${formatMetric(record.measurement.value, name)} ${unit(name)}` : "Brak danych"}</strong>{record && <><small>{name === "maxWeight" ? record.measurement.sources[0].reps === null ? "brak powtórzeń" : `${record.measurement.sources[0].reps} powt.` : `${record.measurement.sources.length} ${record.measurement.sources.length === 1 ? "seria" : "serii"}`}</small><time dateTime={record.point.date}>{fullDate(record.point.date)}</time></>}</article>; })}</div>
     <details className={styles.details} open={detailsOpen} onToggle={event => setDetailsOpen(event.currentTarget.open)}><summary>O wykresie, daty i wyniki treningów</summary>
       <p>Własne wykonane serie, również z treningów w toku i przerwanych. Linia łączy wpisy, nie dodaje pomiarów. Brak danych to przerwa, a zero jest wynikiem. Rekordy obejmują całą historię niezależnie od okna wykresu.</p><p>Objętość = suma kg × powtórzenia porównywalnych serii. Nie mieszamy masy ciała, asysty, ciężaru na hantel ani niejednoznacznych dodatków. Dla masy ciała uwzględniamy wyłącznie powtórzenia bez asysty i dodatkowego ciężaru.</p>
       <div className={styles.zoom}><Button variant="secondary" onClick={() => touchRangeChange(resizeRange(range, 2 / 3))}>Przybliż</Button><Button variant="secondary" onClick={() => touchRangeChange(resizeRange(range, 1.5))}>Oddal</Button><Button variant="secondary" onClick={() => touchRangeChange(moveRange(range, -.5))}>Wcześniej</Button><Button variant="secondary" onClick={() => touchRangeChange(moveRange(range, .5))}>Później</Button><Button variant="secondary" onClick={() => { setPeriod("3m"); setRange(defaultRange()); }}>Reset zakresu</Button></div>

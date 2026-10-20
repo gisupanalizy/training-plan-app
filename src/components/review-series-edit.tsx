@@ -3,6 +3,7 @@ import {useState} from 'react';
 import {parsePlanEditorDocument,type PlanEditorDocument,type PlanEditorExercise} from '@/lib/domain/plan-editor';
 import {parsePlannedSet,type PlannedSetInput} from '@/lib/domain/model';
 import {exerciseSummary,goalLabel,loadLabel,patchSeries,resizeSeriesBlock,seriesBlocks} from '@/lib/imports/review';
+import {Button} from '@/components/ui';
 import {ReviewSetFields} from './review-set-fields';
 export function ReviewSeriesEdit({exercise,document,onApply,individual=false,blockIndex=0}:{exercise:PlanEditorExercise;document:PlanEditorDocument;onApply:(exercise:PlanEditorExercise)=>void;individual?:boolean;blockIndex?:number}){
  const blocks=seriesBlocks(exercise),block=blocks[blockIndex]??blocks[0];
@@ -39,6 +40,6 @@ export function ReviewSeriesEdit({exercise,document,onApply,individual=false,blo
   <label className="editor-check"><input type="checkbox" checked={optional} onChange={e=>setOptional(e.target.checked)}/> Całe ćwiczenie opcjonalne</label>
   <div className="review-change-preview"><strong>Po zmianie</strong><p>{preview}</p><small>{loadLabel(edited)}</small></div>
   {error&&<p className="auth-error" role="alert">{error}</p>}
-  <div className="review-dialog-footer"><button className="button button-dark" type="submit">Zastosuj zmiany</button></div>
+  <div className="review-dialog-footer"><Button variant="primary" type="submit">Zastosuj zmiany</Button></div>
  </form>;
 }

@@ -2,6 +2,7 @@
 import {useEffect,useRef,useState} from 'react';
 import {parsePlanEditorDocument,type PlanEditorDocument,type PlanEditorExercise} from '@/lib/domain/plan-editor';
 import {applyQuestionAnswer,questionTargets,type ImportQuestion} from '@/lib/imports/questions';
+import {Button} from '@/components/ui';
 import {exerciseSummary,hasSetGoal} from '@/lib/imports/review';
 import {ImportSource,pageFromReference,type SourceFocus} from './import-source';
 import {ReviewSeriesEdit} from './review-series-edit';
@@ -56,6 +57,6 @@ export function ReviewQuestionEditor({question:q,document,rawDraft,id,kind,text,
   </>}
   {preview&&<div className="review-change-preview"><strong>Po zastosowaniu</strong>{questionTargets(q,preview).filter((t,index,all)=>t.exercise&&all.findIndex(x=>x.exercise?.reviewId===t.exercise?.reviewId)===index).map(t=><p key={t.exercise!.reviewId}>{t.session.dayLabel} → {t.exercise!.name}: {exerciseSummary(t.exercise!)}</p>)}{q.scope==='source'&&<p>Zmiana obejmuje skorygowany fragment źródła w szkicu.</p>}</div>}
   {error&&<p role="alert" className="auth-error">{error}</p>}
-  <div className="review-dialog-footer"><button type="button" className="button button-outline" onClick={onLater}>Później</button><button type="button" className="button button-dark" disabled={!valid} onClick={()=>{try{const next=proposal();parsePlanEditorDocument(next);onApply(next,answer);}catch(cause){setError((cause as Error).message);}}}>{generic?'Potwierdź interpretację':'Zastosuj odpowiedź'}</button></div>
+  <div className="review-dialog-footer"><Button variant="ghost" onClick={onLater}>Później</Button><Button variant="primary" disabled={!valid} onClick={()=>{try{const next=proposal();parsePlanEditorDocument(next);onApply(next,answer);}catch(cause){setError((cause as Error).message);}}}>{generic?'Potwierdź interpretację':'Zastosuj odpowiedź'}</Button></div>
  </div>;
 }

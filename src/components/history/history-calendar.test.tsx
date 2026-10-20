@@ -10,9 +10,12 @@ afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 describe("Historia — wybór i przegląd",()=>{
  it("pokazuje wiele sesji, nieznaną godzinę i aktywne osobno, linkuje wspólny przegląd",()=>{
   render(<HistoryCalendar {...props}/>);
-  expect(screen.getByText("18:00 · Zakończony")).toBeTruthy();
-  expect(screen.getByText("godzina nieznana · Zakończony")).toBeTruthy();
+  expect(screen.getByText("18:00 · zakończony")).toBeTruthy();
+  expect(screen.getByText("godzina nieznana · zakończony")).toBeTruthy();
+  expect(screen.getAllByText("Otwórz trening")).toHaveLength(2);
   expect(screen.getByRole("heading",{name:"Do wznowienia"})).toBeTruthy();
+  expect(screen.getByRole("link",{name:/Aktywny/}).textContent).toContain("Wznów");
+  expect(screen.getByRole("link",{name:"Zobacz postęp"}).getAttribute("href")).toBe("/postep");
   expect(screen.getByRole("link",{name:/Siła/}).getAttribute("href")).toContain("/trening/Si%C5%82a?historyMonth=2026-10&historyDay=2026-10-14");
   expect(screen.getByRole("button",{name:/środa, 14 października 2026 · zakończone treningi: 2/}).getAttribute("aria-pressed")).toBe("true");
  });
@@ -20,6 +23,8 @@ describe("Historia — wybór i przegląd",()=>{
   render(<HistoryCalendar {...props}/>);
   fireEvent.click(screen.getByRole("button",{name:/czwartek, 15 października/}));
   expect(screen.getByText("Brak zakończonych treningów tego dnia.")).toBeTruthy();
+  expect(screen.getByText("Wybierz inny dzień albo rozpocznij trening z planu.")).toBeTruthy();
+  expect(screen.getByRole("heading",{name:"Do wznowienia"})).toBeTruthy();
   expect(window.location.search).toBe("?month=2026-10&day=2026-10-15");
   fireEvent.click(screen.getByRole("button",{name:"Następny miesiąc"}));
   expect(window.location.search).toBe("?month=2026-11&day=2026-11-15");

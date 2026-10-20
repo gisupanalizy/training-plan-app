@@ -1,6 +1,7 @@
 "use client";
 import {useState} from 'react';
 import type {PlanEditorDocument,PlanEditorExercise} from '@/lib/domain/plan-editor';
+import {Button} from '@/components/ui';
 import {ExerciseNamePicker} from './exercise-name-picker';
 import {suggestExerciseName} from '@/lib/exercises/names';
 export function ReviewExerciseEdit({exercise,document,sessionId,onApply,onDelete}:{exercise:PlanEditorExercise;document:PlanEditorDocument;sessionId:string;onApply:(exercise:PlanEditorExercise,targetId:string,newDay?:string)=>void;onDelete?:()=>void}){
@@ -18,6 +19,6 @@ export function ReviewExerciseEdit({exercise,document,sessionId,onApply,onDelete
   {target!==sessionId&&<p className="review-hint">Ćwiczenie zostanie przeniesione. Grupę superserii ustalisz w kroku drugim.</p>}
   <label className="editor-field">Uwagi do ćwiczenia<textarea maxLength={2000} value={draft.note??''} onChange={e=>set('note',e.target.value||null)}/></label>
   {error&&<p role="alert" className="auth-error">{error}</p>}
-  <div className="review-dialog-footer">{onDelete&&<button type="button" className="review-danger" onClick={onDelete}>Usuń ćwiczenie</button>}<button className="button button-dark" type="submit">Zastosuj zmiany</button></div>
+  <div className="review-dialog-footer">{onDelete&&<Button variant="danger" onClick={onDelete}>Usuń ćwiczenie</Button>}<Button variant="primary" type="submit">Zastosuj zmiany</Button></div>
  </form>;
 }

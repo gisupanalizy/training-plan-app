@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 const inter = localFont({ src: "../../public/fonts/InterVariable.woff2", variable: "--font-inter", display: "swap", weight: "100 900" });
-export const viewport: Viewport = { themeColor: "#11181f", colorScheme: "dark", viewportFit: "cover", width: "device-width", initialScale: 1 };
+export const viewport: Viewport = { themeColor: "#11191c", colorScheme: "dark", viewportFit: "cover", width: "device-width", initialScale: 1 };
 
 export const metadata: Metadata = {
   title: "Forma — prototyp planu treningowego",
@@ -11,5 +11,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="pl" data-theme="night" className={inter.variable}><body>{children}</body></html>;
+  return <html lang="pl" className={inter.variable}><body>{children}</body></html>;
 }

@@ -35,6 +35,14 @@ try {
   }
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${base}/postep?exercise=${f.externalId}`);
+  const readingBox = await page.getByTestId("progress-reading").boundingBox();
+  const plotBox = await page.getByTestId("progress-plot").boundingBox();
+  const rangeBox = await page.getByRole("group", { name: "Zakres czasu", exact: true }).boundingBox();
+  assert.ok(readingBox && plotBox && rangeBox && readingBox.y + readingBox.height <= plotBox.y + 1, "ostatni wynik jest nad wykresem");
+  assert.ok(rangeBox.y >= plotBox.y + plotBox.height - 1, "zakres jest pod wykresem");
+  assert.doesNotMatch(await page.getByTestId("progress-change").innerText(), /%/);
+  await page.getByText("Szacunek to nie pomiar", { exact: true }).waitFor();
+  assert.equal(await page.getByRole("link", { name: "Przejdź do Profilu" }).getAttribute("href"), "/profil");
   await page.getByRole("button", { name: "Jak liczymy szacowany 1RM" }).focus(); await page.keyboard.press("Enter");
   assert.match(await page.getByRole("note").innerText(), /106,4 kg/); await page.keyboard.press("Escape"); assert.equal(await page.getByRole("note").count(), 0);
   const plot = page.getByTestId("progress-plot"), point = plot.locator("[data-progress-point]").last();
@@ -67,6 +75,10 @@ try {
   await page.getByRole("button", { name: "Przybliż", exact: true }).click(); await page.getByRole("button", { name: "Reset zakresu", exact: true }).click();
   await page.getByLabel("Od daty", { exact: true }).fill("2026-10-08"); await page.getByLabel("Do daty", { exact: true }).fill("2026-10-08"); await page.getByRole("button", { name: "Ustaw daty", exact: true }).click();
   assert.equal(await plot.locator("[data-progress-point]").count(), 1); assert.equal(await records.innerText(), allTime);
+  assert.equal(await plot.getAttribute("data-chart-line"), "none");
+  assert.match(await page.getByTestId("progress-change").innerText(), /brak podstawy porównania/);
+  assert.equal(await page.getByText("Jeden wynik nie pokazuje trendu.", { exact: true }).count(), 1);
+  assert.doesNotMatch(await page.getByTestId("progress-change").innerText(), /%/);
   await page.getByRole("button", { name: "3M", exact: true }).click();
   await page.getByText("O wykresie, daty i wyniki treningów", { exact: true }).click();
   const pointList = page.getByTestId("progress-point-list"); await pointList.locator("summary").click();
@@ -79,13 +91,15 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0)); await page.screenshot({ path: "/private/tmp/t15e-progress-390.png" });
   await page.getByLabel("Ćwiczenie i wariant").selectOption(f.bodyweightId); await page.screenshot({ path: "/private/tmp/t15e-bodyweight-390.png" });
   assert.equal(await page.getByRole("button", { name: "Jak liczymy szacowany 1RM" }).count(), 0);
+  assert.equal(await page.getByText("Szacunek to nie pomiar", { exact: true }).count(), 0);
   // Korekta faktycznej serii przez API/RPC → odświeżenie analityki; zero i null wcześniej odczytane z bazy.
   const set = f.originalSets.find(s => s.exercise_id === f.externalId), revision = ok(await f.a.client.from("workout_sessions").select("revision").eq("id", f.started.workoutId).single()).revision;
   await f.command(f.started.workoutId, revision, "save_set", f.save(set, null, 250));
   await page.goto(`${base}/postep?exercise=${f.externalId}`); await page.getByRole("group", { name: "Metryka wykresu", exact: true }).getByRole("button", { name: "Max Ciężar", exact: true }).click();
+  assert.equal(await page.getByText("Szacunek to nie pomiar").count(), 0);
   assert.match(await records.innerText(), /250 kg/); assert.match(await records.innerText(), /brak powtórzeń/);
   await page.setViewportSize({ width: 1280, height: 900 }); assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)); await page.screenshot({ path: "/private/tmp/t15e-progress-desktop.png" });
   assert.deepEqual(errors, []);
   await writeFile("/private/tmp/t15e-browser-report.json", JSON.stringify({ checks, mouseDragThenClick: true, keyboard: true, pinch: true, firstTapAfterPinch: true, swipe: { scrollRight, scrollLeft }, customDates: true, correction: true, errors }, null, 2));
-  console.log(`T15-E Chrome PASS:${checks.length} stanów360/390/430;mysz klik/drag/klik,outside,Enter/Escape,pomoc,pinch,pierwszy tap,PR swipe${scrollRight}→${scrollLeft},własne daty,korekta,desktop.`);
+  console.log(`T15-E Chrome PASS:${checks.length} stanów360/390/430;mysz klik/drag/klik,outside,Enter/Escape,pomoc,pinch,pierwszy tap,PR swipe${scrollRight}→${scrollLeft},własne daty,korekta,desktop,ostatni wynik nad wykresem,jeden punkt bez trendu i bez procentu,szacunek osobno od Profilu.`);
 } finally { try { await browser?.close(); } finally { await f.cleanup(); } }

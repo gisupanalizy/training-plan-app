@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AppShell, DemoNotice } from "@/components/app-shell";
+import { AppShell } from "@/components/app-shell";
 import { getDemoDay } from "@/lib/demo-plan";
 import { getPlanDocument, getPlanVersions, getOneRepMaxData } from "@/lib/plans/repository";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import { PlanPreview } from "@/components/plan-preview";
-import { Icon } from "@/components/ui";
+import { Icon, Notice } from "@/components/ui";
 import { DemoPlanPreview } from "@/components/training-preview";
 import styles from "@/components/plan-workout.module.css";
 import { getActiveWorkoutForDay } from "@/lib/workouts/repository";
@@ -21,7 +21,7 @@ export default async function PlanDayPage({ params, searchParams }: { params: Pr
   if (!getSupabaseConfig()) {
     const day = getDemoDay(id);
     if (!day) notFound();
-    return <AppShell section="Plany"><div className={`${styles.surface} ${styles.planPage}`}><Link className={styles.back} href="/plany"><Icon name="arrowLeft" size={18} />Wróć do planów</Link><div className={styles.heading}><div><h1>Fundament siły</h1><p>Plan demonstracyjny · {day.label}</p></div><Link className={styles.secondary} href={`/trening/${day.id}`}>Zobacz trening</Link></div><DemoNotice /><DemoPlanPreview day={day} /></div></AppShell>;
+    return <AppShell section="Plany"><div className={`${styles.surface} ${styles.planPage} ${styles.screen}`}><Link className={styles.back} href="/plany"><Icon name="arrowLeft" size={18} />Wróć do planów</Link><div className={styles.heading}><div><p className={styles.eyebrow}>Plan demonstracyjny</p><h1>Fundament siły</h1><p>{day.label}</p></div></div><Notice tone="warning" title="Dane demonstracyjne">Ten ekran pokazuje dane syntetyczne. Wpisy w podglądzie treningu nie są zapisywane.</Notice><DemoPlanPreview day={day} /></div></AppShell>;
   }
   const { version: requestedVersionId, session: initialSessionId } = await searchParams;
   const loaded = await getPlanDocument(id, requestedVersionId);
@@ -29,11 +29,12 @@ export default async function PlanDayPage({ params, searchParams }: { params: Pr
   const [maxData, versions] = await Promise.all([getOneRepMaxData(), getPlanVersions(id)]);
   const date = todayInZone(maxData.profile.time_zone);
   const active = await Promise.all(loaded.sessionIds.map((sessionId) => getActiveWorkoutForDay(sessionId)));
-  return <AppShell section="Plany"><div className={`plan-preview-page ${styles.surface} ${styles.planPage}`}><div className={styles.nav}><Link className={styles.back} href="/plany"><Icon name="arrowLeft" size={18} />Wróć do planów</Link><details className={styles.version}><summary>Wersja {loaded.version.version_number}{loaded.version.id === loaded.plan.current_version_id ? " · aktualna" : " · archiwalna"}</summary><nav className="version-list" aria-label="Wersje planu">{versions.map((version) => <Link key={version.id} href={version.id === loaded.plan.current_version_id ? `/plany/${id}` : `/plany/${id}?version=${version.id}`} aria-current={version.id === loaded.version.id ? "page" : undefined}>Wersja {version.version_number}{version.id === loaded.plan.current_version_id ? " · aktualna" : ""}</Link>)}</nav></details></div>
-    <div className={styles.heading}><div><h1>{loaded.document.name}</h1><p>Opublikowano {new Date(loaded.version.published_at).toLocaleDateString("pl-PL")}. Cele procentowe pokazano według 1RM obowiązującego {date}.</p></div><Link className={styles.secondary} href={`/plany/edytor?plan=${id}`}><Icon name="edit" size={18} />Edytuj plan</Link></div>
-
+  const current = loaded.version.id === loaded.plan.current_version_id;
+  return <AppShell section="Plany"><div className={`plan-preview-page ${styles.surface} ${styles.planPage} ${styles.screen}`}>
+    <div className={styles.nav}><Link className={styles.back} href="/plany"><Icon name="arrowLeft" size={18} />Wróć do planów</Link><details className={styles.version}><summary>Wersja {loaded.version.version_number}{current ? " · aktualna" : " · archiwalna"}</summary><nav className="version-list" aria-label="Wersje planu">{versions.map((version) => <Link key={version.id} href={version.id === loaded.plan.current_version_id ? `/plany/${id}` : `/plany/${id}?version=${version.id}`} aria-current={version.id === loaded.version.id ? "page" : undefined}>Wersja {version.version_number}{version.id === loaded.plan.current_version_id ? " · aktualna" : ""}</Link>)}</nav></details></div>
+    <div className={styles.heading}><div><p className={styles.eyebrow}>{current ? "Aktywny plan" : "Wersja archiwalna"}</p><h1>{loaded.document.name}</h1><p>Opublikowano {new Date(loaded.version.published_at).toLocaleDateString("pl-PL")}. Cele procentowe pokazano według 1RM obowiązującego {date}.</p></div><Link className={styles.secondary} href={`/plany/edytor?plan=${id}`}><Icon name="edit" size={18} />Edytuj plan</Link></div>
     <PlanPreview initialSessionId={initialSessionId} planId={id} versionId={loaded.version.id} document={loaded.document} sessionIds={loaded.sessionIds}
-      current={loaded.version.id === loaded.plan.current_version_id} active={active}
+      current={current} active={active}
       context={{ date, records: maxData.records, increment: maxData.profile.rounding_increment_kg }} />
   </div></AppShell>;
 }

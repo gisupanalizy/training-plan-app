@@ -12,7 +12,7 @@ export default async function ImportPage({ searchParams }: { searchParams: Promi
   const { id } = await searchParams;
   return <AppShell section="Plany"><div className={styles.importSurface}><Link className={styles.back} href="/plany"><Icon name="arrowLeft" size={18} />Wróć do planów</Link>
     <div className={styles.heading}><div><h1>Import planu</h1>
-      <p>Wybierz źródło, popraw szkic i zatwierdź go świadomie.</p></div></div>
+      <p>Plik i zdjęcie prowadzą import. Tekst, głos i ręczny edytor są obok, a plan powstaje dopiero po korekcie.</p></div></div>
     <ImportWorkspace initialId={id ?? null} supabaseUrl={config.url} supabaseKey={config.key} />
   </div></AppShell>;
 }

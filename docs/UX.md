@@ -75,7 +75,7 @@ Karta ma nazwę, skrót sąsiadujących bloków, obciążenie/przerwę oraz jawn
 
 ### T13-C — wykonany lokalny widok sesji
 
-Przegląd pokazuje nazwę, datę/godzinę lub „godzina nieznana”, osobne liczniki i cztery zwarte karty na typowym390×844. Grupa superserii prowadzi rundami, nie uzupełnia braków. Szczegóły pokazują jedną serię, historyczny cel, poprzedni wynik, właściwe pola oraz dodatkowe RPE/RIR/komentarz. Istniejące dodatkowe wartości otwierają sekcję. Wszystkie serie pozwalają wybrać również historyczną poprawkę. Opcjonalne wymagają wyboru; pominięcie pozostaje osobnym stanem.
+Przegląd pokazuje nazwę, datę/godzinę lub „godzina nieznana”, osobne liczniki i zwarte karty. Zwartość opisuje układ T13. Bramką pozostaje doskrolowanie zasłoniętej karty (D046), także przy 390×844. Grupa superserii prowadzi rundami, nie uzupełnia braków. Szczegóły pokazują jedną serię, historyczny cel, poprzedni wynik, właściwe pola oraz dodatkowe RPE/RIR/komentarz. Istniejące dodatkowe wartości otwierają sekcję. Wszystkie serie pozwalają wybrać również historyczną poprawkę. Opcjonalne wymagają wyboru; pominięcie pozostaje osobnym stanem.
 
 ACK i aktualny GET poprzedzają przejście. Błąd sieci zachowuje pełną komendę retry; nieudany GET ponawia tylko odczyt.409 zachowuje szkic do odczytu i świadomego rozstrzygnięcia. Komentarz i dodatkowe ćwiczenie mają formularze na żądanie; zapis serii zachowuje inny szkic. Powrót z brudnej serii i wyjście z karty dają zapisz/odrzuć/zostań; Chrome Wstecz zachowuje dokument i pozycję. Przeładowanie/zamknięcie używa natywnego ostrzeżenia przeglądarki. Trwałości szkiców po zamknięciu nie obiecujemy.
 
@@ -85,3 +85,7 @@ Start zapisuje czas automatycznie. Konflikt pokazuje własne sesje i jawne powr�
 ## T14 — zatwierdzony kierunek wizualny, makiety
 
 D039: Plany A z poziomym swipe wielu planów, Podgląd A, Szczegóły A, Zapis serii C. Równoważna obsługa strzałkami/wskaźnikiem/klawiaturą, bez automatycznej rotacji. Właściciel przegląda po trzy warianty pozostałych ośmiu ekranów. [Specyfikacja i ograniczenia](design/t14-selected-spec.md), [galeria syntetyczna](design/t14-full-gallery.html). To projekt UI, nie wdrożenie; prywatny podgląd źródła pozostaje poza repo. Kontrakty T13 i niezmienność historii nadal obowiązują.
+
+## T16 — Tempo jako jedyny wygląd
+
+D047 wybiera Tempo jako jedyny docelowy wygląd i zastępuje paletę Noc. Drugi motyw i przełącznik palet nie wchodzą do produktu. D046 zostaje: lista może wchodzić pod dolną nawigację, a zasłonięta karta ma być doskrolowalna. Semantyka ekranów T13 i T15, w tym `null`, zero, „Nie dotyczy”, konflikty, retry i historyczne cele, pozostaje. [Program T16](T16_TEMPO_IMPLEMENTATION.md), [brief](tempo-implementation-brief.md) i [katalog klatek](tempo-frame-catalog.md) opisują wygląd. T16-A jest kontraktem. T16-B–H wprowadziły Tempo do drzewa roboczego. T16-I nie zamknął odbioru: główny zapis serii przy 390×844 zachodzi na dolną nawigację i wraca do T16-D.

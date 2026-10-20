@@ -1,47 +1,20 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { getSupabaseConfig } from "@/lib/supabase/config";
-import { Icon, type IconName } from "@/components/ui/icon";
-
-const navigation = [
-  { href: "/", label: "Trening", icon: "training" },
-  { href: "/plany", label: "Plany", icon: "plans" },
-  { href: "/historia", label: "Historia", icon: "history" },
-  { href: "/postep", label: "Postęp", icon: "progress" },
-  { href: "/profil", label: "Profil", icon: "profile" },
-] satisfies { href: string; label: string; icon: IconName }[];
+import { Icon } from "@/components/ui/icon";
+import { BottomNav, Sidebar } from "@/components/ui/navigation";
 
 export function AppShell({ children, section }: { children: ReactNode; section: string }) {
   const configured = Boolean(getSupabaseConfig());
+  const mode = configured ? "private" : "demo";
   return (
     <div className="app-shell">
       <a href="#main-content" className="skip-link">Przejdź do treści</a>
-      <aside className="sidebar">
-        <Link className="brand" href="/" aria-label="Forma — strona główna">
-          <span className="brand-mark">F<span>.</span></span>
-          <span className="brand-name">forma<span>.</span><small>TWÓJ PLAN, TWÓJ RYTM</small></span>
-        </Link>
-        <div className="sidebar-group-label">PRZESTRZEŃ TRENINGOWA</div>
-        <nav aria-label="Nawigacja główna" className="sidebar-nav">
-          {navigation.map((item) => (
-            <Link key={item.href} href={item.href} aria-current={section === item.label ? "page" : undefined} className={`nav-link ${section === item.label ? "active" : ""}`}>
-              <Icon name={item.icon} className="nav-icon" />{item.label}
-              {section === item.label && <Icon name="chevronRight" className="nav-arrow" size={18} />}
-            </Link>
-          ))}
-        </nav>
-        <div className="sidebar-bottom">
-          <div className="sidebar-note"><span className="status-dot" /> {configured ? "KONTO PRYWATNE" : "TRYB DEMONSTRACYJNY"}<br /><small>{configured ? "Plany i maksima zapisane na koncie" : "Dane wyłącznie przykładowe"}</small></div>
-          <div className="avatar-row"><span className="avatar">{configured ? "T" : "D"}</span><span><strong>{configured ? "Tester" : "Demo"}</strong><small>{configured ? "Prywatne dane" : "Widok prototypu"}</small></span></div>
-        </div>
-      </aside>
+      <Sidebar section={section} mode={mode} />
       <div className="main-column">
         <header className="topbar"><span className="mobile-brand">forma<span>.</span></span><span className="topbar-tag"><span className="status-dot" /> {configured ? "KONTO PRYWATNE" : "TRYB DEMO"}</span><span className="topbar-avatar">{configured ? "T" : "D"}</span></header>
         <main id="main-content" tabIndex={-1} className="content">{children}<footer className="asset-credit">Ilustracje: <a href="https://github.com/bryllim/workout-guide">Workout Guide · Bryl Lim / Everkinetic</a> · <a href="/exercise-assets/LICENSE-ASSETS">CC BY-SA 4.0</a> · <a href="/exercise-assets/manifest.json">Pochodzenie grafik</a></footer></main>
       </div>
-      <nav className="mobile-nav" aria-label="Nawigacja główna">
-        {navigation.map((item) => <Link key={item.href} href={item.href} aria-current={section === item.label ? "page" : undefined} className={section === item.label ? "active" : ""}><Icon name={item.icon} /><small>{item.label}</small></Link>)}
-      </nav>
+      <BottomNav section={section} />
     </div>
   );
 }
