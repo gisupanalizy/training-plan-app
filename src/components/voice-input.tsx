@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Button, Icon } from "@/components/ui";
+import styles from "./plan-authoring.module.css";
 
 export type VoiceResult = { transcript: string; proposal: unknown; target: Record<string, unknown> | null };
 export function VoiceInput({ scope, context, label, onProposal }: {
@@ -98,14 +100,15 @@ export function VoiceInput({ scope, context, label, onProposal }: {
     } catch (cause) { if (id === generation.current) { setState("idle"); setError((cause as Error).message); } }
     finally { if (id === generation.current) request.current = null; }
   }
-  return <div className="voice-input"><strong>{label}</strong><p className="small-muted">Nagranie trwa do 30 s. Tekst można poprawić przed interpretacją. Zapis następuje dopiero po zatwierdzeniu karty.</p>
-    <div className="editor-actions">{state === "recording" ? <button type="button" onClick={stop}>Zatrzymaj · {seconds} s</button> :
-      <button type="button" className="button button-outline" disabled={state !== "idle"} onClick={() => void start()}>🎙 Nagraj</button>}
-      {state !== "idle" && <button type="button" className="button button-outline" onClick={cancel}>Anuluj</button>}</div>
+  return <div className={`voice-input ${styles.voice}`}><strong>{label}</strong><p className="small-muted">Nagranie trwa do 30 s. Tekst można poprawić przed interpretacją. Zapis następuje dopiero po zatwierdzeniu karty.</p>
+    <div className={styles.voiceActions}>{state === "recording" ? <Button variant="primary" onClick={stop}>Zatrzymaj · {seconds} s</Button> :
+      <Button variant="secondary" disabled={state !== "idle"} onClick={() => void start()}><Icon name="microphone" size={18} />Nagraj</Button>}
+      {state !== "idle" && <Button variant="ghost" onClick={cancel}>Anuluj</Button>}</div>
     <label className="editor-field">Transkrypcja lub tekst wpisany ręcznie<textarea value={text} disabled={state !== "idle"}
       onChange={(event) => { setText(event.target.value); onProposal(null); }} maxLength={3000} /></label>
-    <button type="button" className="button button-outline" disabled={state !== "idle" || !text.trim()} onClick={() => void interpret()}>{state === "interpreting" ? "Interpretowanie…" : "Przygotuj propozycję"}</button>
-    {state === "requesting" && <p>Oczekiwanie na dostęp do mikrofonu…</p>}
-    {state === "transcribing" && <p>Przepisywanie nagrania…</p>}{error && <p role="alert" className="auth-error">{error}</p>}
+    <Button variant="secondary" disabled={state !== "idle" || !text.trim()} onClick={() => void interpret()}>{state === "interpreting" ? "Interpretowanie…" : "Przygotuj propozycję"}</Button>
+    {state === "recording" && <p role="status">Nagrywanie trwa.</p>}
+    {state === "requesting" && <p role="status">Oczekiwanie na dostęp do mikrofonu…</p>}
+    {state === "transcribing" && <p role="status">Przepisywanie nagrania…</p>}{error && <p role="alert" className="auth-error">{error}</p>}
   </div>;
 }

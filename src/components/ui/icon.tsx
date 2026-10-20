@@ -17,6 +17,7 @@ const paths = {
   check: "M4 12l5 5L20 6",
   edit: "m15 4 5 5M4 20l1-6L17 2l5 5L10 19z",
   info: "M12 11v6M12 7h.01M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0",
+  warning: "M12 3 3 20h18L12 3zM12 9v5M12 17h.01",
   upload: "M12 16V3M6 9l6-6 6 6M4 16v5h16v-5",
   file: "M14 2H5v20h14V7zM14 2v6h5M8 12h8M8 16h5",
   camera: "M3 6h4l2-3h6l2 3h4v15H3zM16 13a4 4 0 1 1-8 0 4 4 0 0 1 8 0",

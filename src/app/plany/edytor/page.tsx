@@ -15,7 +15,7 @@ export default async function EditorPage({ searchParams }: { searchParams: Promi
   const { exercises } = await getOneRepMaxData();
   return <AppShell section="Plany"><div className={styles.surface}><Link className={styles.back} href={planId ? `/plany/${planId}` : "/plany"}><Icon name="arrowLeft" size={18} />Wróć do planów</Link>
     <div className={styles.heading}><div><h1>{existing ? "Edytuj plan" : "Nowy plan"}</h1>
-      <p>{existing ? `Edycja opublikuje wersję ${existing.version.version_number + 1}. Poprzednia pozostanie w historii.` : "Utwórz dni A/B i dodaj własne ćwiczenia."}</p></div></div>
+      <p>{existing ? `Edycja opublikuje wersję ${existing.version.version_number + 1}. Poprzednia pozostanie w historii. Szkic nie zapisuje się sam.` : "Utwórz dni A/B i dodaj własne ćwiczenia. Szkic nie zapisuje się sam."}</p></div></div>
     <PlanEditor initialVoice={voice === "1"} initial={existing?.document} planId={planId ?? null} expectedVersionId={existing?.version.id ?? null} catalog={exercises} />
   </div></AppShell>;
 }

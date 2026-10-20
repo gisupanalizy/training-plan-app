@@ -42,7 +42,16 @@ try {
     await page.setViewportSize({ width, height: 844 }); await page.evaluate(() => window.scrollTo(0, 0));
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `overflow ${width}`);
     const cards = await page.locator('.workout-card').evaluateAll(elements => elements.map(el => ({ top: el.getBoundingClientRect().top, bottom: el.getBoundingClientRect().bottom })));
-    const nav = await page.locator('.mobile-nav').boundingBox(); if (width === 390) assert.ok(cards[3].bottom <= nav.y, JSON.stringify({ cards, nav }));
+    const nav = await page.locator('.mobile-nav').boundingBox();
+    if (width === 390) {
+      assert.ok(cards.length >= 4, 'cztery karty');
+      const reachable = await page.evaluate(() => {
+        const bar = document.querySelector('.mobile-nav').getBoundingClientRect().top;
+        const bottom = document.querySelectorAll('.workout-card')[3].getBoundingClientRect().bottom;
+        return bottom - (document.documentElement.scrollHeight - innerHeight) < bar + 1;
+      });
+      assert.ok(reachable, `czwarta karta niedostępna przewinięciem ${JSON.stringify({ cards, nav })}`);
+    }
     for (const locator of [button('Kontynuuj'), card('Przysiad')]) { const box = await locator.boundingBox(); assert.ok(box.width >= 44 && box.height >= 44); }
     measures.push({ width, cards, navTop: nav.y }); await page.screenshot({ path: `/private/tmp/t13c-${width}.png` });
   }

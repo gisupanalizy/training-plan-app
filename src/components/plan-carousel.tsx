@@ -2,11 +2,11 @@
 import { useEffect, useRef, useState, useTransition } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Icon } from '@/components/ui';
+import { Icon, ListRow } from '@/components/ui';
 import styles from './plan-carousel.module.css';
 import ui from './plan-workout.module.css';
 export type PlanChoice = { id: string; name: string; status: string; href?: string };
-export type PlanSessionChoice = { id: string; name: string; count: number; href: string };
+export type PlanSessionChoice = { id: string; name: string; count: number; href: string; meta?: string };
 export function PlanCarousel({ plans, selectedPlanId, sessions, demo = false }: { plans: PlanChoice[]; selectedPlanId: string; sessions: PlanSessionChoice[]; demo?: boolean }) {
   const router = useRouter();
   const track = useRef<HTMLDivElement>(null);
@@ -31,6 +31,8 @@ export function PlanCarousel({ plans, selectedPlanId, sessions, demo = false }: 
   useEffect(() => () => clearTimeout(timer.current), []);
   const current = plans[index];
   if (!current) return null;
+  const caption = (status: string) => demo ? 'Plan demonstracyjny · dane syntetyczne' : status === 'archived' ? 'Tylko do odczytu · tej wersji nie można rozpocząć' : status === 'active' ? 'Prywatny plan · aktualna wersja' : 'Prywatny szkic';
+  const kicker = (status: string) => demo ? 'Dane demonstracyjne' : status === 'archived' ? 'Archiwum' : status === 'active' ? 'Aktywny plan' : 'Szkic';
   return <>
     <div ref={track} className={styles.track} role="region" aria-roledescription="karuzela" aria-label="Twoje plany" tabIndex={0}
       onPointerDown={event => { dragged.current = false; if (event.pointerType === 'mouse' && event.button === 0) drag.current = { x: event.clientX, y: event.clientY, left: event.currentTarget.scrollLeft }; }}
@@ -39,10 +41,10 @@ export function PlanCarousel({ plans, selectedPlanId, sessions, demo = false }: 
       onClickCapture={event => { if (dragged.current) { if (event.detail > 0) { event.preventDefault(); event.stopPropagation(); } dragged.current = false; } }}
       onKeyDown={event => { if (event.key === 'ArrowRight' || event.key === 'ArrowLeft' || event.key === 'Home' || event.key === 'End') { event.preventDefault(); move(event.key === 'Home' ? 0 : event.key === 'End' ? plans.length - 1 : index + (event.key === 'ArrowRight' ? 1 : -1)); } }}
       onScroll={() => { clearTimeout(timer.current); timer.current = setTimeout(() => { if (!track.current) return; const children = [...track.current.children] as HTMLElement[]; const nearest = children.reduce((best, item, i) => Math.abs(item.offsetLeft - track.current!.scrollLeft) < Math.abs(children[best].offsetLeft - track.current!.scrollLeft) ? i : best, 0); move(nearest, false); }, 140); }}>
-      {plans.map((plan, position) => <section className={styles.slide} key={plan.id} aria-label={`${position + 1} z ${plans.length}: ${plan.name}`}><h2>{plan.name}</h2><p>{demo ? 'Plan demonstracyjny · dane syntetyczne' : plan.status === 'active' ? 'Prywatny plan · aktualna wersja' : 'Prywatny szkic'}</p><Link className={ui.primary} href={plan.href ?? `/plany/${plan.id}`}>Otwórz plan <Icon name="chevronRight" size={18} /></Link></section>)}
+      {plans.map((plan, position) => <section className={styles.slide} key={plan.id} aria-label={`${position + 1} z ${plans.length}: ${plan.name}`}><p className={ui.eyebrow}>{kicker(plan.status)}</p><h2>{plan.name}</h2><p>{caption(plan.status)}</p><Link className={`${ui.primary} ${ui.block}`} href={plan.href ?? `/plany/${plan.id}`}>Otwórz plan <Icon name="chevronRight" size={18} /></Link></section>)}
     </div>
     <div className={styles.bar}><button className={ui.iconButton} type="button" aria-label="Poprzedni plan" disabled={index === 0} onClick={() => move(index - 1)}><Icon name="chevronLeft" /></button><p role="status" aria-live="polite"><strong>Plan {index + 1} z {plans.length}</strong>{current.name}</p><button className={ui.iconButton} type="button" aria-label="Następny plan" disabled={index === plans.length - 1} onClick={() => move(index + 1)}><Icon name="chevronRight" /></button></div>
     {plans.length > 1 && <div className={styles.dots} aria-label="Wybierz plan">{plans.map((plan, position) => <button type="button" key={plan.id} aria-label={`Pokaż plan ${position + 1}: ${plan.name}`} aria-current={index === position} onClick={() => move(position)}><span /></button>)}</div>}
-    <h2 className={ui.sectionTitle}>Treningi w planie</h2><div className={styles.sessions} aria-busy={pending || current.id !== selectedPlanId}>{current.id === selectedPlanId ? sessions.length ? sessions.map((session, position) => <Link key={session.id} className={ui.row} href={session.href}><span className={ui.letter}>{position + 1}</span><div><strong>{session.name}</strong><small>{session.count} ćwiczeń</small></div><Icon name="chevronRight" /></Link>) : <p className={ui.muted}>Ten plan nie ma jeszcze opublikowanych treningów.</p> : <p role="status" className={ui.muted}>Wczytywanie treningów…</p>}</div>
+    <h2 className={ui.sectionTitle}>Treningi w planie</h2><div className={styles.sessions} aria-busy={pending || current.id !== selectedPlanId}>{current.id === selectedPlanId ? sessions.length ? sessions.map((session, position) => <ListRow key={session.id} code={String(position + 1)} title={session.name} meta={session.meta ?? `${session.count} ćwiczeń`} href={session.href} />) : <p className={ui.muted}>Ten plan nie ma jeszcze opublikowanych treningów.</p> : <p role="status" className={ui.muted}>Wczytywanie treningów…</p>}</div>
   </>;
 }

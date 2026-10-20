@@ -1,5 +1,6 @@
 "use client";
 import {useState} from 'react';
+import {Button} from '@/components/ui';
 import type {PlanEditorSession} from '@/lib/domain/plan-editor';
 export function ReviewGroupEdit({session,group,onApply}:{session:PlanEditorSession;group:string|null;onApply:(session:PlanEditorSession)=>void}){
  const original=session.exercises.filter(e=>group&&e.supersetGroup===group);
@@ -29,6 +30,6 @@ export function ReviewGroupEdit({session,group,onApply}:{session:PlanEditorSessi
   <div className="editor-grid"><label className="editor-field">Przerwa po grupie od (s)<input type="number" min={0} value={pause} onChange={e=>setPause(e.target.value)}/></label><label className="editor-field">Przerwa po grupie do (s)<input type="number" min={0} value={pauseMax} onChange={e=>setPauseMax(e.target.value)}/></label></div>
   <p className="review-hint">Wybrane ćwiczenia utworzą jeden blok w podanej kolejności. Zmiana przerwy dotyczy kończącego ćwiczenia.</p>
   {error&&<p className="auth-error" role="alert">{error}</p>}
-  <div className="review-dialog-footer">{group&&<button type="button" className="review-danger" onClick={()=>apply(true)}>Rozłącz superserię</button>}<button className="button button-dark" type="submit">Zastosuj grupę</button></div>
+  <div className="review-dialog-footer">{group&&<Button variant="danger" onClick={()=>apply(true)}>Rozłącz superserię</Button>}<Button variant="primary" type="submit">Zastosuj grupę</Button></div>
  </form>;
 }

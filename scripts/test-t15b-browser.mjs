@@ -32,6 +32,7 @@ try {
     for (const route of ['/', '/plany', `/plany/${created[0].planId}`]) {
       await page.goto(`${base}${route}`); await page.waitForLoadState('networkidle');
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `overflow ${width} ${route}`);
+      if (route === '/' && width === 390) assert.equal(await page.getByRole('link', { name: /^Rozpocznij / }).count(), 1, 'start ma jedno dominujące rozpoczęcie');
       if (route.includes(created[0].planId)) {
         const cards = await page.locator('.preview-exercise').evaluateAll(items => items.map(item => ({ top: item.getBoundingClientRect().top, bottom: item.getBoundingClientRect().bottom })));
         const nav = await page.locator('.mobile-nav').boundingBox();
@@ -49,9 +50,17 @@ try {
       await page.screenshot({ path: `/private/tmp/t15b-${width}-${route === '/' ? 'start' : route === '/plany' ? 'plans' : 'preview'}.png` });
     }
   }
+  await page.setViewportSize({ width: 1280, height: 900 });
+  for (const route of ['/', '/plany', `/plany/${created[0].planId}`]) {
+    await page.goto(`${base}${route}`); await page.waitForLoadState('networkidle');
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `overflow desktop ${route}`);
+    assert.equal(await page.locator('.sidebar').count(), 1, `sidebar desktop ${route}`);
+  }
+  await page.screenshot({ path: '/private/tmp/t15b-desktop-preview.png' });
   await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${base}/plany/${created[0].planId}`); await page.waitForLoadState('networkidle');
   await page.getByRole('button', { name: 'Szczegóły: Przysiad ze sztangą' }).focus(); await page.keyboard.press('Enter');
-  await page.getByRole('heading', { name: 'Przysiad ze sztangą', exact: true }).waitFor();
+  await page.locator('.exercise-detail').waitFor();
   assert.equal(await page.locator('.preview-series tr[data-plan-set]').count(), 8);
   assert.match(await page.locator('.exercise-detail').innerText(), /Syntetyczny arkusz!A1/);
   await page.screenshot({ path: '/private/tmp/t15b-plan-detail.png' });

@@ -25,8 +25,9 @@ try {
   const button = name => page.getByRole('button', { name, exact: true });
   for (const width of [360, 390, 430]) {
     await page.setViewportSize({ width, height: 844 }); await page.goto(`${base}/plany/import`); await page.getByRole('group').count();
-    const tiles = page.locator('[aria-label="Wybierz źródło"] > *'); await tiles.first().waitFor(); assert.equal(await tiles.count(), 4);
-    for (const tile of await tiles.all()) { const delta = await tile.evaluate(el => { const a = el.getBoundingClientRect(), b = el.querySelector('svg').getBoundingClientRect(); return Math.abs(a.x + a.width / 2 - b.x - b.width / 2); }); assert.ok(delta < 1, 'ikony źródeł wyśrodkowane'); }
+    const tiles = page.locator('[aria-label="Wybierz źródło"] > *'); await tiles.first().waitFor(); assert.equal(await tiles.count(), 2);
+    for (const tile of await tiles.all()) { const delta = await tile.evaluate(el => { const a = el.getBoundingClientRect(), b = el.querySelector('svg').getBoundingClientRect(); return Math.abs(a.x + a.width / 2 - b.x - b.width / 2); }); assert.ok(delta < 1, 'ikony pliku i zdjęcia wyśrodkowane'); }
+    assert.equal(await page.locator('[aria-label="Inne sposoby"] > *').count(), 3);
     assert.ok(await page.getByRole('link', { name: 'Utwórz ręcznie' }).locator('svg').count());
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)); await page.screenshot({ path: `/private/tmp/t15c-import-${width}.png` });
   }
@@ -42,6 +43,11 @@ try {
     ok(await admin.from('imports').update({ status: 'needs_review', draft: raw() }).eq('id', id));
     await page.goto(`${base}/plany/import?id=${id}`); await page.getByRole('heading', { name: 'Nazwy ćwiczeń i kolejność', exact: true }).waitFor();
     assert.equal(await page.locator('.review-main input[type=number]').count(), 0);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await button('Pokaż źródło').click(); await page.locator('aside.review-source-panel').waitFor();
+    assert.equal(await page.getByRole('dialog').count(), 0, 'desktop pokazuje źródło obok planu');
+    await button('Zamknij źródło').click();
+    await page.setViewportSize({ width: 390, height: 844 });
     await button('Pokaż źródło').click(); await page.getByRole('dialog', { name: 'Oryginalne źródło' }).waitFor();
     if (source.kind === 'pdf') { const pages = page.getByLabel('Strona PDF'); await pages.locator('option').nth(1).waitFor({ state: 'attached' }); await pages.selectOption('2'); await page.getByLabel('Oryginalny PDF — strona 2').waitFor(); await page.waitForFunction(() => document.querySelector('.pdf-page-scroll canvas')?.width > 0); await page.getByLabel('Powiększ PDF').click(); }
     else { const sheets = page.getByLabel('Arkusz źródłowy'); await sheets.waitFor(); await sheets.selectOption('Trening B'); assert.match(await page.locator('[data-address="A2"]').getAttribute('class'), /source-strike/); await sheets.selectOption('Trening A'); }
@@ -61,6 +67,6 @@ try {
     const stored = ok(await admin.from('imports').select('committed_plan_id,review_data').eq('id', id).single()); assert.deepEqual(stored.review_data.document, before.document);
     assert.equal(ok(await client.from('plan_versions').select('id').eq('plan_id', stored.committed_plan_id)).length, 1);
   }
-  assert.deepEqual(errors, []); console.log('T15-C import PASS: centered icons/manual/voice, PDF2/XLSX2, trzy różne kroki/reload, blokada braków, cancel, realne idempotentne approve i własne syntetyczne źródła.');
+  assert.deepEqual(errors, []); console.log('T15-C import PASS: plik i zdjęcie dominują, tekst/głos/ręczny są wtórne, źródło desktop obok i mobile pełnoekranowe, PDF2/XLSX2, trzy kroki, blokada braków, retry approve.');
 } catch (error) { if (page) await page.screenshot({ path: '/private/tmp/t15c-import-failure.png' }).catch(() => {}); throw error; }
 finally { if (paths.length) ok(await admin.storage.from('training-imports').remove(paths)); await browser.close(); for (const id of users) ok(await admin.auth.admin.deleteUser(id)); }

@@ -1,6 +1,6 @@
 # Plan zadań
 
-Aktualizacja: 2026-10-17. Jedyne źródło statusów poszczególnych zadań. STATUS opisuje kontekst sesji, bez kopiowania całego backlogu.
+Aktualizacja: 2026-10-19. Jedyne źródło statusów poszczególnych zadań. STATUS opisuje kontekst sesji, bez kopiowania całego backlogu. Bieżący program wizualny to T16; T15-A–G są done lokalnie.
 
 Statusy: `todo`, `in_progress`, `blocked`, `review`, `done`, `deferred`. `todo` z niespełnionymi zależnościami nie jest gotowe do rozpoczęcia. `blocked` wymaga konkretnego blokera i kroku odblokowania. `done` wymaga spełnienia kryteriów, weryfikacji i handoffu.
 
@@ -386,3 +386,78 @@ Wymagania, kontrakty, właściciele plików i pełne bramki: [specyfikacja T13](
 - Zakres: ocenić uwagi i przygotować pełne przyszłe zlecenie A–G z subagentami, bramkami, checkpointami i procedurą wznowienia. Nie uruchamiać implementacji lub delegowania podczas pisania promptu.
 - Odbiór: gotowy prompt startowy i pełna instrukcja w repo, jawne pierwszeństwo zbiorczego zlecenia nad osobnymi zleceniami etapów; maksymalnie dwóch wykonawców, niezależny G, ochrona wspólnych testów i danych. A–G nadal todo.
 - Wynik: [instrukcja integratora](prompts/T15-ORCHESTRATOR.md) i [handoff U2](handoffs/2026-10-18-T15-U2-prompt-cli.md), krótki prompt startowy do ręcznego użycia. Bez kodowania lub uruchamiania agentów w tej sesji.
+
+## T16 — interfejs Tempo
+
+D047. Tempo jest jedynym docelowym wyglądem i zastępuje paletę Noc. D046 zostaje. Zachowanie produktu, API i baza zostają poza warunkowym T16-K. Jeden etap na jedno zlecenie. Specyfikacja: [T16](T16_TEMPO_IMPLEMENTATION.md). Źródła: [brief](tempo-implementation-brief.md), [katalog](tempo-frame-catalog.md).
+
+### T16-A — Kontrakt, decyzja i lokalne źródła
+
+- Status: review. Właściciel: Cursor agent, sesja 2026-10-19; pliki zwolnione. Zależności: lokalne T13 i T15-A–G oraz decyzja użytkownika o Tempo — spełnione.
+- Zakres: wierne kopie briefu i katalogu z Make `D2nF5loZrbPDqY2oco8ske`, D047, macierz klatek, własność plików A–I i warunkowe K. Bez `src/`, commitów i T16-B.
+- Odbiór: ponowny odczyt MCP, zgodne SHA-1, linki, identyfikatory i `git diff --check`. [Handoff](handoffs/2026-10-19-T16-A-kontrakt-tempo.md).
+- Przekazanie: [etap B](T16_TEMPO_IMPLEMENTATION.md#b--fundament-tempo). Medium; sam fundament, bez zmian domeny.
+
+### T16-B — Fundament Tempo
+
+- Status: review. Właściciel: Cursor agent, sesja 2026-10-19; pliki zwolnione. Zależności: T16-A w review i osobne zlecenie użytkownika — spełnione.
+- Zakres: jeden `:root` Tempo, `themeColor` `#11191c`, bez `data-theme="night"`, przełącznika i drugiej palety. Pięć tras, lokalny Inter, safe-area. Wspólne Button, Field, Stepper, ListRow, Card, StatusBadge, SegmentedControl, Notice, EmptyState, Dialog oraz dolna i boczna nawigacja. Klatki `library` i `dialog-open`. Ekrany C–H bez przebudowy.
+- Odbiór: testy UI 9/9, `npm test` 256/9 skip, Chrome 21 stanów 360/390/430 i desktop, kontrast AA, fokus, reduced motion, build i sekwencyjny typecheck PASS. [Handoff](handoffs/2026-10-19-T16-B-fundament-tempo.md).
+- Przekazanie: [etap C](T16_TEMPO_IMPLEMENTATION.md#c--start-plany-i-podgląd). High; konflikty i istniejące komendy.
+
+### T16-C — Start, Plany i podgląd
+
+- Status: review. Właściciel: Cursor agent, sesja 2026-10-19; pliki zwolnione. Zależności: odebrany T16-B — spełnione.
+- Zakres: trasy `/`, `/plany`, `/plany/[id]` i konflikt startu. Jedna dominująca akcja, karuzela z dotykiem, myszą, klawiaturą i wskaźnikiem, archiwum bez startu, osobno brak planu i błąd odczytu. Podgląd zachowuje serie, rampy, superserie, opcjonalność, źródła, `null` i 0. Powrót primary, zakończenie secondary, usunięcie danger z dialogiem. D046 zostaje doskrolowaniem.
+- Odbiór: `npm test` 259/9 skip, Chrome T15-B z T13-C, 360/390/430 i desktop 1280, build i sekwencyjny typecheck PASS. [Handoff](handoffs/2026-10-19-T16-C-start-plany.md).
+- Przekazanie: [etap D](T16_TEMPO_IMPLEMENTATION.md#d--trening). High; trwałość szkiców.
+
+### T16-D — Trening
+
+- Status: review. Właściciel poprawki widoczności: Cursor agent, sesja 2026-10-20; pliki zwolnione. Zależności: odebrany T16-C — spełnione. Wada T16-I wróciła tutaj i została poprawiona bez nowego odbioru I.
+- Zakres: `/trening/[id]`, przegląd, jedna seria, dyktowanie, zakończenie, wybór offsetu DST i usunięcie. Hierarchia Tempo. Komenda, API i `lib/workouts` bez zmian. D046 sprawdza doskrolowanie czwartej karty. Główny zapis serii przy 390×844 kończy się nad dolną nawigacją. Brak propozycji kontraktu.
+- Odbiór pierwotny: `npm test` 263/9 skip, Chrome T13-C na `localhost:3002`, regresje T13-A, T05 i T09, build i sekwencyjny typecheck PASS. [Handoff](handoffs/2026-10-19-T16-D-trening.md). Poprawka 2026-10-20: test edytora 7/7, `npm test` 272/9 skip, T15-B i ogon T13-C na `localhost:3000`, build i sekwencyjny typecheck PASS. [Handoff poprawki](handoffs/2026-10-20-T16-D-widocznosc-zapisu.md).
+- Przekazanie: [etap E](T16_TEMPO_IMPLEMENTATION.md#e--import-korekta-i-edytor). High; niezmienniki szkicu.
+
+### T16-E — Import, korekta i edytor
+
+- Status: review. Właściciel: Cursor agent, sesja 2026-10-19; pliki zwolnione. Zależności: odebrany T16-B i sekwencja po odebranym D — spełnione.
+- Zakres: `/plany/import`, korekta i `/plany/edytor`. Plik i zdjęcie są głównymi źródłami. Tekst, głos i ręczny edytor są wtórne. Statusy katalogu są rozróżnione i nie obiecują planu przed zatwierdzeniem. Korekta ma Nazwy, Serie i superserie, Podsumowanie oraz jedno pytanie. Źródło jest pełnoekranowe na wąskim ekranie i obok planu na desktopie. Nierozwiązane pytanie blokuje publikację. Edytor otwiera się całą kartą. Indywidualne serie, anulowanie, wersje, retry i brak autosave zostają. Bez parserów, API i AI. Brak propozycji kontraktu.
+- Odbiór: `npm test` 265/9 skip, Chrome importu i edytora na `localhost:3002`, HTTP T15-C na `localhost:3016` z wyłączonym AI, build i sekwencyjny typecheck PASS. [Handoff](handoffs/2026-10-19-T16-E-import-edytor.md).
+- Przekazanie: [etap F](T16_TEMPO_IMPLEMENTATION.md#f--historia). Medium; zamrożony kontrakt czasu.
+
+### T16-F — Historia
+
+- Status: review. Właściciel: Cursor agent, sesja 2026-10-19; pliki zwolnione. Zależności: odebrany T16-D — spełnione. Test klika interfejs treningu D, więc F i D nie szły równolegle.
+- Zakres: `/historia`. Kalendarz od poniedziałku do niedzieli, Dzisiaj, zmiana miesiąca, pusty dzień, wiele sesji, aktywne `Wznów` osobno i zakończone `Otwórz trening`. Prawdziwa godzina albo „godzina nieznana”. Powrót zachowuje miesiąc i dzień. Projekcja czasu, DST i własność bez zmian. Brak propozycji kontraktu.
+- Odbiór: `npm test` 265/9 skip, Chrome T15-D na `localhost:3002`, 360/390/430 i desktop 1280, build i sekwencyjny typecheck PASS. [Handoff](handoffs/2026-10-19-T16-F-historia.md).
+- Przekazanie: [etap G](T16_TEMPO_IMPLEMENTATION.md#g--postęp). High; znaczenie liczb zostaje.
+
+### T16-G — Postęp
+
+- Status: review. Właściciel: Cursor agent, sesja 2026-10-19; pliki zwolnione. Zależności: odebrany T16-B i sekwencja po F — spełnione.
+- Zakres: `/postep`. Kolejność Tempo: ćwiczenie, metryka, ostatni wynik, wykres, zakres, rekordy całej historii. Stany empty, single-point, gap, selected-point, no-change i estimated-vs-real. Tylko punkt otwiera szczegół. Analityka v1, paginacja, współczynniki i rekordy bez zmian. Procent z klatki nie jest liczony, bo odczyt nie zwraca delty. Brak propozycji kontraktu.
+- Odbiór: `npm test` 268/9 skip, Chrome T15-E na `localhost:3000`, API 505 sesji, build i sekwencyjny typecheck PASS. [Handoff](handoffs/2026-10-19-T16-G-postep.md).
+- Przekazanie: [etap H](T16_TEMPO_IMPLEMENTATION.md#h--profil-i-auth). Medium; zamrożony Auth.
+
+### T16-H — Profil i Auth
+
+- Status: review. Właściciel: Cursor agent, sesja 2026-10-20; pliki zwolnione. Zależności: odebrany T16-B i sekwencja po G — spełnione.
+- Zakres: `/profil`, `/logowanie`, `/ustaw-haslo`. Kolejność profilu: konto, pomiar, ustawienia, historia, wylogowanie. Jedno pole nowego hasła, minimum 12, wartość zostaje po błędzie. Wylogowanie jest danger, nie głównym CTA. Akcje Auth, API 1RM i baza bez zmian. Brak propozycji kontraktu.
+- Odbiór: `npm test` 271/9 skip, Chrome T15-F na `localhost:3000`, 360/390/430 i desktop 1280, build i sekwencyjny typecheck PASS. [Handoff](handoffs/2026-10-19-T16-H-profil-auth.md).
+- Przekazanie: [etap I](T16_TEMPO_IMPLEMENTATION.md#i--niezależny-odbiór). High; odbiór przekrojowy, inny agent niż autorzy B–H.
+
+### T16-K — Rezerwowy kontrakt
+
+- Status: todo, niegotowe. Właściciel: —. Zależności: propozycja `docs/proposals/T16-CONTRACT-*.md` oraz osobna zgoda użytkownika na dokładny zakres. Brak takiej propozycji. Samo T16-A nie uruchamia K.
+- Zakres/odbiór/własność: [etap K](T16_TEMPO_IMPLEMENTATION.md#k--rezerwowy-kontrakt). Najmniejsza zaakceptowana zmiana kontraktu, migracja wyłącznie lokalna do kolejnej zgody zdalnej. Nigdy równolegle z etapem wizualnym.
+- Przekazanie: prompt w specyfikacji K, dopiero po zgodzie. High.
+
+### T16-I — Niezależny odbiór
+
+- Status: bramka nieprzyjęta. Właściciel: Cursor agent, sesja 2026-10-20; pliki dokumentacji zwolnione, `src/` nie ruszane. Zależności: odebrane B–H, inny agent niż ich autorzy. Brak propozycji `T16-CONTRACT`. Poprawka zapisu jest w drzewie roboczym i nie zamyka tej bramki.
+- Zakres: macierz 85 stanów i lokalny przepływ na `next start`. Defekt z tego odbioru: przy 390×844 `Zapisz i przejdź dalej` nie kończył się nad dolną nawigacją. D046 tego nie zamyka. Poprawkę wykonał T16-D 2026-10-20.
+- Odbiór: `npm test` 271/9 skip, build i sekwencyjny typecheck PASS. Chrome i API A/F/import/edytor/D/E/T13-A/T05/T09/T15-C HTTP oraz osobny T13-C PASS. T15-B exit 1. [Raport](reports/2026-10-19-T16-I-tempo-acceptance.md), [handoff](handoffs/2026-10-19-T16-I-niezalezny-odbior.md).
+- Przekazanie: nowy T16-I innym agentem niż autor poprawki z 2026-10-20. High; główna akcja zapisu.
+- Zakres/odbiór/własność: [etap I](T16_TEMPO_IMPLEMENTATION.md#i--niezależny-odbiór). Macierz 85 stanów i pełny lokalny przepływ. Recenzent nie poprawia `src/` po cichu.
+- Przekazanie: prompt w specyfikacji I. High; odbiór przekrojowy.

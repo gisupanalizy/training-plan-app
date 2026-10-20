@@ -4,6 +4,7 @@ import type { PlannedSetInput } from '@/lib/domain/model';
 import { emptySet, type PlanEditorExercise, type PlanEditorDocument, type PlanEditorSession } from '@/lib/domain/plan-editor';
 import { validateEditorExercise, synchronizeSetCounts } from '@/lib/domain/compact-editor';
 import { seriesBlocks, patchSeries, resizeSeriesBlock, exerciseSummary, goalLabel } from '@/lib/imports/review';
+import { Button } from '@/components/ui';
 import { PlanSetFields, RangeField } from './plan-set-fields';
 import { ExerciseNamePicker } from './exercise-name-picker';
 
@@ -34,7 +35,7 @@ export function PlanExerciseEdit({ exercise, document, sessionId, catalog, onApp
     {draft.originalName && draft.originalName !== draft.name && <p className="review-hint">W źródle: {draft.originalName}</p>}
     {draft.sourceRef && <details className="review-more"><summary>Odwołanie do źródła</summary><p>{draft.sourceRef}</p></details>}
     {error && <p className="auth-error" role="alert">{error}</p>}
-    <div className="review-dialog-footer">{onDelete && <button type="button" className="review-danger" onClick={onDelete}>Usuń ćwiczenie</button>}<button type="button" onClick={onCancel}>Anuluj</button><button className="button button-dark" type="submit">Zastosuj zmiany</button></div>
+    <div className="review-dialog-footer">{onDelete && <Button variant="danger" onClick={onDelete}>Usuń ćwiczenie</Button>}<Button variant="ghost" onClick={onCancel}>Anuluj</Button><Button variant="primary" type="submit">Zastosuj zmiany</Button></div>
   </form>;
 }
 
@@ -62,8 +63,8 @@ function FullExerciseSeries({ exercise, onChange, onValidity }: { exercise: Plan
     <FullSeriesFields key={`${mode}:${selected}`} exercise={exercise} mode={mode} original={original} block={block} onChange={onChange} onValidity={onValidity} update={update} />
     {mode === 'individual' && <label className="editor-check"><input type="checkbox" checked={!!original.isOptional} disabled={exercise.isOptional} onChange={event => { update({ ...original, isOptional: event.target.checked }); }} />Seria opcjonalna</label>}
     <details className="review-more"><summary>Opcjonalność ćwiczenia</summary><label className="editor-check"><input type="checkbox" checked={!!exercise.isOptional} onChange={event => { const next = structuredClone(exercise); if (!exercise.isOptional) optionalBeforeWhole.current = new Map(exercise.sets.map(set => [set.reviewId!, !!set.isOptional])); next.isOptional = event.target.checked; next.sets.forEach((set, index) => { set.isOptional = next.isOptional || (optionalBeforeWhole.current.get(set.reviewId!) ?? index >= (exercise.setCountMin ?? exercise.sets.length)); }); try { synchronizeSetCounts(next); onValidity(true); } catch { onValidity(false); } onChange(next); }} />Całe ćwiczenie opcjonalne</label></details>
-    <button type="button" className="button button-outline" disabled={exercise.sets.length >= 30} onClick={() => { const next = structuredClone(exercise); const set = { ...emptySet(next.sets.length + 1), reviewId: crypto.randomUUID(), isOptional: !!next.isOptional }; next.sets.push(set); synchronizeSetCounts(next); onChange(next); setMode('individual'); choose(set.reviewId); }}>+ Dodaj serię</button>
-    {mode === 'individual' && <button type="button" className="review-danger" disabled={exercise.sets.length === 1} onClick={() => { const next = structuredClone(exercise); next.sets.splice(index, 1); synchronizeSetCounts(next); onChange(next); choose(next.sets[0].reviewId!); }}>Usuń serię</button>}
+    <Button variant="secondary" disabled={exercise.sets.length >= 30} onClick={() => { const next = structuredClone(exercise); const set = { ...emptySet(next.sets.length + 1), reviewId: crypto.randomUUID(), isOptional: !!next.isOptional }; next.sets.push(set); synchronizeSetCounts(next); onChange(next); setMode('individual'); choose(set.reviewId); }}>+ Dodaj serię</Button>
+    {mode === 'individual' && <Button variant="danger" disabled={exercise.sets.length === 1} onClick={() => { const next = structuredClone(exercise); next.sets.splice(index, 1); synchronizeSetCounts(next); onChange(next); choose(next.sets[0].reviewId!); }}>Usuń serię</Button>}
   </>;
 }
 function FullSeriesFields({ exercise, mode, original, block, onChange, onValidity, update }: { exercise: PlanEditorExercise; mode: 'block' | 'individual'; original: PlannedSetInput; block: ReturnType<typeof seriesBlocks>[number]; onChange: (exercise: PlanEditorExercise) => void; onValidity: (valid: boolean) => void; update: (set: PlannedSetInput) => void }) {
@@ -146,7 +147,7 @@ function PlanSeriesForm({ exercise, mode, selected, onApply, onCancel }: {
     <details className="review-more"><summary>Opcjonalność ćwiczenia</summary><label className="editor-check"><input type="checkbox" checked={optional} onChange={event => setOptional(event.target.checked)} /> Całe ćwiczenie opcjonalne</label></details>
     <div className="review-change-preview"><strong>Po zmianie</strong><p>{preview}</p></div>
     {error && <p className="auth-error" role="alert">{error}</p>}
-    <div className="review-dialog-footer">{mode === 'individual' && <button type="button" className="review-danger" disabled={exercise.sets.length === 1} onClick={() => apply(true)}>Usuń serię</button>}<button type="button" onClick={onCancel}>Anuluj</button><button type="submit" className="button button-dark">Zastosuj zmiany</button></div>
+    <div className="review-dialog-footer">{mode === 'individual' && <Button variant="danger" disabled={exercise.sets.length === 1} onClick={() => apply(true)}>Usuń serię</Button>}<Button variant="ghost" onClick={onCancel}>Anuluj</Button><Button variant="primary" type="submit">Zastosuj zmiany</Button></div>
   </form>;
 }
 
@@ -162,6 +163,6 @@ export function PlanDayEdit({ session, position, total, onApply, onCancel, onDel
     <label className="editor-field">Pozycja treningu<select value={order} onChange={event => setOrder(Number(event.target.value))}>{Array.from({ length: total }, (_, index) => <option key={index} value={index}>{index + 1}{index === total - 1 ? ' — na końcu' : ''}</option>)}</select></label>
     <label className="editor-field">Uwagi do treningu<textarea maxLength={2000} value={draft.note ?? ''} onChange={event => setDraft({ ...draft, note: event.target.value || null })} /></label>
     {error && <p className="auth-error" role="alert">{error}</p>}
-    <div className="review-dialog-footer">{onDelete && <button type="button" className="review-danger" onClick={onDelete}>Usuń trening</button>}<button type="button" onClick={onCancel}>Anuluj</button><button type="submit" className="button button-dark">Zastosuj zmiany</button></div>
+    <div className="review-dialog-footer">{onDelete && <Button variant="danger" onClick={onDelete}>Usuń trening</Button>}<Button variant="ghost" onClick={onCancel}>Anuluj</Button><Button variant="primary" type="submit">Zastosuj zmiany</Button></div>
   </form>;
 }

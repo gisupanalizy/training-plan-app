@@ -7,6 +7,7 @@ import { getSupabaseConfig } from "@/lib/supabase/config";
 import { getWorkout } from "@/lib/workouts/repository";
 import { historyReturnHref } from "@/lib/workouts/presentation";
 import styles from "@/components/plan-workout.module.css";
+import editorStyles from "@/components/workout-editor.module.css";
 import { Icon } from "@/components/ui";
 import { WorkoutEditor } from "@/components/workout-editor";
 
@@ -17,7 +18,7 @@ export default async function TrainingPage({ params, searchParams }: { params: P
   if (getSupabaseConfig()) {
     const loaded = await getWorkout(id);
     if (!loaded) notFound();
-    return <AppShell section="Trening"><div className={styles.workoutPage}><Link className="back-link workout-history-back" href={returnHref}>← Historia treningów</Link><WorkoutEditor key={loaded.workout.id} loaded={loaded} /></div></AppShell>;
+    return <AppShell section="Trening"><div className={`${styles.workoutPage} ${editorStyles.page}`}><Link className="back-link workout-history-back" href={returnHref}>← Historia treningów</Link><WorkoutEditor key={loaded.workout.id} loaded={loaded} /></div></AppShell>;
   }
   const day = getDemoDay(id);
   if (!day) notFound();

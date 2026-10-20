@@ -1,5 +1,55 @@
-/* T15-A — tokeny wybranej palety Noc. Aliasy zachowują kontrakt istniejących ekranów. */
-:root{color-scheme:dark;--paper:#11181f;--surface:#1c262f;--ink:#f1f3f5;--muted:#b5c1cc;--line:#3a4854;--tint:#293641;--primary:#f2c66b;--accent:#f2c66b;--on-primary:#282012;--on-accent:#282012;--hero:#293641;--hero-ink:#f1f3f5;--hero-muted:#d0dbe3;--focus:#f2c66b;--control:#7d8d9b;--hover:#ffdc8c;--soft-hover:#344652;--warning:#3c311c;--warning-ink:#f5d693;--success:#a5d7ac;--skipped:#d6b37b;--pending:#8195a3;--illustration:#293641;--danger:#ffb4ab;--danger-surface:#402825;--white:var(--surface);--green:var(--accent);--dark:var(--primary);--mobile-nav-height:76px;font-family:var(--font-inter),Inter,sans-serif;color:var(--ink);background:var(--paper)}
+/* T16-B — jeden system Tempo. Aliasy ekranów wskazują tokeny --tempo-*, bez drugiej palety. */
+:root{
+  color-scheme:dark;
+  --tempo-bg:#11191c;
+  --tempo-surface:#1b2629;
+  --tempo-surface-raised:#253235;
+  --tempo-line:#344245;
+  --tempo-text:#f2f5f1;
+  --tempo-muted:#9daaa7;
+  --tempo-soft:#c7cfcc;
+  --tempo-accent:#efc45f;
+  --tempo-on-accent:#25200f;
+  --tempo-accent-hover:#f3d078;
+  --tempo-surface-hover:#314247;
+  --tempo-success:#8fc79b;
+  --tempo-danger:#ffb4ab;
+  --tempo-danger-surface:#402825;
+  --tempo-warning-surface:#3c311c;
+  --tempo-warning:#f2f5f1;
+  --paper:var(--tempo-bg);
+  --surface:var(--tempo-surface);
+  --ink:var(--tempo-text);
+  --muted:var(--tempo-muted);
+  --line:var(--tempo-line);
+  --tint:var(--tempo-surface-raised);
+  --primary:var(--tempo-accent);
+  --accent:var(--tempo-accent);
+  --on-primary:var(--tempo-on-accent);
+  --on-accent:var(--tempo-on-accent);
+  --hero:var(--tempo-surface-raised);
+  --hero-ink:var(--tempo-text);
+  --hero-muted:var(--tempo-soft);
+  --focus:var(--tempo-accent);
+  --control:var(--tempo-muted);
+  --hover:var(--tempo-accent-hover);
+  --soft-hover:var(--tempo-surface-hover);
+  --warning:var(--tempo-warning-surface);
+  --warning-ink:var(--tempo-warning);
+  --success:var(--tempo-success);
+  --skipped:var(--tempo-muted);
+  --pending:var(--tempo-muted);
+  --illustration:var(--tempo-surface-raised);
+  --danger:var(--tempo-danger);
+  --danger-surface:var(--tempo-danger-surface);
+  --white:var(--tempo-surface);
+  --green:var(--tempo-accent);
+  --dark:var(--tempo-accent);
+  --mobile-nav-height:76px;
+  font-family:var(--font-inter),Inter,sans-serif;
+  color:var(--ink);
+  background:var(--paper)
+}
 *{box-sizing:border-box}
 html{scroll-behavior:auto}
 body{margin:0}
@@ -16,7 +66,7 @@ p{line-height:1.55}
 .brand-mark{width:38px;height:38px;display:grid;place-items:center;background:var(--dark);border-radius:12px;color:var(--ink);font-size:22px;font-weight:900;letter-spacing:-.03em}
 .brand-mark span,.brand-name>span,.mobile-brand span,.accent{color:var(--accent)}
 .brand-name{font-size:27px;font-weight:900;line-height:.82;letter-spacing:-.03em}
-.brand-name small{display:block;font-size:7px;letter-spacing:.18em;color:var(--muted);font-weight:700;margin-top:8px}
+.brand-name small{display:block;font-size:10px;letter-spacing:.12em;color:var(--muted);font-weight:700;margin-top:8px}
 .sidebar-group-label,.eyebrow,.label-small{font-size:10px;letter-spacing:.18em;font-weight:800;color:var(--muted)}
 .sidebar-group-label{padding-left:17px;margin-bottom:17px}
 .sidebar-nav{display:grid;gap:7px}
@@ -377,7 +427,7 @@ button,input,select,textarea{scroll-margin-block:20px calc(var(--mobile-nav-heig
 .profile-avatar{flex-shrink:0}
 .nav-icon{flex:none}
 .nav-link{min-height:48px}
-.nav-link.active,.nav-link:hover{background:var(--tint);color:var(--primary)}
+.nav-link.active{background:var(--tint);color:var(--ink)}.nav-link:hover{background:var(--soft-hover);color:var(--ink)}
 .brand-mark{color:var(--on-primary)}
 .brand-mark>span{color:var(--on-primary)}
 .button-dark,.button-light{background:var(--primary);color:var(--on-primary)}
@@ -394,10 +444,10 @@ button,input,select,textarea{scroll-margin-block:20px calc(var(--mobile-nav-heig
 @media(max-width:740px){
   .topbar{padding-top:env(safe-area-inset-top);height:calc(57px + env(safe-area-inset-top));padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right))}
   .content{padding-left:max(18px,env(safe-area-inset-left));padding-right:max(18px,env(safe-area-inset-right));padding-bottom:calc(var(--mobile-nav-height) + env(safe-area-inset-bottom) + 24px)}
-  .mobile-nav{height:calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));align-items:center;padding:6px max(4px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));background:var(--paper)}
+  .mobile-nav{height:calc(var(--mobile-nav-height) + env(safe-area-inset-bottom));align-items:center;padding:6px max(4px,env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));background:var(--surface)}
   .mobile-nav a{min-width:0;min-height:52px;flex:1;gap:5px;color:var(--muted);font-weight:500;background:transparent}
-  .mobile-nav a.active{color:var(--primary);background:transparent}
-  .mobile-nav small{font-size:10px;font-weight:500}
+  .mobile-nav a.active{color:var(--ink);background:var(--tint);font-weight:700}
+  .mobile-nav small{font-size:11px;font-weight:500}
   .mobile-nav a.active small{font-weight:700}
   .asset-credit{font-size:10px;margin-top:28px}
 }

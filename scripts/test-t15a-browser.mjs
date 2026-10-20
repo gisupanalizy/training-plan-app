@@ -11,6 +11,12 @@ const { chromium } = await import(pathToFileURL(process.env.T15A_PLAYWRIGHT_MODU
 const browser = await chromium.launch({ headless: true, channel: 'chrome' });
 const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false, autoRefreshToken: false } });
 const ok = value => { if (value.error) throw new Error(value.error.message); return value.data; };
+function contrast(a, b) {
+  const lin = c => { const v = c / 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; };
+  const lum = hex => { const n = parseInt(hex.slice(1), 16); return 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255); };
+  const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+}
 let userId; const report = []; const errors = [];
 try {
   const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -19,10 +25,36 @@ try {
   for (const width of [360,390,430]) {
     await page.setViewportSize({ width, height: 844 });
     assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
-    assert.equal(await page.locator('html').getAttribute('data-theme'), 'night');
+    assert.equal(await page.locator('html').getAttribute('data-theme'), null);
+    assert.equal(await page.locator('meta[name=theme-color]').getAttribute('content'), '#11191c');
     assert.equal(await page.locator('html').evaluate(el => getComputedStyle(el).colorScheme), 'dark');
-    assert.equal(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(17, 24, 31)');
-    report.push({ screen: 'logowanie', width, night: true });
+    assert.equal(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(17, 25, 28)');
+    const tokens = await page.evaluate(() => {
+      const styles = getComputedStyle(document.documentElement);
+      const read = name => {
+        let value = styles.getPropertyValue(name).trim();
+        const seen = new Set();
+        while (value.startsWith('var(') && !seen.has(value)) { seen.add(value); value = styles.getPropertyValue(value.slice(4, -1).split(',')[0].trim()).trim(); }
+        return value;
+      };
+      return { bg: read('--tempo-bg'), paper: read('--paper'), text: read('--tempo-text'), muted: read('--tempo-muted'), surface: read('--tempo-surface'), raised: read('--tempo-surface-raised'), accent: read('--tempo-accent'), onAccent: read('--tempo-on-accent'), success: read('--tempo-success'), danger: read('--tempo-danger'), dangerSurface: read('--tempo-danger-surface'), warning: read('--tempo-warning'), warningSurface: read('--tempo-warning-surface') };
+    });
+    assert.equal(tokens.bg, '#11191c');
+    assert.equal(tokens.paper, '#11191c');
+    assert.ok(contrast(tokens.text, tokens.bg) >= 4.5);
+    assert.ok(contrast(tokens.muted, tokens.bg) >= 4.5);
+    assert.ok(contrast(tokens.muted, tokens.surface) >= 4.5);
+    assert.ok(contrast(tokens.muted, tokens.raised) >= 4.5);
+    assert.ok(contrast(tokens.onAccent, tokens.accent) >= 4.5);
+    assert.ok(contrast(tokens.success, tokens.bg) >= 4.5);
+    assert.ok(contrast(tokens.danger, tokens.bg) >= 4.5);
+    assert.ok(contrast(tokens.danger, tokens.dangerSurface) >= 4.5);
+    assert.ok(contrast(tokens.warning, tokens.warningSurface) >= 4.5);
+    assert.ok(contrast(tokens.accent, tokens.bg) >= 3);
+    assert.ok(contrast(tokens.muted, tokens.surface) >= 3);
+    const themed = await page.evaluate(() => [...document.styleSheets].some(sheet => { try { return [...sheet.cssRules].some(rule => 'selectorText' in rule && String(rule.selectorText).includes('data-theme')); } catch { return false; } }));
+    assert.equal(themed, false);
+    report.push({ screen: 'logowanie', width, tempo: true });
   }
   const email = `t15a-${randomUUID()}@example.invalid`, password = randomUUID();
   const { user } = ok(await admin.auth.admin.createUser({ email, password, email_confirm: true })); userId = user.id;
@@ -39,11 +71,15 @@ try {
     for (const width of [360,390,430]) {
       await page.setViewportSize({ width,height:844 });
       assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `overflow ${route} ${width}`);
-      assert.equal(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(17, 24, 31)');
+      assert.equal(await page.locator('body').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(17, 25, 28)');
       await page.evaluate(() => document.fonts.ready);
       assert.match(await page.locator('body').evaluate(el => getComputedStyle(el).fontFamily), /inter/i);
-      const boxes = await page.locator('.mobile-nav a').evaluateAll(els => els.map(el => { const r=el.getBoundingClientRect();return { width:r.width,height:r.height }; }));
+      const boxes = await page.locator('.mobile-nav a').evaluateAll(els => els.map(el => { const r=el.getBoundingClientRect(); const s=getComputedStyle(el); return { width:r.width,height:r.height,active:el.getAttribute('aria-current')==='page',background:s.backgroundColor }; }));
+      assert.equal(boxes.length, 5);
       assert.ok(boxes.every(b => b.width>=44 && b.height>=44));
+      const active = boxes.find(b => b.active), idle = boxes.find(b => !b.active);
+      assert.equal(active.background, 'rgb(37, 50, 53)');
+      assert.equal(idle.background, 'rgba(0, 0, 0, 0)');
       await page.evaluate(() => window.scrollTo(0,document.body.scrollHeight));
       const credit = await page.locator('.asset-credit').boundingBox(), nav = await page.locator('.mobile-nav').boundingBox();
       assert.ok(credit.y+credit.height <= nav.y, `stopka pod nawigacją ${route}`);
@@ -60,15 +96,22 @@ try {
   }
   await page.goto(`${base}/plany`); await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(() => document.activeElement.className), 'skip-link');
+  const focus = await page.evaluate(() => { const s = getComputedStyle(document.activeElement); return { width: s.outlineWidth, style: s.outlineStyle }; });
+  assert.equal(focus.width, '3px');
+  assert.notEqual(focus.style, 'none');
   await page.keyboard.press('Enter');
   assert.equal(await page.evaluate(() => document.activeElement.id), 'main-content');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  assert.equal(await page.locator('body').evaluate(el => getComputedStyle(el).transitionDuration), '0s');
   await page.setViewportSize({width:1280,height:900});
   assert.equal(await page.locator('.sidebar').isVisible(),true);
   assert.equal(await page.locator('.mobile-nav').isVisible(),false);
+  const sidebarActive = await page.locator('.sidebar .nav-link.active').evaluate(el => getComputedStyle(el).backgroundColor);
+  assert.equal(sidebarActive, 'rgb(37, 50, 53)');
   await page.screenshot({path:'/private/tmp/t15a-desktop.png'});
   assert.deepEqual(errors,[]);
-  await writeFile('/private/tmp/t15a-browser-report.json',JSON.stringify({report,keyboard:true,desktop:true,errors},null,2));
-  console.log(`T15-A PASS: ${report.length} stanów; lokalne Auth/plan, nawigacja, Noc/font, cele44, skip-link, desktop, brak JS errors.`);
+  await writeFile('/private/tmp/t15a-browser-report.json',JSON.stringify({report,keyboard:true,desktop:true,contrast:true,reducedMotion:true,errors},null,2));
+  console.log(`T16-B PASS: ${report.length} stanów; lokalne Auth/plan, nawigacja, Tempo/font, cele44, skip-link, fokus, reduced motion, desktop, brak JS errors.`);
 } finally {
   if(userId) ok(await admin.auth.admin.deleteUser(userId));
   await browser.close();

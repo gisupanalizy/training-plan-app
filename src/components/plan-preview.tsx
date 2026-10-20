@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import type { PlanEditorDocument, PlanEditorExercise } from '@/lib/domain/plan-editor';
 import { compactPrescription, resolveSessionId, type TargetContext } from '@/lib/workouts/presentation';
+import { Notice } from '@/components/ui';
 import { ExerciseSummary } from './exercise-summary';
 import { WorkoutStart } from './workout-start';
 import styles from './plan-preview.module.css';
@@ -71,7 +72,6 @@ function VersionPreview({ planId, versionId, document, sessionIds, current, acti
       if (!group.label) return cards;
       return <section className={styles.superset} key={group.key} aria-label={`Superseria ${group.label}`}><p className={styles.supersetTitle}>Superseria {group.label}</p>{cards}</section>;
     })}</div>
-    <div className={styles.footer}>{current ? active[index] ? <Link className={pageStyles.primary} href={`/trening/${active[index]}`}>Wznów trening</Link> : <details className="preview-start" key={`start:${sessionIds[index]}`}><summary>Rozpocznij trening</summary><WorkoutStart planSessionId={sessionIds[index]} today={context.date} /></details> : <p className={pageStyles.muted}>Wersja archiwalna · rozpocznij z aktualnej wersji.</p>}</div>
     <details className={`preview-context ${styles.context}`} key={`context:${sessionIds[index]}`}><summary>Kontekst treningu i źródła</summary><p>Tydzień {session.weekNumber} w źródle</p><p>Podgląd procentów według 1RM obowiązującego {context.date}. Cele treningu zostaną zapisane przy starcie.</p>{session.note && <p>{session.note}</p>}</details>
     <details className={`preview-overview ${styles.overview}`} ref={overview} onToggle={event => { if (!event.currentTarget.open && event.currentTarget.contains(window.document.activeElement)) selector.current?.focus(); }}>
       <summary>Podgląd całego planu</summary>
@@ -80,5 +80,6 @@ function VersionPreview({ planId, versionId, document, sessionIds, current, acti
         <button className="button button-outline" type="button" onClick={() => { choose(sessionIds[position], true); if (overview.current) overview.current.open = false; }}>Wybierz trening {position + 1}: {item.dayLabel}</button>
       </section>)}
     </details>
+    <div className={styles.footer}>{current ? active[index] ? <Link className={`${pageStyles.primary} ${pageStyles.block}`} href={`/trening/${active[index]}`}>Wznów trening</Link> : <details className="preview-start" key={`start:${sessionIds[index]}`}><summary>Rozpocznij {session.dayLabel}</summary><WorkoutStart planSessionId={sessionIds[index]} today={context.date} /></details> : <Notice tone="info" title="Tylko do odczytu">Archiwalnej wersji nie można rozpocząć.</Notice>}</div>
   </div>;
 }

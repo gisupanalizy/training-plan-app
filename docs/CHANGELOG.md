@@ -341,3 +341,43 @@ Podgląd treningu rysował każde ćwiczenie osobną kartą, a jedyną informacj
 ### 2026-10-19 — T15-G zamknięty lokalnie
 
 Niezależny odbiór na `11d66bc` zaliczył testy, typy, build, lokalne A/B/anon i Chrome. Pierwsza asercja wymagała, żeby czwarta karta podglądu kończyła się nad nawigacją; pomiar dał 786,95 wobec 768. D046: użytkownik uznał przewinięcie dłuższej listy za właściwe zachowanie, nie za wadę. Asercja sprawdza teraz, że kartę da się doskrolować. Powtórzony T15-B razem z T13-C przeszedł. T13 i T15-A–G są done lokalnie. Telefon, Safari i publikacja bez zmiany.
+
+### 2026-10-20 — T16-D widoczność zapisu serii
+
+Główny zapis jednej serii kończy się nad dolną nawigacją przy 390×844. Powód: odbiór T16-I odrzucił bramkę, bo `Zapisz i przejdź dalej` było pod paskiem, a D046 dotyczy kart, nie tej akcji. Wpływ: treść serii przewija się w panelu, zapis zostaje na dole panelu nad `.mobile-nav`. Karty przeglądu nadal mogą wchodzić pod pasek i muszą być doskrolowalne. Komenda, API, próg T15-B i dane bez zmian. T16-D zostaje review. T16-I nie jest powtórzony i nie jest done.
+
+### 2026-10-20 — T16-I odbiór nieprzyjęty
+
+Niezależny odbiór Tempo nie zamyka programu. Powód: przy 390×844 główny zapis serii nie mieści się nad dolną nawigacją, a D046 dotyczy kart, nie tej akcji. Wpływ: wada wraca do T16-D; recenzent nie zmienia `src/`, API ani progu testu. Brak luki kontraktu. T16-I nie jest done. Poprawka wymaga osobnego zlecenia, a kolejny odbiór innego agenta.
+
+### 2026-10-20 — T16-H Profil i Auth
+
+Profil, logowanie i ustawienie hasła używają hierarchii Tempo. Powód: D047 na koncie, bez zmiany akcji Auth, API 1RM i bazy. Wpływ: formularz hasła ma jedno pole nowego hasła, a wylogowanie nie jest głównym przyciskiem. Błąd logowania nie ujawnia istnienia konta. Brak luki wymagającej propozycji kontraktu. T16-H jest review. T16-I wymaga osobnego zlecenia i innego agenta.
+
+### 2026-10-19 — T16-A kontrakt Tempo
+
+Użytkownik wybrał Tempo jako jedyny wygląd zamiast palety Noc. D047 zastępuje wyłącznie tę wizualną część D044. D046 i zachowanie produktu zostają. Do repozytorium weszły wierne kopie briefu i katalogu klatek z Make `D2nF5loZrbPDqY2oco8ske` oraz program T16 A–I z warunkowym K. Powód: kolejni agenci mają samowystarczalny kontrakt przed kodowaniem. Wpływ: nowe zależności i własność plików; brak zmiany API, bazy i analityki. T16-A jest review. Brak propozycji luki kontraktu, więc K pozostaje niegotowe.
+
+### 2026-10-19 — T16-G Postęp
+
+Ekran Postępu używa hierarchii Tempo. Powód: D047 na trasie postępu, bez zmiany analityki v1, kwalifikacji serii, współczynników, paginacji i rekordów. Wpływ: ostatni wynik jest nad wykresem, brak pomiaru jest przerwą, a jeden punkt nie udaje trendu. Procent z klatki nie wchodzi do produktu, bo odczyt nie zwraca delty i brak podstawy nie staje się `0%`. Szacunek prowadzi do Profilu i nie pokazuje zmierzonego 1RM. Brak luki wymagającej propozycji kontraktu. T16-G jest review. T16-H wymaga osobnego zlecenia.
+
+### 2026-10-19 — T16-F Historia
+
+Kalendarz i listy sesji używają hierarchii Tempo. Powód: D047 na trasie historii, bez zmiany projekcji czasu, DST i własności. Wpływ: zakończona sesja prowadzi przez `Otwórz trening`, aktywna zostaje osobno jako `Wznów`, a pusty dzień nie udaje błędu odczytu. Brak luki wymagającej propozycji kontraktu. T16-F jest review. T16-G wymaga osobnego zlecenia.
+
+### 2026-10-19 — T16-E Import, korekta i edytor
+
+Import, korekta i ręczny edytor używają hierarchii Tempo. Powód: D047 na tworzeniu planu, bez zmiany szkicu, parserów, API i zatwierdzenia. Wpływ: plik i zdjęcie są główną drogą, a tekst, głos i edytor ręczny zostają wtórne. Statusy nie obiecują zapisu przed serwerem. Jedno pytanie i nierozwiązany brak nadal blokują publikację. Brak luki wymagającej propozycji kontraktu. T16-E jest review. T16-F wymaga osobnego zlecenia.
+
+### 2026-10-19 — T16-D Trening
+
+Przegląd, seria, głos, zakończenie i usunięcie sesji używają hierarchii Tempo. Powód: D047 na trasie treningu, bez zmiany komendy, API i snapshotów. Wpływ: kontynuacja jest jedyną główną akcją, a `null`, `0` i „Nie dotyczy” zostają osobnymi stanami celu. Czas trwania sesji nie wchodzi do liczników, bo odczyt go nie ma. D046 sprawdza doskrolowanie czwartej karty. Brak luki wymagającej propozycji kontraktu. T16-D jest review. T16-E wymaga osobnego zlecenia.
+
+### 2026-10-19 — T16-C Start, Plany i podgląd
+
+Start, biblioteka i podgląd planu używają hierarchii Tempo: jedna dominująca akcja, karuzela bez zmiany gestów oraz konflikt z powrotem, zakończeniem i osobnym usunięciem. Powód: D047 na trasach C, bez zmiany odczytów i komend. Wpływ: pusta biblioteka nie udaje błędu odczytu, archiwum nie startuje, a D046 dalej sprawdza doskrolowanie. Przy kilku aktywnych sesjach etykiety komend zostają inne niż przy jednej, bo nie otwierają nowego treningu. Brak luki wymagającej propozycji kontraktu. T16-C jest review. T16-D wymaga osobnego zlecenia.
+
+### 2026-10-19 — T16-B fundament Tempo
+
+Noc w kodzie zastępuje jeden system Tempo. Aliasy ekranów wskazują `--tempo-*` w jednym `:root`, `themeColor` to `#11191c`, a atrybut `data-theme="night"` znika. Powód: D047. Wpływ: wspólne kontrolki i AppShell mają warianty, fokus, 44×44 i reduced motion; pięć tras oraz stany prywatny i demo zostają. Układy ekranów C–H nie były przebudowywane. Ostrzeżenie nie używa bursztynu CTA. Brak luki odczytu, więc nie dodano propozycji kontraktu. T16-B jest review. T16-C wymaga osobnego zlecenia.

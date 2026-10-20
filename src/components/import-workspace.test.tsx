@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { emptySet, type PlanEditorDocument } from "@/lib/domain/plan-editor";
 import type { ImportQuestion } from "@/lib/imports/questions";
 import { PlanEditor } from "./plan-editor";
@@ -8,7 +8,7 @@ import { ImportWorkspace } from "./import-workspace";
 
 vi.mock("@supabase/supabase-js", () => ({ createClient: () => ({ storage: { from: () => ({ uploadToSignedUrl: vi.fn() }) } }) }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh: vi.fn() }) }));
-afterEach(() => { vi.unstubAllGlobals(); });
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 const document: PlanEditorDocument = { name: "Szkic", sessions: [{ weekNumber: 1, dayLabel: "A", note: null,
   exercises: [{ exerciseId: null, name: "Przysiad", variant: null, equipment: null, supersetGroup: null, note: null, sets: [emptySet(1)] }] }] };
@@ -45,5 +45,33 @@ describe("T07 ekran importu", () => {
     expect(await screen.findByRole("alert")).toHaveProperty("textContent", expect.stringContaining("Odmówiono dostępu"));
     fireEvent.click(screen.getByRole("button", { name: "Plik" }));
     expect(screen.getByLabelText(/PDF \(1–6 stron\)/)).toBeTruthy();
+    expect(screen.getByRole("region", { name: "Historia importów" })).toBeTruthy();
+    expect(screen.getByText("Nie masz jeszcze importów.")).toBeTruthy();
+  });
+
+  it("rozróżnia statusy historii i nie obiecuje planu przed zatwierdzeniem", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      if (String(url) === "/api/imports") return { ok: true, json: async () => ({ jobs: [
+        { id: "failed-job", status: "failed", source_kind: "pdf", attempt_number: 2, error_code: "read_failed" },
+        { id: "done-job", status: "committed", source_kind: "xlsx", attempt_number: 1, error_code: null },
+      ] }) };
+      return { ok: false, json: async () => ({ error: "brak" }) };
+    }));
+    render(<ImportWorkspace initialId={null} supabaseUrl="http://127.0.0.1:54321" supabaseKey="anon" />);
+    expect(await screen.findByText("Nie udało się odczytać")).toBeTruthy();
+    expect(screen.getByText("Zatwierdzony")).toBeTruthy();
+    expect(screen.queryByText("Nie masz jeszcze importów.")).toBeNull();
+  });
+
+  it("po błędzie odczytu zostawia ponowienie i nie tworzy planu", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      const path = String(url);
+      if (path === "/api/imports") return { ok: true, json: async () => ({ jobs: [] }) };
+      return { ok: true, json: async () => ({ job: { id: "job", source_kind: "pdf", status: "failed", attempt_number: 1, draft: null, review_data: null, validation_issues: [], error_code: "unreadable", committed_plan_id: null, expires_at: "2026-10-26T00:00:00.000Z" }, document: null, questions: [] }) };
+    }));
+    render(<ImportWorkspace initialId="job" supabaseUrl="http://127.0.0.1:54321" supabaseKey="anon" />);
+    expect(await screen.findByRole("button", { name: "Odczytaj / ponów próbę" })).toBeTruthy();
+    expect(screen.getByText(/Ponowienie nie tworzy planu/)).toBeTruthy();
+    expect(screen.queryByRole("link", { name: "Otwórz zapisany plan" })).toBeNull();
   });
 });

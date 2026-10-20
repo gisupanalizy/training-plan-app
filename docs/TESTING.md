@@ -1,3 +1,79 @@
+## T16-D — widoczność zapisu serii (2026-10-20)
+
+`npx vitest run src/components/workout-editor.test.tsx`: 7/7. Nowy test sprawdza, że `Zapisz i przejdź dalej` jest w `[data-series-save]` i poza `[data-series-scroll]`. Pozostałe testy edytora bez zmiany oczekiwań komendy.
+
+`npm test`: 272 passed / 9 skipped. `npm run build` PASS. Następujący `npm run typecheck` PASS. `git diff --check` bez zgłoszeń.
+
+Chrome na już działającym `next dev` `http://localhost:3000`, nie `next start`: `T15B_HTTP_BASE=http://localhost:3000 T15B_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false node scripts/run-local-t05.mjs scripts/test-t15b-browser.mjs`. PASS, łącznie z ogonem `test-t13c-browser.mjs`. Próg asercji zapisu nie był zmieniany. Przy 390×844, po uzupełnieniu celów i „Zostań”, dół `Zapisz i przejdź dalej` jest nad `.mobile-nav`. Zrzut `/private/tmp/t15b-result.png`. Czwarta karta podglądu ma dół 1015,75 przy nawigacji 768 i jest doskrolowalna. T13-C: czwarta karta treningu ma dół 1195,97 przy nawigacji 768 i jest doskrolowalna. Szkice, retry, ACK i GET, 409, null/0, głos jako mock transportu, finish i delete PASS. Telefon i Safari niewykonane. Po buildzie `.next` jest produkcyjny; `next dev` na 3000 może wymagać restartu.
+
+## T16-I — niezależny odbiór (2026-10-20)
+
+Bramka nieprzyjęta. `npm test`: 271 passed / 9 skipped. `npm run build` PASS, potem `npm run typecheck` PASS. Chrome i API na produkcyjnym `next start` `http://localhost:3017`, AI wyłączone w procesie serwera, moduł Playwright spoza aplikacji: T15-A, T15-F, `test-t15c-import.mjs`, `test-t15c-editor.mjs`, T15-D, T15-E przeglądarka i API, T13-A RPC/HTTP, T05, T09 oraz `test-t15c-http.mjs` — PASS. `test-t15b-browser.mjs` exit 1: dół `Zapisz i przejdź dalej` nie jest nad `.mobile-nav` przy 390×844. Osobny `test-t13c-browser.mjs` PASS, w tym doskrolowanie czwartej karty (dół 1195,97, nawigacja 768). Pierwsza próba T15-A na `next dev` port 3000 padła na portalu deweloperskim i nie jest dowodem produktu. Głos to mock, import HTTP dostał 503. Telefon, Safari i Make niewykonane. Szczegóły: [raport](reports/2026-10-19-T16-I-tempo-acceptance.md).
+
+## T16-H — Profil i Auth (2026-10-20)
+
+`npx vitest run src/components/one-rep-max-editor.test.tsx`: 5/5. Idempotentny retry 1RM, blokada pól w trakcie zapisu kroku, jedno pole `new-password`, za krótkie hasło bez wywołania akcji, przywrócenie wartości po błędzie zapisu i jedno wysłanie poprawnego hasła.
+
+`npm test`: 271 passed / 9 skipped. `npm run build` PASS. Następujący `npm run typecheck` PASS. `git diff --check` bez zgłoszeń.
+
+Chrome: `T15F_HTTP_BASE=http://localhost:3000 T15F_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false node scripts/run-local-t05.mjs scripts/test-t15f-browser.mjs`. Serwer to już uruchomiony `next dev`, nie `next start`. Prawdziwe lokalne Auth i API. PASS: brak `data-theme`, tło `rgb(17, 25, 28)`, 360/390/430 i desktop 1280 bez poziomego overflow, autofill `username` i `current-password`, jeden `alert` logowania z fokusem, pomoc 1RM, datowane 100 kg, krok 1,25, jedno pole `autocomplete=new-password` i minimum 12, za krótkie hasło zostaje w polu, zmiana hasła, wylogowanie danger i ponowne logowanie. Zrzuty `/private/tmp/t15f-login-390.png`, `/private/tmp/t15f-login-desktop.png`, `/private/tmp/t15f-profile.png`, `/private/tmp/t15f-profile-desktop.png` i `/private/tmp/t15f-password-390.png`. Stany demo nie weszły do tego przebiegu, bo lokalny Supabase jest skonfigurowany. Telefon i Safari niewykonane. Po buildzie `.next` jest produkcyjny.
+
+## T16-G — Postęp (2026-10-19)
+
+`npx vitest run src/components/progress/progress-dashboard.test.tsx src/lib/progress/analytics.test.ts src/lib/progress/repository.test.ts src/lib/progress/summary.test.ts`: 32/32. Dashboard: domyślne 3M, rekord całej historii 212,8 kg wobec ostatniego wyniku 106,4 kg, tylko klik punktu, lista nakładających się treningów, pusty stan, jeden punkt bez linii, przerwa przy 11 powtórzeniach, ciągła linia przez 0 kg i brak `0%`. Oczekiwania analityki i repozytorium bez zmian.
+
+`npm test`: 268 passed / 9 skipped. `npm run build` PASS. Następujący `npm run typecheck` PASS. `git diff --check` bez zgłoszeń.
+
+Chrome: `T15E_HTTP_BASE=http://localhost:3000 T15E_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false node scripts/run-local-t05.mjs scripts/test-t15e-browser.mjs`. Serwer to już uruchomiony `next dev`, nie `next start`. PASS: 15 stanów 360/390/430, brak poziomego overflow, cele punktów co najmniej 44 px, mysz klik/drag/klik, klik poza punktem, Enter/Escape, pomoc 106,4 kg, pinch, pierwszy tap po pinch, swipe rekordów 170→0, własne daty, jeden punkt bez trendu i bez procentu, informacja o szacunku z linkiem do Profilu, korekta 250 kg i „brak powtórzeń”, desktop 1280. Zrzuty `/private/tmp/t15e-progress-390.png`, `/private/tmp/t15e-bodyweight-390.png`, `/private/tmp/t15e-progress-desktop.png` obejrzane.
+
+API bez edycji runnera: `T15E_HTTP_BASE=http://localhost:3000 DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false node scripts/run-local-t05.mjs scripts/test-t15e-api.mjs`. PASS: 505 sesji, 503 pozycje katalogu, ponad 500 dzieci, rekord całej historii mimo filtra dat, źródła, dwa bloki jako jeden punkt, korekta, snapshoty, 1RM, A/B/anon. Telefon i Safari niewykonane. Po buildzie `.next` jest produkcyjny.
+
+## T16-F — Historia (2026-10-19)
+
+`npx vitest run src/components/history/history-calendar.test.tsx src/lib/workouts/calendar.test.ts`: 6/6. Wiele sesji, godzina nieznana, osobne Wznów, `Otwórz trening`, pusty dzień, URL, strzałki przez granicę miesiąca, fokus i rok przestępny. Testy projekcji w `calendar.test.ts` bez zmiany oczekiwań.
+
+`npm test`: 265 passed / 9 skipped. Pierwszy przebieg w sandboxie, równolegle z Chrome, przerwał jeden niezmieniony test importu limitem 5000 ms. Powtórka poza sandboxem przeszła w całości. `npm run build` PASS. Następujący `npm run typecheck` PASS. `git diff --check` bez zgłoszeń.
+
+Chrome: `T15E_HTTP_BASE=http://localhost:3002 T15D_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false RUN_T06_LIVE=false RUN_T09_LIVE=false node scripts/run-local-t05.mjs scripts/test-t15d-browser.mjs`. Serwer to już uruchomiony `next dev`, nie `next start`. Prawdziwe lokalne Auth, API i RPC. PASS: 360/390/430 i desktop 1280, dni co najmniej 44 px (przy 360 szerokość 44,56 i wysokość 48), brak poziomego overflow, tap, klawiatura, pusty dzień, wiele sesji, legacy, abandoned, rok przestępny, DST, północ, zmiana strefy, powrót do miesiąca i dnia, korekta finish bez zmiany snapshotów, usunięcie aktywnej sesji, izolacja A/B/anon. Zrzut `/private/tmp/t15d-calendar-390.png`. Telefon i Safari niewykonane. Po buildzie `.next` jest produkcyjny.
+
+## T16-E — Import, korekta i edytor (2026-10-19)
+
+`npx vitest run src/components/import-workspace.test.tsx src/components/import-review.test.tsx src/components/compact-plan-editor.test.tsx src/components/plan-editor.test.tsx src/components/voice-input.test.tsx`: 48/48. Pusta historia i statusy, ponowienie bez planu, trzy kroki, jedno pytanie, anulowanie, indywidualna seria, superseria, retry publikacji edytora i głos.
+
+`npm test`: 265 passed / 9 skipped. `npm run build` PASS. Następujący `npm run typecheck` PASS. `git diff --check` bez zgłoszeń.
+
+Chrome na już działającym `next dev` `http://localhost:3002`, nie `next start`: `T15C_HTTP_BASE=http://localhost:3002 T15C_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-t05.mjs scripts/test-t15c-import.mjs` oraz ten sam zestaw dla `scripts/test-t15c-editor.mjs`. Oba PASS. Import: dwa główne źródła z wyśrodkowanymi ikonami, trzy wtórne, brak poziomego overflow 360/390/430, głos otwiera dialog edytora. Korekta: desktop 1280 pokazuje źródło obok planu, 390 otwiera pełny dialog, PDF strona 2 i XLSX dwa arkusze, trzy kroki z przeładowaniem, blokada braku celu, anulowanie nazwy, identyczny retry zatwierdzenia. Edytor: cztery karty, całe karty, anulowanie, katalog, superseria, dialog o szerokości 390, fokus, prawdziwy zapis z utratą odpowiedzi i retry, stare serie oraz snapshoty. Dane syntetyczne. Płatnego AI nie było. Telefon i Safari niewykonane.
+
+HTTP: `T15C_HTTP_BASE=http://localhost:3016 CRON_SECRET` ustawiony tylko w tym procesie jako wartość lokalna `t16e-local-only`, `node scripts/run-local-t05.mjs scripts/test-t15c-http.mjs` na `next start -p 3016` z `OPENAI_IMPORT_ENABLED=false` i pustym kluczem. PASS: A/B/anon, źródło, korekta, podpisany upload, formaty, pytanie i retry zatwierdzenia. `process` zwrócił 503, bez wywołania modelu. Lokalny `.env` ma włączony import AI, więc tego testu nie puszczano na `localhost:3002`. W `.env` nie ma `CRON_SECRET`. Serwer 3016 zatrzymano. Po buildzie `.next` jest produkcyjny.
+
+## T16-D — Trening (2026-10-19)
+
+`npx vitest run src/components/workout-editor.test.tsx src/components/workout-voice.test.tsx src/components/workout-finish.test.tsx src/components/workout-state.test.ts src/components/workout-start.test.tsx`: 19/19. Retry i identyczna komenda, ACK i GET, 409 ze szkicem, trzy decyzje nawigacji, brak zapisu przy otwarciu, trzy stany obciążenia, czas i dystans bez pola powtórzeń, jawny offset DST i odrzucenie nieistniejącej godziny, kotwica głosu.
+
+`npm test`: 263 passed / 9 skipped. `npm run build` PASS. Następujący `npm run typecheck` PASS. `git diff --check` bez zgłoszeń.
+
+Chrome: `T13C_HTTP_BASE=http://localhost:3002 T13C_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-t05.mjs scripts/test-t13c-browser.mjs`. Serwer to już uruchomiony `next dev`, nie `next start`. Prawdziwe lokalne Auth i API. 360/390/430 bez poziomego overflow, cele 44 px, viewport 500 px dla klawiatury. Czwarta karta przy 390 ma dół 1195,97 wobec nawigacji 768 i przechodzi doskrolowanie D046. Szkice, retry, ACK i GET, 409, rundy, opcjonalna, null/0, poprawka historyczna, głos jako mock transportu, korekta czasu bez zmiany snapshotów, konflikt, delete i ponowne logowanie PASS. Powtórka po poprawce liczników na 360 px też PASS.
+
+Regresje bez płatnego AI, ten sam lokalny Supabase i `localhost:3002`: `scripts/test-t05-api.mjs` PASS, `T13A_HTTP_BASE=http://localhost:3002 scripts/test-t13a-api.mjs` RPC i HTTP PASS, `T09_HTTP_BASE=http://localhost:3002 scripts/test-t09-api.mjs` HTTP 503 bez budżetu głosu i PostgREST PASS. Telefon i Safari niewykonane.
+
+## T16-C — Start, Plany i podgląd (2026-10-19)
+
+`npx vitest run src/components/plan-carousel.test.tsx src/components/plan-preview.test.tsx src/components/workout-start.test.tsx src/components/training-preview.test.tsx`: 15/15. Karuzela: klawiatura, wyrównanie drugiego slajdu, archiwum bez startu. Podgląd: osiem serii, superseria, archiwum, fokus karty. Start: retry tej samej koperty oraz jedna i wiele sesji konfliktu.
+
+`npm test`: 259 passed / 9 skipped. `npm run build` PASS. Następujący `npm run typecheck` PASS.
+
+Chrome: `T15B_HTTP_BASE=http://localhost:3002 T15B_PLAYWRIGHT_MODULE=/Users/jakub.olech/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright/index.mjs DO_NOT_TRACK=1 OPENAI_API_KEY='' OPENAI_IMPORT_ENABLED=false OPENAI_VOICE_ENABLED=false node scripts/run-local-t05.mjs scripts/test-t15b-browser.mjs`. Serwer to już uruchomiony `next dev`, nie `next start`. Ten sam adres przez `127.0.0.1` nie hydratował klienta, więc klik i Enter na karcie nie działały; `localhost` PASS.
+
+T15-B: brak poziomego overflow 360/390/430 i desktop 1280, sidebar na desktopie, jedno `Rozpocznij` na starcie przy trzech planach, czwarta karta podglądu przy 390 doskrolowalna (dół przy starcie przewinięcia 1015,75 wobec nawigacji 768), szczegół ośmiu serii i źródła, reload karuzeli, klawiatura, swipe, drag, Enter, powrót historii i szkic. Potem niezmieniony T13-C PASS: komendy, retry, ACK i GET, 409, szkice, daty, delete, legacy, głos jako mock transportu. Przy 390 czwarta karta treningu kończy się na 766,19, nadal nad nawigacją 768; stara bramka T13-C nie była zmieniana. Telefon i Safari niewykonane. Błąd odczytu i pusta biblioteka nie były odtwarzane w Chrome, bo lokalne API odpowiadało.
+
+## T16-B — lokalny fundament Tempo (2026-10-19)
+
+`npx vitest run src/components/ui/ui.test.tsx`: 9/9. Przycisk nie wysyła formularza, pole łączy etykietę, podpowiedź i błąd, dymek zamyka się poza nim i przez Escape, ilustracja nie podstawia innego wariantu. Stepper przyjmuje wpis i nie zamienia pustki na zero; zero przy minimum zostaje zerem. Segment ma `aria-checked` i strzałkę. Wiersz, karta, status, komunikat i pusty stan niosą tekst. Dialog: Escape, Anuluj i Zamknij odrzucają pole i wracają fokus; Zastosuj jest osobne. Nawigacja ma pięć tras oraz osobny tekst konta prywatnego i demo.
+
+`npm test`: 256 passed / 9 skipped. `npm run build` PASS po usunięciu tymczasowego zrzutu Make, który pierwszy przebieg typechecku builda odrzucił. Następujący `npm run typecheck` PASS.
+
+Chrome: `T15A_HTTP_BASE=http://127.0.0.1:3002 T15A_PLAYWRIGHT_MODULE=<lokalny Playwright> DO_NOT_TRACK=1` oraz `node scripts/run-local-t05.mjs scripts/test-t15a-browser.mjs`. Serwer to już uruchomiony lokalny Next, nie `next start`. PASS: 21 stanów, 360/390/430 i desktop 1280, brak `data-theme`, `theme-color` `#11191c`, tło `rgb(17, 25, 28)`, Inter, pięć celów nawigacji co najmniej 44 px, aktywna trasa z powierzchnią `#253235`, stopka nad nawigacją, skip-link, obrys fokusu 3 px, `transition-duration` `0s` przy reduced motion, sidebar na desktopie, brak błędów JS. Kontrast tokenów w runnerze: tekst, muted, akcent z tekstem, sukces, błąd i ostrzeżenie co najmniej 4,5:1; fokus akcentu i obrys kontrolki co najmniej 3:1. Samodzielny pomiar tych par dał odpowiednio od 5,51:1 (muted na podniesionej powierzchni) do 16,20:1 (tekst na tle). Linia `#344245` ma 1,48:1 wobec powierzchni i zostaje separatorem; obrys pól i kontrolek używa muted. Telefon i Safari niewykonane. `scripts/test-t15f-browser.mjs` nadal sprawdza `data-theme="night"` i nie był uruchamiany; plik należy do T16-H.
+
 ## T15-A — lokalny fundament (2026-10-18)
 
 Integrator przyjął bramkę A: npm test204 passed/9 skipped (AI/live off), build przez run-local-app i typecheck PASS. Nowy scripts/test-t15a-browser.mjs, uruchamiany przez run-local-t05 z T15A_PLAYWRIGHT_MODULE, sprawdza prawdziwe lokalne Auth/RPC i21 stanów360/390/430, wszystkie linki nawigacji, font/Noc/44px, skip-link i desktop1280. Bez błędów JS. Długi email profilu początkowo powodował overflow360; poprawiony i test ponowiony. Kontrasty tokenów policzone; telefon/Safari niewykonane. B–G nie są jeszcze odebrane.

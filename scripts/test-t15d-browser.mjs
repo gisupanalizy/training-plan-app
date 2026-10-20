@@ -32,10 +32,12 @@ try {
  const selected=()=>page.locator('section[aria-labelledby="selected-history-day"]');
  await history('2026-10','2026-10-01');
  assert.equal(await selected().getByRole('link').count(),2,'completed+legacy, bez abandoned');
+ assert.equal(await selected().getByRole('link',{name:/Otwórz trening/}).count(),2);
  assert.match(await selected().innerText(),/18:00/);assert.match(await selected().innerText(),/godzina nieznana/);
  assert.match(await dayButton('2026-10-01').getAttribute('aria-label'),/zakończone treningi: 2/);
- assert.equal(await page.locator('section[aria-labelledby="active-history"]').getByRole('link').count(),1);
- for(const width of [360,390,430]) {
+ assert.equal(await page.locator('section[aria-labelledby="active-history"]').getByRole('link',{name:/Wznów/}).count(),1);
+ assert.equal(await page.getByRole('link',{name:'Zobacz postęp'}).getAttribute('href'),'/postep');
+ for(const width of [360,390,430,1280]) {
   await page.setViewportSize({width,height:844});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`overflow${width}`);
   const boxes=await page.locator('[data-day]').evaluateAll(els=>els.map(el=>({width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})));
@@ -93,5 +95,5 @@ try {
  const denied=await bContext.request.get(`${base}/api/workouts/${f.started.workoutId}`);assert.ok([404,410].includes(denied.status()));
  const anon=await browser.newContext();const anonPage=await anon.newPage();await anonPage.goto(`${base}/historia`);assert.match(anonPage.url(),/logowanie/);
  assert.deepEqual(errors,[]);await writeFile('/private/tmp/t15d-report.json',JSON.stringify({measures,errors,keyboard:true,privacy:true},null,2));
- console.log('T15-D PASS: lokale Auth/API/RPC/Chrome,360/390/430,44px,mouse/tap/keyboard,puste/wiele/legacy/abandoned,leapyear/DST/midnight/zone,powrót/finish/delete/snapshoty,A/B/anon.');console.log(JSON.stringify(measures));
+ console.log('T15-D PASS: lokale Auth/API/RPC/Chrome,360/390/430/1280,44px,mouse/tap/keyboard,puste/wiele/legacy/abandoned,leapyear/DST/midnight/zone,powrót/finish/delete/snapshoty,A/B/anon.');console.log(JSON.stringify(measures));
 } finally {try {await browser?.close();} finally {await f.cleanup();}}

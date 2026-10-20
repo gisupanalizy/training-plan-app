@@ -1,10 +1,106 @@
 # Aktualny stan projektu
 
-Aktualizacja: 2026-10-19.
+Aktualizacja: 2026-10-20.
+
+## T16-D — widoczność zapisu serii, review
+
+Poprawka wady z niezależnego T16-I. Przy 390×844, po uzupełnieniu celów i wyborze „Zostań”, dół `Zapisz i przejdź dalej` jest nad górą `.mobile-nav`. Zapis stoi pod przewijaną treścią serii. D046 bez zmian: czwarta karta podglądu ma dół 1015,75, a czwarta karta treningu 1195,97, obie przy nawigacji 768, i obie są doskrolowalne. Komenda, API i próg T15-B bez zmian. Ta sesja nie jest nowym T16-I i nie zamyka T16. [Handoff](handoffs/2026-10-20-T16-D-widocznosc-zapisu.md).
+
+Sprawdzenia: test edytora 7/7, `npm test` 272 passed / 9 skipped, Chrome T15-B na `localhost:3000` razem z ogonem T13-C PASS, `npm run build`, potem `npm run typecheck` PASS. Serwer Chrome to już działający `next dev`, nie `next start`. Telefon i Safari niewykonane. Po buildzie `.next` jest produkcyjny.
+
+Następny krok: inny agent niż autor tej poprawki powtarza T16-I. Ta sesja nie przechodzi do odbioru.
+
+Poniższa sekcja T16-I opisuje odrzuconą bramkę sprzed poprawki.
+
+## T16-I — odbiór, bramka nieprzyjęta
+
+Niezależny recenzent nie zmieniał `src/`. Tempo jest w drzewie roboczym: jedna paleta, pięć tras, brak `data-theme`. Brak propozycji `T16-CONTRACT`. Pełnego PASS nie ma. Przy 390×844 przycisk `Zapisz i przejdź dalej` nie kończy się nad dolną nawigacją. D046 zostaje regułą kart, nie zasłony głównego zapisu. Wada wraca do T16-D. [Raport](reports/2026-10-19-T16-I-tempo-acceptance.md), [handoff](handoffs/2026-10-19-T16-I-niezalezny-odbior.md).
+
+Sprawdzenia: `npm test` 271 passed / 9 skipped, `npm run build`, potem `npm run typecheck` — PASS. Lokalny Chrome i API na produkcyjnym `next start` `localhost:3017`: T15-A, T15-F, import, edytor, historia, postęp, T13-A, T05, T09, T15-C HTTP i osobny T13-C — PASS. T15-B — exit 1. Głos to mock. Telefon, Safari i ponowny odczyt Make niewykonane. Serwer 3017 zatrzymany. Po buildzie `.next` jest produkcyjny; `next dev` na 3000 może wymagać restartu.
+
+Następny krok zapisany w tej sekcji dotyczył poprawki T16-D. Poprawka jest w sekcji wyżej. Ten opis zostaje świadectwem odrzuconej bramki.
+
+Poniższa sekcja T16-H opisuje profil. Wcześniejsze etapy są niżej.
+
+## T16-H — Profil i Auth, review
+
+Profil, logowanie i ustawienie hasła mają hierarchię Tempo. Profil idzie od konta, przez rzeczywiste 1RM i ustawienia, do historii i wylogowania. Wylogowanie jest akcją danger, nie głównym przyciskiem. Logowanie zostawia autofill, generyczny błąd, sesję wygasłą, wylogowanie i tryb demo. Ustawienie hasła ma dokładnie jedno pole `new-password`, widoczne minimum 12 znaków, zachowanie wpisu po błędzie i blokadę drugiego wysłania. Historia treningów nie jest przeliczana. Brak propozycji `T16-CONTRACT`. [Handoff](handoffs/2026-10-19-T16-H-profil-auth.md).
+
+Sprawdzenia: testy 1RM i hasła 5/5, `npm test` 271 passed / 9 skipped, lokalny Chrome `test-t15f-browser.mjs` na `localhost:3000`, 360/390/430 i desktop 1280, `npm run build`, potem `npm run typecheck` — PASS. Chrome korzystał z już działającego `next dev`. Telefon i Safari niewykonane. Po buildzie katalog `.next` jest produkcyjny.
+
+Następny krok: użytkownik wkleja prompt T16-I z handoffu H. Odbiorca ma być innym agentem niż autorzy B–H. Ta sesja nie przechodzi do niezależnego odbioru.
+
+Poniższa sekcja T16-G opisuje postęp. T16-F i wcześniejsze są niżej.
+
+## T16-G — Postęp, review
+
+Postęp ma hierarchię Tempo na istniejącej analityce v1. Kolejność: ćwiczenie i wariant, metryka, ostatni wynik, wykres, zakres, rekordy całej historii. Pusty wynik zostaje „Brak danych”. Jeden punkt nie rysuje linii trendu. Przerwa między pomiarami nie schodzi do zera, a prawdziwe 0 kg zostaje punktem. Brak dwóch pomiarów w oknie nie pokazuje `0%`. Szacunek ma osobną informację i link do Profilu; nie wyświetla zmierzonego 1RM, bo ten odczyt go nie zawiera. Rekordy nadal obejmują całą historię. Tylko punkt otwiera szczegół. Brak propozycji `T16-CONTRACT`. [Handoff](handoffs/2026-10-19-T16-G-postep.md).
+
+Sprawdzenia: testy postępu i analityki 32/32, `npm test` 268 passed / 9 skipped, lokalny Chrome `test-t15e-browser.mjs` na `localhost:3000`, 360/390/430 i desktop 1280, API `test-t15e-api.mjs` 505 sesji oraz A/B/anon, `npm run build`, potem `npm run typecheck` — PASS. Chrome korzystał z już działającego `next dev`. Telefon i Safari niewykonane. Po buildzie katalog `.next` jest produkcyjny.
+
+Następny krok: użytkownik wkleja prompt T16-H z handoffu G. Ta sesja nie przechodzi do profilu i logowania.
+
+Poniższa sekcja T16-F opisuje historię. T16-E i wcześniejsze są niżej.
+
+## T16-F — Historia, review
+
+Kalendarz i listy sesji mają hierarchię Tempo. Miesiąc stoi nad siatką od poniedziałku do niedzieli. Wybrany dzień jest wypełniony, a dzisiejsza data ma obrys. `Dzisiaj` jest akcją przy dniu. Zakończona sesja ma `Otwórz trening`. Aktywna zostaje w osobnej sekcji `Do wznowienia` z `Wznów`, także przy pustym dniu. Pusty dzień mówi o braku zakończonych treningów i nie udaje błędu odczytu. Godzina pochodzi z projekcji albo zostaje „godzina nieznana”. Postęp jest osobną akcją. Powrót z treningu przywraca miesiąc i dzień. Brak propozycji `T16-CONTRACT`. [Handoff](handoffs/2026-10-19-T16-F-historia.md).
+
+Sprawdzenia: testy kalendarza 6/6, `npm test` 265 passed / 9 skipped, lokalny Chrome `test-t15d-browser.mjs` na `localhost:3002`, 360/390/430 i desktop 1280, północ, DST, rok przestępny, korekta, usunięcie, A/B/anon, `npm run build`, potem `npm run typecheck` — PASS. Chrome korzystał z już działającego `next dev`. Telefon i Safari niewykonane. Po buildzie katalog `.next` jest produkcyjny.
+
+Następny krok: użytkownik wkleja prompt T16-G z handoffu F. Ta sesja nie przechodzi do postępu.
+
+Poniższa sekcja T16-E opisuje import i edytor. T16-D i wcześniejsze są niżej.
+
+## T16-E — Import, korekta i edytor, review
+
+Import, korekta i ręczny edytor mają hierarchię Tempo. Plik i zdjęcie są głównymi źródłami. Tekst, głos i ręczny edytor są wtórne. Statusy czekania, odczytu, błędu z ponowieniem, anulowania i zatwierdzenia są osobne i nie obiecują planu przed serwerem. Korekta idzie Nazwy → Serie i superserie → Podsumowanie. Jedno pytanie na raz, a nierozwiązane blokuje publikację. Źródło na wąskim ekranie jest pełnym dialogiem, na desktopie stoi obok planu. Edytor otwiera ćwiczenie całą kartą. Anulowanie, indywidualne serie, wersje, retry i brak autosave zostają. Brak propozycji `T16-CONTRACT`. [Handoff](handoffs/2026-10-19-T16-E-import-edytor.md).
+
+Sprawdzenia: `npm test` 265 passed / 9 skipped, lokalny Chrome importu i edytora na `localhost:3002`, 360/390/430 i desktop 1280, HTTP T15-C na produkcyjnym `next start` `localhost:3016` z wyłączonym AI i lokalnym sekretem crona, `npm run build`, potem `npm run typecheck` — PASS. Chrome korzystał z już działającego `next dev`. Telefon i Safari niewykonane. Po buildzie katalog `.next` jest produkcyjny. Tymczasowy serwer 3016 został zatrzymany.
+
+Następny krok: użytkownik wkleja prompt T16-F z handoffu E. Ta sesja nie przechodzi do historii.
+
+Poniższa sekcja T16-D opisuje trening. T16-C, T16-B i T16-A są wcześniejsze.
+
+## T16-D — Trening, review
+
+Przegląd sesji, jedna seria, dyktowanie, zakończenie i usunięcie mają hierarchię Tempo. Kontynuacja jest główną akcją. Dodanie ćwiczenia i komentarz są drugorzędne, zakończenie jest ghost, usunięcie danger z osobnym dialogiem. Cel serii jest oddzielony od wykonania. `Brak wartości w planie`, `Nie dotyczy` i `0 kg` są trzema stanami celu. Czas i dystans zostają własnymi polami. Otwarcie serii, także opcjonalnej, nie zapisuje wyniku. Retry, ACK i GET, 409, szkic oraz korekta czasu bez zmiany snapshotów zostają. Przy 390 czwarta karta treningu ma dół 1195,97 przy nawigacji 768 i jest doskrolowalna. Brak propozycji `T16-CONTRACT`. [Handoff](handoffs/2026-10-19-T16-D-trening.md).
+
+Sprawdzenia: `npm test` 263 passed / 9 skipped, lokalny Chrome `test-t13c-browser.mjs` na `localhost:3002`, 360/390/430 i obniżony viewport 500, regresje T13-A RPC/HTTP, T05 API i T09 HTTP/PostgREST bez płatnego AI, `npm run build`, potem `npm run typecheck` — PASS. Serwer Chrome to już działający `next dev`. Telefon i Safari niewykonane. Po buildzie katalog `.next` jest produkcyjny.
+
+Następny krok: użytkownik wkleja prompt T16-E z handoffu D. Ta sesja nie przechodzi do importu i edytora.
+
+Poniższa sekcja T16-C opisuje start i plany. T16-B i T16-A są wcześniejsze.
+
+## T16-C — Start, Plany i podgląd, review
+
+Start, biblioteka planów, podgląd i konflikt startu mają hierarchię Tempo. Na starcie jedna akcja: `Wznów trening`, `Rozpocznij [jednostka]`, `Utwórz lub zaimportuj plan` albo `Zaloguj się`. Pusta biblioteka i błąd odczytu są osobnymi stanami. Karuzela `/plany` zostaje z dotykiem, myszą, klawiaturą i wskaźnikiem; archiwum nie startuje. Podgląd zachowuje serie, rampy, superserie, opcjonalność, źródła, `null` i 0. W konflikcie powrót jest primary, zakończenie secondary, a usunięcie danger z osobnym dialogiem. Przy kilku sesjach etykiety zostają `Zakończ ten trening` i `Usuń ten trening`, bo te komendy nie otwierają nowego treningu, dopóki nie zostanie jedna sesja. D046: czwarta karta podglądu przy 390 wchodzi pod nawigację i jest doskrolowalna. Brak propozycji `T16-CONTRACT`. [Handoff](handoffs/2026-10-19-T16-C-start-plany.md).
+
+Sprawdzenia: testy karuzeli, podglądu i startu, `npm test` 259 passed / 9 skipped, lokalny Chrome `test-t15b-browser.mjs` razem z T13-C na `localhost:3002`, 360/390/430 i desktop 1280, `npm run build`, potem `npm run typecheck` — PASS. Serwer to już działający `next dev`, nie `next start`. Wejście przez `127.0.0.1` nie hydratowało klienta. Telefon i Safari niewykonane. Po buildzie katalog `.next` jest produkcyjny.
+
+Następny krok: użytkownik wkleja prompt T16-D z handoffu C. Ta sesja nie przechodzi do treningu.
+
+Poniższa sekcja T16-B opisuje fundament. T16-A i T15-G są wcześniejsze.
+
+## T16-B — fundament Tempo, review
+
+Jeden system Tempo jest w kodzie. `--tempo-*` w jednym `:root` mapują dotychczasowe aliasy. Nie ma `data-theme="night"`, przełącznika ani drugiej palety. `themeColor` to `#11191c`. Pięć tras, lokalny Inter, safe-area, fokus, cele 44×44 i `prefers-reduced-motion` zostają. Wspólne kontrolki: Button, Field, Stepper, ListRow, Card, StatusBadge, SegmentedControl, Notice, EmptyState, Dialog oraz dolna i boczna nawigacja. AppShell nadal rozróżnia konto prywatne i demo. Ekrany C–H dostały tylko nowe tokeny, bez przebudowy układów. Brak propozycji `T16-CONTRACT`, więc T16-K pozostaje niegotowe. [Handoff](handoffs/2026-10-19-T16-B-fundament-tempo.md).
+
+Sprawdzenia: testy UI 9/9, `npm test` 256 passed / 9 skipped, lokalny Chrome 21 stanów na 360/390/430 i desktop, kontrast AA, skip-link, fokus i reduced motion, `npm run build`, potem `npm run typecheck` — PASS. Serwer Chrome to już działający lokalny Next na `127.0.0.1:3002`, nie `next start`. Telefon i Safari niewykonane. `scripts/test-t15f-browser.mjs` nadal oczekuje `data-theme="night"` i należy do T16-H; nie był uruchamiany. README oraz zdanie w specyfikacji T16 o Nocy w kodzie opisują stan sprzed B i nie były w dzierżawie tej sesji.
+
+Następny krok: użytkownik wkleja prompt T16-C z handoffu B. Ta sesja nie przechodzi do Startu i planów.
+
+Poniższa sekcja T16-A opisuje poprzedni kontrakt. T15-G jest wcześniejszym zamknięciem lokalnym.
+
+## T16-A — kontrakt Tempo, review
+
+Zapisano kierunek Tempo jako jedyny wygląd (D047) i wiernie skopiowano z Figma Make `D2nF5loZrbPDqY2oco8ske` [brief](tempo-implementation-brief.md) oraz [katalog klatek](tempo-frame-catalog.md). Program A–I i warunkowe K, własność plików oraz macierz 85 stanów są w [T16](T16_TEMPO_IMPLEMENTATION.md). D046 pozostaje bez zmian. Zdanie o palecie Nocy w kodzie dotyczy stanu przed T16-B. [Handoff](handoffs/2026-10-19-T16-A-kontrakt-tempo.md).
+
+Sprawdzenia tej sesji: ponowny odczyt MCP i zgodne SHA-1 obu kopii, identyfikatory stanów z `App.tsx` w Make, linki oraz `git diff --check`. Bez testów produktu, telefonu, Safari i commitów. Brak propozycji `T16-CONTRACT`.
 
 ## T15-G / T13-E — odbiór lokalny zamknięty
 
-Niezależny recenzent sprawdził `codex/t15-ui` na `11d66bc`. Testy 251/9 skip, typy, build, lokalne Auth/API A/B/anon i Chrome przepływu przeszły. Pierwszy pomiar podglądu przy 390×844 pokazał dół czwartej karty na 786,95 przy nawigacji od 768. Użytkownik uznał to za zwykłe przewijanie dłuższej listy, nie za błąd (D046). Po tej decyzji cały runner planów i treningu przeszedł ponownie. [Raport G](reports/2026-10-19-T15-G-acceptance.md), [raport R](reports/2026-10-19-T13-acceptance.md), [handoff](handoffs/2026-10-19-T15-G-niezalezny-odbior.md). T13 i T15-A–G są done lokalnie. Telefon, Safari i publikacja zostają otwarte. Bez kolejnego zadania wykonawczego.
+Niezależny recenzent sprawdził `codex/t15-ui` na `11d66bc`. Testy 251/9 skip, typy, build, lokalne Auth/API A/B/anon i Chrome przepływu przeszły. Pierwszy pomiar podglądu przy 390×844 pokazał dół czwartej karty na 786,95 przy nawigacji od 768. Użytkownik uznał to za zwykłe przewijanie dłuższej listy, nie za błąd (D046). Po tej decyzji cały runner planów i treningu przeszedł ponownie. [Raport G](reports/2026-10-19-T15-G-acceptance.md), [raport R](reports/2026-10-19-T13-acceptance.md), [handoff](handoffs/2026-10-19-T15-G-niezalezny-odbior.md). T13 i T15-A–G są done lokalnie. Telefon, Safari i publikacja zostają otwarte. W chwili tego odbioru nie było kolejnego zadania wykonawczego; program T16 jest późniejszy.
 
 Poniższe sekcje opisują historię, w tym wstępny zapis sprzed D046.
 

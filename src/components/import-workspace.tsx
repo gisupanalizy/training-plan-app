@@ -3,7 +3,7 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Icon } from "@/components/ui";
+import { Button, EmptyState, Icon, StatusBadge } from "@/components/ui";
 import styles from "./plan-authoring.module.css";
 import { ImportReview } from "./import-review";
 import type { PlanEditorDocument } from "@/lib/domain/plan-editor";
@@ -17,6 +17,28 @@ type Job = { id: string; source_kind: string; status: string; attempt_number: nu
 type Detail = { job: Job; document: PlanEditorDocument | null; questions: ImportQuestion[] };
 type ListItem = Pick<Job, "id" | "status" | "source_kind" | "attempt_number" | "error_code">;
 const labels: Record<string, string> = { upload_pending: "Czeka na plik", uploaded: "Gotowy do odczytu", processing: "Odczytywanie", needs_review: "Do korekty", failed: "Nie udało się odczytać", cancelled: "Anulowany", committed: "Zatwierdzony" };
+const statusTone: Record<string, "neutral" | "success" | "warning" | "danger"> = { upload_pending: "warning", uploaded: "neutral", processing: "warning", needs_review: "warning", failed: "danger", cancelled: "neutral", committed: "success" };
+const phaseCopy: Record<string, string> = {
+  uploading: "Wysyłka nie jest zakończona. Plan nie jest jeszcze zapisany.",
+  processing: "Odczyt trwa. Możesz odświeżyć stronę i wrócić do tego importu. Plan nie jest jeszcze zapisany.",
+  "error-retry": "Odczyt się nie udał. Ponowienie nie tworzy planu.",
+  cancelling: "Import jest anulowany. Plan nie powstał.",
+  committed: "Import zatwierdzony. Otwórz zapisany plan.",
+  review: "Szkic czeka na korektę. Aktywny plan powstanie dopiero po zatwierdzeniu.",
+  uploaded: "Plik jest w prywatnym magazynie. Odczyt jeszcze się nie rozpoczął.",
+};
+function importPhase(status: string, stage: string) {
+  if (stage.includes("Anulowanie")) return "cancelling";
+  if (stage.includes("Wysyłanie") || stage.includes("Tworzenie") || stage.includes("Sprawdzanie")) return "uploading";
+  if (stage.includes("Odczytywanie") || status === "processing") return "processing";
+  if (status === "failed") return "error-retry";
+  if (status === "cancelled") return "cancelling";
+  if (status === "committed") return "committed";
+  if (status === "needs_review") return "review";
+  if (status === "upload_pending") return "uploading";
+  if (status === "uploaded") return "uploaded";
+  return status;
+}
 
 async function json(response: Response) {
   const result = await response.json();
@@ -119,32 +141,47 @@ export function ImportWorkspace({ initialId, supabaseUrl, supabaseKey }: { initi
   }
   const job = detail?.job;
   const review = job?.status === "needs_review" ? job.review_data?.document ?? detail?.document : null;
+  const phase = job ? importPhase(job.status, stage) : "";
+  const stopCamera = () => { stream.current?.getTracks().forEach((track) => track.stop()); stream.current = null; setCameraReady(false); };
   return <div className={`import-workspace ${styles.workspace}`}>
     {error && <p className="auth-error" role="alert">{error}</p>}
-    {stage && <p className="demo-notice" role="status">{stage}</p>}
-    {!id && <><div className={styles.sourceGrid} aria-label="Wybierz źródło">
-      <button type="button" className={styles.sourceTile} aria-label="Plik" aria-pressed={mode === 'file'} onClick={() => { setMode('file'); stream.current?.getTracks().forEach(track => track.stop()); stream.current = null; setCameraReady(false); }}><Icon name="upload" size={27} /><strong>Plik PDF lub XLSX</strong><small>Dokument lub zdjęcie</small></button>
-      <button type="button" className={styles.sourceTile} aria-label="Aparat" aria-pressed={mode === 'camera'} onClick={() => void camera()}><Icon name="camera" size={27} /><strong>Zdjęcie lub aparat</strong><small>Plan z kartki</small></button>
-      <button type="button" className={styles.sourceTile} aria-label="Wklej tekst" aria-pressed={mode === 'text'} onClick={() => { setMode('text'); stream.current?.getTracks().forEach(track => track.stop()); stream.current = null; setCameraReady(false); }}><Icon name="file" size={27} /><strong>Wklej tekst</strong><small>Skopiowany plan</small></button>
-      <Link className={styles.sourceTile} href="/plany/edytor?voice=1"><Icon name="microphone" size={27} /><strong>Dyktuj plan</strong><small>Propozycja w edytorze</small></Link>
-    </div><section className={styles.sourceForm}><h2>{mode === 'file' ? 'Dodaj dokument' : mode === 'camera' ? 'Zrób zdjęcie' : 'Tekst planu'}</h2>
-      {mode === "file" && <label className="editor-field">PDF (1–6 stron), XLSX, PNG lub JPEG<input type="file" accept=".pdf,.xlsx,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/png,image/jpeg" onChange={(event) => setFile(event.target.files?.[0] ?? null)} /></label>}
-      {mode === "camera" && <div><video className="import-video" ref={video} playsInline muted aria-label="Podgląd aparatu" /><button type="button" className="button button-outline" onClick={capture} disabled={!stream.current}>Zrób zdjęcie</button><p>Po odmowie aparatu wybierz zdjęcie z plików.</p></div>}
-      {mode === "text" && <label className="editor-field">Tekst planu<textarea value={text} maxLength={30000} onChange={(event) => setText(event.target.value)} placeholder="Wklej plan treningowy…" /></label>}
-      {file && <p>Wybrany plik: {file.name} ({Math.ceil(file.size / 1024)} KB)</p>}
-      <button type="button" className="button button-dark" disabled={busy} onClick={() => void start()}>Rozpocznij import</button></section>
-      <div className={styles.notice}><strong>Ty zatwierdzasz</strong>Oryginał pozostanie prywatny przez 7 dni. Najpierw sprawdź ćwiczenia, potem serie i superserie. Plan powstanie po zatwierdzeniu.</div>
-      <Link className={styles.manual} href="/plany/edytor"><Icon name="edit" />Utwórz ręcznie</Link>
-      <details className={styles.earlier}><summary>Wcześniejsze importy ({jobs.length})</summary><div className="plan-list">{jobs.map(item => <button className="plan-list-item" type="button" key={item.id} onClick={() => select(item.id)}><span className="list-main"><strong>{item.source_kind.toUpperCase()}</strong><small>{labels[item.status] ?? item.status} · próba {item.attempt_number}</small></span><Icon name="chevronRight" /></button>)}</div>{!jobs.length && <p className="small-muted">Nie masz jeszcze importów.</p>}</details></>}
+    {stage && <p className={styles.stage} role="status">{stage}</p>}
+    {!id && <>
+      <div className={styles.sourceGrid} aria-label="Wybierz źródło">
+        <button type="button" className={styles.sourceTile} aria-label="Plik" aria-pressed={mode === "file"} onClick={() => { setMode("file"); stopCamera(); }}><Icon name="upload" size={32} /><strong>Plik PDF lub XLSX</strong><small>Dokument lub zdjęcie z plików</small></button>
+        <button type="button" className={styles.sourceTile} aria-label="Aparat" aria-pressed={mode === "camera"} onClick={() => void camera()}><Icon name="camera" size={32} /><strong>Zdjęcie lub aparat</strong><small>Plan z kartki</small></button>
+      </div>
+      <div className={styles.secondarySources} aria-label="Inne sposoby">
+        <button type="button" className={styles.secondaryAction} aria-label="Wklej tekst" aria-pressed={mode === "text"} onClick={() => { setMode("text"); stopCamera(); }}><Icon name="file" size={22} /><span><strong>Wklej tekst</strong><small>Skopiowany plan</small></span></button>
+        <Link className={styles.secondaryAction} href="/plany/edytor?voice=1"><Icon name="microphone" size={22} /><span><strong>Dyktuj plan</strong><small>Propozycja w edytorze</small></span></Link>
+        <Link className={styles.secondaryAction} href="/plany/edytor"><Icon name="edit" size={22} /><span><strong>Utwórz ręcznie</strong><small>Bez odczytu AI</small></span></Link>
+      </div>
+      <section className={styles.sourceForm}><h2>{mode === "file" ? "Dodaj dokument" : mode === "camera" ? "Zrób zdjęcie" : "Tekst planu"}</h2>
+        {mode === "file" && <label className="editor-field">PDF (1–6 stron), XLSX, PNG lub JPEG<input type="file" accept=".pdf,.xlsx,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/png,image/jpeg" onChange={(event) => setFile(event.target.files?.[0] ?? null)} /></label>}
+        {mode === "camera" && <div><video className="import-video" ref={video} playsInline muted aria-label="Podgląd aparatu" /><Button variant="primary" onClick={capture} disabled={!stream.current}>Zrób zdjęcie</Button><p>Po odmowie aparatu wybierz zdjęcie z plików.</p></div>}
+        {mode === "text" && <label className="editor-field">Tekst planu<textarea value={text} maxLength={30000} onChange={(event) => setText(event.target.value)} placeholder="Wklej plan treningowy…" /></label>}
+        {file && <p>Wybrany plik: {file.name} ({Math.ceil(file.size / 1024)} KB)</p>}
+        <Button variant="primary" disabled={busy} onClick={() => void start()}>Rozpocznij import</Button>
+      </section>
+      <div className={styles.notice}><strong>Ty zatwierdzasz</strong>Oryginał pozostanie prywatny przez 7 dni. Najpierw sprawdź nazwy, potem serie i superserie. Plan powstanie po zatwierdzeniu.</div>
+      <section className={styles.history} aria-label="Historia importów"><h2>Wcześniejsze importy</h2>
+        {jobs.length === 0 ? <EmptyState title="Brak importów">Nie masz jeszcze importów.</EmptyState> : <div className={styles.historyList}>{jobs.map((item) => <button className={styles.historyItem} type="button" key={item.id} onClick={() => select(item.id)}><span><strong>{item.source_kind.toUpperCase()}</strong><small>próba {item.attempt_number}</small></span><StatusBadge tone={statusTone[item.status] ?? "neutral"}>{labels[item.status] ?? item.status}</StatusBadge></button>)}</div>}
+      </section>
+    </>}
 
     {id && !detail && <p role="status">Wczytywanie importu…</p>}
-    {job && <><section className={review ? "import-job-summary" : "editor-card"}><div className="editor-row"><h2>{labels[job.status] ?? job.status}</h2><button type="button" className="button button-outline" onClick={() => select(null)}>← Lista importów</button></div>
+    {job && <><section className={`${review ? "import-job-summary" : "editor-card"} ${styles.jobCard}`} data-import-phase={phase}>
+      <div className={styles.jobHead}><StatusBadge tone={statusTone[job.status] ?? "neutral"}>{labels[job.status] ?? job.status}</StatusBadge><Button variant="ghost" onClick={() => select(null)}>← Lista importów</Button></div>
+      <h2>{labels[job.status] ?? job.status}</h2>
+      <p>{phase === "committed" && !job.committed_plan_id ? "Import jest zatwierdzony. Odczyt nie zawiera identyfikatora planu." : phaseCopy[phase] ?? "Status pochodzi z serwera. Plan nie powstaje przed zatwierdzeniem."}</p>
       <p>Źródło: {job.source_kind.toUpperCase()} · próba {job.attempt_number}/3 · dostępne do {new Date(job.expires_at).toLocaleDateString("pl-PL")}</p>
-      {job.error_code && <p className="auth-error">Błąd: {job.error_code}</p>}
-      {job.status === "processing" && <p role="status">Odczyt trwa. Możesz odświeżyć stronę i wrócić do tego importu.</p>}
-      {(["uploaded", "failed", "processing"].includes(job.status)) && <button type="button" className="button button-dark" disabled={busy} onClick={() => void action("process")}>Odczytaj / ponów próbę</button>}
-      {!["committed", "cancelled"].includes(job.status) && <button type="button" className="button button-outline" disabled={busy && job.status !== "processing"} onClick={() => void action("cancel")}>Anuluj import</button>}
-      {job.status === "committed" && job.committed_plan_id && <Link className="button button-dark" href={`/plany/${job.committed_plan_id}`}>Otwórz zapisany plan</Link>}</section>
+      {job.error_code && <p className="auth-error" role="alert">Błąd: {job.error_code}</p>}
+      <div className={styles.jobActions}>
+        {(["uploaded", "failed", "processing"].includes(job.status)) && <Button variant={job.status === "failed" ? "primary" : "secondary"} disabled={busy} onClick={() => void action("process")}>Odczytaj / ponów próbę</Button>}
+        {!["committed", "cancelled"].includes(job.status) && <Button variant="ghost" disabled={busy && job.status !== "processing"} onClick={() => void action("cancel")}>Anuluj import</Button>}
+        {job.status === "committed" && job.committed_plan_id && <Link className={styles.primaryLink} href={`/plany/${job.committed_plan_id}`}>Otwórz zapisany plan</Link>}
+      </div>
+    </section>
       {review && job.draft && <ImportReview key={job.id} id={job.id} kind={job.source_kind} text={sourceText} initial={review} questions={detail!.questions} rawDraft={job.draft} answers={job.review_data?.answers} progress={job.review_data?.progress} warnings={Array.isArray(job.draft.warnings) ? job.draft.warnings.map(String) : []} />}
     </>}
   </div>;
