@@ -342,6 +342,10 @@ Podgląd treningu rysował każde ćwiczenie osobną kartą, a jedyną informacj
 
 Niezależny odbiór na `11d66bc` zaliczył testy, typy, build, lokalne A/B/anon i Chrome. Pierwsza asercja wymagała, żeby czwarta karta podglądu kończyła się nad nawigacją; pomiar dał 786,95 wobec 768. D046: użytkownik uznał przewinięcie dłuższej listy za właściwe zachowanie, nie za wadę. Asercja sprawdza teraz, że kartę da się doskrolować. Powtórzony T15-B razem z T13-C przeszedł. T13 i T15-A–G są done lokalnie. Telefon, Safari i publikacja bez zmiany.
 
+### 2026-10-20 — subtelne ramy Tempo
+
+Ramy pól, kart i wierszy używają linii `#344245` zamiast tekstu pomocniczego `#9daaa7`. Powód: użytkownik woli cichszy obrys z Figmy; przy 1 px jaśniejszy kolor wyglądał jak grubsza kreska. Wpływ: jeden alias `--control`. Fokus, błąd, akcent wyboru i tekst muted bez zmian. Próg 3:1 nie obejmuje już ramy kontrolki. T16-I nie jest powtórzony i nie jest done.
+
 ### 2026-10-20 — T16-D widoczność zapisu serii
 
 Główny zapis jednej serii kończy się nad dolną nawigacją przy 390×844. Powód: odbiór T16-I odrzucił bramkę, bo `Zapisz i przejdź dalej` było pod paskiem, a D046 dotyczy kart, nie tej akcji. Wpływ: treść serii przewija się w panelu, zapis zostaje na dole panelu nad `.mobile-nav`. Karty przeglądu nadal mogą wchodzić pod pasek i muszą być doskrolowalne. Komenda, API, próg T15-B i dane bez zmian. T16-D zostaje review. T16-I nie jest powtórzony i nie jest done.
