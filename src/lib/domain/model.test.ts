@@ -37,6 +37,10 @@ describe("kontrakty domenowe T02", () => {
       { id: "other", exerciseId: "bench", valueKg: 200, effectiveOn: "2026-09-01", createdAt: "2026-09-01T10:00:00Z" },
     ];
     expect(selectApplicableOneRepMax(records, "squat", "2026-10-11")?.id).toBe("max-a");
+    expect(selectApplicableOneRepMax([
+      { id: "older", exerciseId: "squat", valueKg: 100, effectiveOn: "2026-01-01", createdAt: "2026-01-01T00:00:00Z" },
+      { id: "sibling", exerciseId: "bench", valueKg: 140, effectiveOn: "2026-08-01", createdAt: "2026-08-01T00:00:00Z" },
+    ], "squat", "2026-10-11", ["bench"])?.id).toBe("sibling");
     expect(selectApplicableOneRepMax(records, "deadlift", "2026-10-11")).toBeNull();
     expect(() => selectApplicableOneRepMax(records, "squat", "2026-02-30")).toThrow();
   });

@@ -1,7 +1,8 @@
-import { emptySet, parsePlanEditorDocument, type PlanEditorDocument, withReviewIds } from "../domain/plan-editor";
+import { emptySet, parsePlanEditorDocument, type PlanEditorDocument, type PlanEditorExercise, withReviewIds } from "../domain/plan-editor";
 import { PDFDocument } from "pdf-lib";
 import ExcelJS from "exceljs";
 import { matchExerciseName } from "../exercises/names";
+import { applyExactIdentity } from "../exercises/identity";
 import { xlsxChunks } from "./xlsx";
 import { IMPORT_LIMITS, XLSX_MIME } from "./limits";
 
@@ -53,7 +54,7 @@ export async function validateSource(kind: SourceKind, mime: string, bytes: Uint
   let pages: number;
   try { pages = (await PDFDocument.load(bytes, { ignoreEncryption: false, updateMetadata: false })).getPageCount(); }
   catch { throw new Error("PDF jest uszkodzony lub nieobsługiwany."); }
-  if (pages < 1 || pages > IMPORT_LIMITS.pdfPages) throw new Error("PDF musi mieć od 1 do 6 rozpoznawalnych stron.");
+  if (pages < 1 || pages > IMPORT_LIMITS.pdfPages) throw new Error(`PDF musi mieć od 1 do ${IMPORT_LIMITS.pdfPages} rozpoznawalnych stron.`);
   return { pageCount: pages };
 }
 
@@ -90,7 +91,7 @@ export function validateDraft(value: unknown): { document: PlanEditorDocument; i
         if (maximum === null && (value.schema_version === 2 || e.sets.length === 0)) issues.push({ path: `sessions.${si}.exercises.${ei}.sets`, code: "missing_sets", message: "Liczba serii nie jest podana; uzupełnij ją przed zatwierdzeniem." });
         const known = matchExerciseName(e.name as string);
         const group = typeof e.superset_group === "string" ? e.superset_group.replace(/^ss\s*(\d+)(?:\s+UM)?$/i, "SS$1") : null;
-        return { exerciseId: null, name: known?.pl ?? e.name as string, originalName: e.name as string,
+        return applyExactIdentity({ exerciseId: null, name: known?.pl ?? e.name as string, originalName: e.name as string,
           variant: e.variant as string | null, equipment: e.equipment as string | null, isOptional: e.is_optional === true,
           sourceRef: e.source_ref as string | null, setCountMin: minimum as number | null, setCountMax: maximum as number | null,
           setCountSource: typeof e.set_count_source === "string" ? e.set_count_source : null,
@@ -115,7 +116,7 @@ export function validateDraft(value: unknown): { document: PlanEditorDocument; i
               restSeconds: v.rest_seconds ?? null,
               note: ambiguousPercent ? `${v.note ? `${v.note}; ` : ""}Niejednoznaczne ${v.target_percent}% ze źródła` : v.note };
             return set;
-          }) };
+          }) } as PlanEditorExercise);
       }) };
   });
   const document = parsePlanEditorDocument(withReviewIds({ schemaVersion: 2, name: value.name.trim() || "Zaimportowany plan", sessions } as PlanEditorDocument));

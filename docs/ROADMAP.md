@@ -487,6 +487,6 @@ D047. Tempo jest jedynym docelowym wyglądem i zastępuje paletę Noc. D046 zost
 
 ### T12-K — wdrożenie wspólnej tożsamości ćwiczeń
 
-- Status: todo, gotowe do rozpoczęcia po zleceniu promptem. Właściciel: —. Zależności: T12-K-P, istniejące T04/T05/T06-R1/T07-R1/T08/T09/T11-C1; przed wywołaniami płatnego modelu wymagane serwerowy klucz i jawny dodatni limit kosztu. Nie zamyka szerokiego, odroczonego T12 ani T16-I.
+- Status: done lokalnie (2026-10-20). Właściciel: Grok, ta sesja. Zależności: T12-K-P, istniejące T04/T05/T06-R1/T07-R1/T08/T09/T11-C1; przed wywołaniami płatnego modelu wymagane serwerowy klucz i jawny dodatni limit kosztu. Nie zamyka szerokiego, odroczonego T12 ani T16-I.
 - Zakres: [pełny kontrakt i kontekst](T12_K_TOZSAMOSC_CWICZEN.md) — prywatna tożsamość, wspólny matcher, potwierdzenie niepewnych propozycji, wersjonowane plany i historyczne snapshoty, wspólny postęp/1RM, lokalne ilustracje custom, limity PDF 10 MB/20 stron, XLSX 5 MB, obrazu 10 MB i tekstu 100 KB z odpornym przetwarzaniem.
-- Odbiór: wszystkie scenariusze i bramki w specyfikacji, lokalne A/B/anon i retry, pełne testy/typy/build oraz faktycznie wykonana przeglądarka; status `review` po implementacji do odbioru właściciela. Hostowany test i publikacja osobno. [Prompt wdrożenia](prompts/T12-K.md).
+- Odbiór: `npm test` 284/9, build i typecheck PASS. Lokalne konta A/B/anon oraz zalogowany Chrome edytora, głosu, importu i postępu PASS. Hostowany test i publikacja osobno. [Handoff](handoffs/2026-10-20-T12-K-tozsamosc.md).

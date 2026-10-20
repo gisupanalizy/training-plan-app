@@ -15,6 +15,9 @@ describe("Dokładne lokalne ilustracje", () => {
     expect(resolveExerciseAsset("Bench press", { variant: "skos dodatni" })).toBeNull();
     expect(resolveExerciseAsset("Bench press", { equipment: "hantle" })).toBeNull();
     expect(resolveExerciseAsset("Bench press", { variant: null, equipment: "" })).toBe("/exercise-assets/bench-press.svg");
+    expect(resolveExerciseAsset("Własny ruch", { assetFile: "pull-up.svg" })).toBe("/exercise-assets/pull-up.svg");
+    expect(resolveExerciseAsset("Własny ruch", { assetFile: "generic.png" })).toBeNull();
+    expect(resolveExerciseAsset("Cokolwiek", { canonicalKey: "bench-press" })).toBe("/exercise-assets/bench-press.svg");
   });
   it("zachowuje bajty, pochodzenie i odrębną licencję zasobów", () => {
     const assets = JSON.parse(readFileSync("public/exercise-assets/manifest.json", "utf8"));

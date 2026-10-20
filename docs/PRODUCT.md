@@ -45,9 +45,9 @@ Panel trenera, subskrypcje, publiczny katalog i ranking, integracje zegarków, p
 
 Dwóch testerów na osobnych kontach może zaimportować plan, poprawić go, wykonać trening z ręcznym i głosowym zapisem, wrócić do wyników po ponownym zalogowaniu i nie ma dostępu do danych drugiej osoby. Scenariusze akceptacyjne: [TESTING](TESTING.md).
 
-## T12-K — uzgodnione rozszerzenie rozpoznawania ćwiczeń, do wdrożenia
+## T12-K — rozpoznawanie ćwiczeń, review
 
-Różne zapisy tego samego ruchu w imporcie, ręcznym planie i dyktowanym fragmencie mają prowadzić do jednej prywatnej tożsamości ćwiczenia i wspólnej historii/1RM. Potwierdzony odpowiednik pokazuje standardową nazwę PL, zachowuje źródłową, a istotny wariant pozostaje oddzielny. Dla parafrazy model może jedynie zaproponować przypisanie do ręcznego potwierdzenia; własny specyficzny ruch i aliasy zostają prywatne. Ikona pochodzi z zatwierdzonego ruchu lub ręcznie wybranego lokalnego zasobu, z sylwetką jako fallbackiem. Obecne formaty wystarczą; docelowe limity to PDF 10 MB/20 stron, XLSX 5 MB, obraz 10 MB i tekst 100 KB. Dyktowanie fragmentów do 30 s wystarczy w tym etapie. [Pełny plan](T12_K_TOZSAMOSC_CWICZEN.md) i [D049](DECISIONS.md#d049--t12-k-wspólna-tożsamość-ćwiczeń) opisują zachowanie; nie jest to opis wdrożonej funkcji.
+Różne zapisy tego samego ruchu w imporcie, ręcznym planie i dyktowanym fragmencie prowadzą do jednej prywatnej tożsamości ćwiczenia i wspólnej historii/1RM. Potwierdzony odpowiednik pokazuje standardową nazwę PL i zachowuje źródłową. Istotny wariant pozostaje oddzielny. Parafraza może być tylko propozycją do potwierdzenia. Własny ruch i aliasy zostają na koncie. Ikona pochodzi z zatwierdzonego klucza albo ręcznie wybranego lokalnego pliku; inaczej zostaje sylwetka. Limity w kodzie: PDF 10 MB/20 stron, XLSX 5 MB, obraz 10 MB, tekst 100 KB. Dyktowanie fragmentów do 30 s zostaje. Funkcja jest w review i wymaga zastosowanej migracji. [Specyfikacja](T12_K_TOZSAMOSC_CWICZEN.md), [D049](DECISIONS.md#d049--t12-k-wspólna-tożsamość-ćwiczeń).
 
 ## Uzgodnione rozszerzenie T13 — planowane, 2026-10-17
 

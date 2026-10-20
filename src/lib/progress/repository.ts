@@ -31,8 +31,15 @@ export async function getProgress(from?: string, to?: string) {
       .eq("owner_id", ownerId).order("performed_on", { ascending: false }).order("id").range(offset, offset + 499);
     return query;
   });
-  const info = await readAll<ExerciseInfo>((offset) => client.from("exercises")
-    .select("id,name,variant,equipment,load_mode").eq("owner_id", ownerId).order("id").range(offset, offset + 499));
+  const info = await readAll<ExerciseInfo & { identity_id?: string | null }>((offset) => client.from("exercises")
+    .select("id,name,variant,equipment,load_mode,identity_id").eq("owner_id", ownerId).order("id").range(offset, offset + 499));
+  const identities = await readAll<{ id: string; display_name: string }>((offset) => client.from("exercise_identities")
+    .select("id,display_name").eq("owner_id", ownerId).order("id").range(offset, offset + 499));
+  const identityNames = new Map(identities.map((row) => [row.id, row.display_name]));
+  for (const exercise of info) {
+    exercise.identityId = exercise.identity_id ?? null;
+    exercise.identityName = exercise.identity_id ? identityNames.get(exercise.identity_id) ?? null : null;
+  }
   const performed: ProgressExercise[] = [];
   for (let index = 0; index < workouts.length; index += 100) {
     const ids = workouts.slice(index, index + 100).map((item) => item.id);

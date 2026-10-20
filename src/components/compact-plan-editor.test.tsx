@@ -90,7 +90,7 @@ test('wybiera prywatne ćwiczenie i przenosi je bez utraty ID lub parametrów', 
   fireEvent.change(screen.getByLabelText('Wybierz trening'), { target: { value: 'day-0' } });
   click('+ Dodaj ćwiczenie'); fireEvent.change(screen.getByLabelText('Nazwa ćwiczenia'), { target: { value: 'Nowe' } }); click('Zastosuj zmiany');
   const result = await publish(mock), moved = result.sessions[1].exercises[1];
-  expect(moved).toEqual({ ...initial.sessions[0].exercises[0], name: 'Wiosłowanie', variant: 'neutralny', equipment: 'hantle', exerciseId: catalogId });
+  expect(moved).toEqual({ ...initial.sessions[0].exercises[0], name: 'Wiosłowanie', variant: 'neutralny', equipment: 'hantle', exerciseId: catalogId, identityId: null, canonicalKey: null, assignment: 'custom', suggestion: null });
 });
 
 test('ukryte pola i złożony cel pozostają przy zmianie przerwy; zakres usuwa się świadomie', async () => {

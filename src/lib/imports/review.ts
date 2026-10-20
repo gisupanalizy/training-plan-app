@@ -44,7 +44,7 @@ export function optionalLabel(exercise:PlanEditorExercise):string|null{
  return `${optional.length===1?'Seria':'Serie'} ${optional.join(', ')} ${optional.length===1?'opcjonalna':'opcjonalne'}`;
 }
 export function reviewFingerprint(document:PlanEditorDocument,kind:'exercises'|'structure'):string{
- const value=kind==='exercises'?{sessions:document.sessions.map(s=>({id:s.reviewId,week:s.weekNumber,day:s.dayLabel,exercises:s.exercises.map(e=>({id:e.reviewId,exerciseId:e.exerciseId,name:e.name,original:e.originalName,variant:e.variant,equipment:e.equipment}))}))}:document.sessions;
+ const value=kind==='exercises'?{sessions:document.sessions.map(s=>({id:s.reviewId,week:s.weekNumber,day:s.dayLabel,exercises:s.exercises.map(e=>({id:e.reviewId,exerciseId:e.exerciseId,name:e.name,original:e.originalName,variant:e.variant,equipment:e.equipment,canonicalKey:e.canonicalKey,assignment:e.assignment,assetFile:e.assetFile}))}))}:document.sessions;
  const stable=(item:unknown):unknown=>Array.isArray(item)?item.map(stable):item&&typeof item==='object'?Object.fromEntries(Object.entries(item).sort(([a],[b])=>a.localeCompare(b)).map(([key,entry])=>[key,stable(entry)])):item;
  const text=JSON.stringify(stable(value));let a=2166136261,b=5381;
  for(let i=0;i<text.length;i++){a=Math.imul(a^text.charCodeAt(i),16777619);b=Math.imul(b,33)^text.charCodeAt(i);}

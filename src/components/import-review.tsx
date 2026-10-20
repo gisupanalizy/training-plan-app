@@ -5,6 +5,7 @@ import {parsePlanEditorDocument,type PlanEditorDocument,type PlanEditorExercise,
 import {setKindLabel} from '@/lib/domain/format';
 import {pendingQuestions,type ImportQuestion} from '@/lib/imports/questions';
 import {changedReview,exerciseSummary,goalLabel,groupProblems,hasSetGoal,loadLabel,newReviewExercise,optionalLabel,questionStep,questionsForExercise,readReviewProgress,restLabel,reviewFingerprint,seriesBlocks,sessionGroups,sortReviewQuestions,withReviewIds,type ReviewProgress,type ReviewStep} from '@/lib/imports/review';
+import {applySuggestionResult, identityProposalOpen} from '@/lib/exercises/identity';
 import {Button, ExerciseIllustration, Icon} from '@/components/ui';
 import styles from './plan-authoring.module.css';
 import {ImportSource,type SourceFocus} from './import-source';
@@ -33,6 +34,16 @@ export function ImportReview({id,kind,text,initial,questions:initialQuestions,an
  const session=document.sessions.find(s=>s.reviewId===dayId)??document.sessions[0];
  const problems=groupProblems(document);
  useEffect(()=>{if(saved)return;const listener=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue='';};window.addEventListener('beforeunload',listener);return()=>window.removeEventListener('beforeunload',listener);},[saved]);
+ async function requestSuggestions(){
+  const items=document.sessions.flatMap(session=>session.exercises).filter(exercise=>!exercise.canonicalKey&&exercise.assignment!=='custom'&&exercise.assignment!=='confirmed_decision'&&exercise.assignment!=='exact'&&exercise.assignment!=='private_alias');
+  if(!items.length){setError('Wszystkie nazwy mają już przypisanie albo własną nazwę.');return;}
+  setBusy(true);setError('');
+  try{const response=await fetch('/api/exercises/suggest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:items.map(exercise=>({id:exercise.reviewId,name:exercise.originalName??exercise.name,variant:exercise.variant,equipment:exercise.equipment}))})});
+   const body=await response.json();if(!response.ok)throw new Error(body.error??'Nie udało się sprawdzić nazw.');
+   setDocument(current=>({...current,sessions:current.sessions.map(session=>({...session,exercises:session.exercises.map(exercise=>{const result=body.results?.find((item:{id:string})=>item.id===exercise.reviewId);return result?applySuggestionResult(exercise,result.source?{source:result.source,key:result.suggestion?.key}:null):exercise;})}))}));
+   setSaved(false);
+  }catch(cause){setError((cause as Error).message);}finally{setBusy(false);}
+ }
  function change(next:PlanEditorDocument,answer?:{question:ImportQuestion;value:unknown}){
   if(busy)return;
   const changed=changedReview(document,next,progress,[...initialQuestions,...questions],answers);
@@ -57,13 +68,14 @@ export function ImportReview({id,kind,text,initial,questions:initialQuestions,an
  }
  async function navigate(step:ReviewStep){if(busy)return;setBusy(true);await persist({...progress,step});setBusy(false);}
  async function confirm(){
+  if(progress.step==='exercises'&&document.sessions.some(session=>session.exercises.some(identityProposalOpen))){setError('Potwierdź propozycje nazw albo zostaw własne ćwiczenia.');return;}
   if(stageQuestions.length){setError('Wyjaśnij niejasności tego kroku przed jego potwierdzeniem.');return;}
   if(progress.step==='structure'&&problems.length){setError(problems[0]);return;}
   const next:ReviewProgress=progress.step==='exercises'?{...progress,step:'structure',exercisesConfirmed:reviewFingerprint(document,'exercises')}:{...progress,step:'summary',structureConfirmed:reviewFingerprint(document,'structure')};
   setBusy(true);await persist(next);setBusy(false);
  }
  async function publish(){
-  if(!progress.exercisesConfirmed||!progress.structureConfirmed||questions.length||problems.length){setError('Potwierdź oba kroki i wyjaśnij pozostałe niejasności.');return;}
+  if(!progress.exercisesConfirmed||!progress.structureConfirmed||questions.length||problems.length||document.sessions.some(session=>session.exercises.some(identityProposalOpen))){setError('Potwierdź oba kroki i wyjaśnij pozostałe niejasności.');return;}
   setError('');setBusy(true);if(!publicationSubmitted.current&&!await persist()){setBusy(false);return;}
   publicationSubmitted.current=true;
   try{const response=await fetch(`/api/imports/${id}/approve`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({operationId,document,answers})});const result=await response.json();
@@ -80,7 +92,7 @@ export function ImportReview({id,kind,text,initial,questions:initialQuestions,an
   const missingCount=own.some(q=>q.id.startsWith('missing_sets:'));
   const blocks=seriesBlocks(exercise);
   return <article key={exercise.reviewId} className="review-exercise-card" data-exercise-id={exercise.reviewId}>
-   <div className="review-card-heading"><ExerciseIllustration className={styles.reviewThumb} name={exercise.name} variant={exercise.variant} equipment={exercise.equipment} /><div><h3>{exercise.name}</h3>{exercise.originalName&&exercise.originalName!==exercise.name&&<p className="review-original">{exercise.originalName}</p>}{exercise.variant&&<p className="review-variant">{exercise.variant}</p>}</div>
+   <div className="review-card-heading"><ExerciseIllustration className={styles.reviewThumb} name={exercise.name} variant={exercise.variant} equipment={exercise.equipment} canonicalKey={exercise.canonicalKey} assetFile={exercise.assetFile} /><div><h3>{exercise.name}</h3>{exercise.originalName&&exercise.originalName!==exercise.name&&<p className="review-original">W źródle: {exercise.originalName}</p>}{identityProposalOpen(exercise)&&<p className="review-missing">Propozycja: {exercise.suggestion?.pl}. Potwierdź w edycji.</p>}{exercise.variant&&<p className="review-variant">{exercise.variant}</p>}</div>
     {progress.step!=='summary'&&<button type="button" className="review-link" onClick={()=>setModal({type:'exercise',exerciseId:exercise.reviewId!})}>Edytuj ćwiczenie</button>}
    </div>
    {progress.step==='exercises'?<div className="review-exercise-bottom"><span>{exercise.equipment??'Sprzęt nieokreślony'}</span><div className="review-inline-actions"><button type="button" aria-label={`Przesuń w górę: ${exercise.name}`} disabled={index===0} onClick={()=>edit(next=>{const list=next.sessions.find(s=>s.reviewId===session.reviewId)!.exercises;[list[index-1],list[index]]=[list[index],list[index-1]];})}><Icon name="chevronLeft" size={18}/></button><button type="button" aria-label={`Przesuń w dół: ${exercise.name}`} disabled={index===session.exercises.length-1} onClick={()=>edit(next=>{const list=next.sessions.find(s=>s.reviewId===session.reviewId)!.exercises;[list[index+1],list[index]]=[list[index],list[index+1]];})}><Icon name="chevronRight" size={18}/></button></div></div>:<>
@@ -108,7 +120,7 @@ export function ImportReview({id,kind,text,initial,questions:initialQuestions,an
   {currentQuestion&&<p className="review-missing">Jedno pytanie na raz.{progress.step==='summary'?' Nierozwiązane pytanie blokuje publikację.':''} {currentQuestion.prompt}</p>}
   <div className={`review-content ${sourceOpen?'with-source':''}`}>
    <div className={`review-main ${sourceOpen?'review-mobile-hidden':''}`}>
-    <div className="review-section-heading"><div><h2 data-review-step-heading tabIndex={-1}>{progress.step==='exercises'?'Nazwy ćwiczeń i kolejność':titles[progress.step]}</h2><p>{progress.step==='exercises'?'Sprawdź listę i kolejność ćwiczeń. Parametry przejrzysz w kolejnym kroku.':progress.step==='structure'?'Sprawdź zalecenia i grupy. Edytuj tylko to, co wymaga korekty.':'Sprawdź cały plan przed utworzeniem jego aktywnej wersji.'}</p></div>{progress.step==='exercises'&&<button type="button" className="review-link" onClick={()=>setModal({type:'day',sessionId:session.reviewId!})}>Edytuj trening</button>}</div>
+    <div className="review-section-heading"><div><h2 data-review-step-heading tabIndex={-1}>{progress.step==='exercises'?'Nazwy ćwiczeń i kolejność':titles[progress.step]}</h2><p>{progress.step==='exercises'?'Sprawdź listę i kolejność ćwiczeń. Parametry przejrzysz w kolejnym kroku.':progress.step==='structure'?'Sprawdź zalecenia i grupy. Edytuj tylko to, co wymaga korekty.':'Sprawdź cały plan przed utworzeniem jego aktywnej wersji.'}</p></div>{progress.step==='exercises'&&<div className="review-inline-actions"><button type="button" className="review-link" onClick={()=>void requestSuggestions()}>Sprawdź niepewne nazwy</button><button type="button" className="review-link" onClick={()=>setModal({type:'day',sessionId:session.reviewId!})}>Edytuj trening</button></div>}</div>
     {progress.step==='summary'&&<div className="review-confirmation-status"><p>{progress.exercisesConfirmed?'✓ Ćwiczenia potwierdzone':'Ćwiczenia wymagają potwierdzenia'}</p><p>{progress.structureConfirmed?'✓ Serie i superserie potwierdzone':'Serie i superserie wymagają potwierdzenia'}</p>{questions.length>0&&<p>{questions.length} niejasności pozostaje do wyjaśnienia.</p>}<label className="editor-field">Nazwa planu<input disabled={busy} maxLength={120} value={document.name} onChange={e=>edit(next=>{next.name=e.target.value;})}/></label></div>}
     {session.note&&<details className="review-day-note"><summary>Uwagi do treningu {session.dayLabel}</summary><p>{session.note}</p></details>}
     {progress.step==='summary'?document.sessions.map(current=><details className="review-summary-day" key={current.reviewId} open={current.reviewId===session.reviewId}><summary>Tydzień {current.weekNumber} · {current.dayLabel} · {current.exercises.length} ćwiczeń</summary>{trainingCards(current)}</details>):trainingCards(session)}

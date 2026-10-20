@@ -1,9 +1,11 @@
 import { type SupabaseClient } from "@supabase/supabase-js";
+import { PDFDocument } from "pdf-lib";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { validateDraft, validateSource, type ImportIssue, type SourceKind } from "./domain";
 import { MODEL, PROMPT_VERSION, openaiImport, type ImportAdapter } from "./openai";
 import { importQuestions } from "./questions";
+import { mergeDraftParts, pdfPartRanges } from "./parts";
 
 export const BUCKET = "training-imports";
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -42,7 +44,7 @@ export async function processImportJob(admin: SupabaseClient, owner: string, id:
   if (!before) return { status: 404, result: { error: "Nie znaleziono importu." } };
   if (new Date(before.expires_at).getTime() <= Date.now()) return { status: 409, result: { error: "Import wygasł." } };
   if (before.status === "needs_review") return { status: 200, result: { job: before, questions: jobQuestions(before) } };
-  if (!["uploaded", "failed", "processing"].includes(before.status)) return { status: 409, result: { error: "Import nie jest gotowy do przetwarzania." } };
+  if (!["uploaded", "failed", "processing", "partial"].includes(before.status)) return { status: 409, result: { error: "Import nie jest gotowy do przetwarzania." } };
   if (adapter === openaiImport && (process.env.OPENAI_IMPORT_ENABLED !== "true" || !process.env.OPENAI_API_KEY || !(Number(process.env.OPENAI_IMPORT_BUDGET_USD) > 0)))
     return { status: 503, result: { error: "Import AI wymaga skonfigurowanego klucza i budżetu." } };
   let bytes: Uint8Array;
@@ -59,6 +61,10 @@ export async function processImportJob(admin: SupabaseClient, owner: string, id:
   let inputTokens: number | null = null;
   let outputTokens: number | null = null;
   try {
+    if (job.source_kind === "pdf") {
+      const pageCount = (await PDFDocument.load(bytes, { ignoreEncryption: false, updateMetadata: false })).getPageCount();
+      if (pageCount > 2) return await processPdfParts(admin, owner, job, bytes, pageCount, adapter, controller.signal);
+    }
     const result = await adapter({ kind: job.source_kind, mime: job.mime_type, bytes }, controller.signal);
     inputTokens = result.inputTokens; outputTokens = result.outputTokens;
     const validated = validateDraft(result.draft);
@@ -73,4 +79,54 @@ export async function processImportJob(admin: SupabaseClient, owner: string, id:
     await admin.rpc("finish_import_job", { p_owner: owner, p_id: id, p_token: job.lease_token, p_draft: null, p_issues: [], p_error: code.slice(0, 80), p_input_tokens: inputTokens, p_output_tokens: outputTokens });
     return { status: 422, result: { error: "Nie udało się przygotować szkicu.", code } };
   } finally { clearTimeout(timer); }
+}
+
+async function slicePdf(bytes: Uint8Array, pageFrom: number, pageTo: number) {
+  const original = await PDFDocument.load(bytes, { ignoreEncryption: false, updateMetadata: false });
+  const split = await PDFDocument.create();
+  const pages = await split.copyPages(original, Array.from({ length: pageTo - pageFrom + 1 }, (_, index) => pageFrom - 1 + index));
+  pages.forEach((page) => split.addPage(page));
+  return new Uint8Array(await split.save());
+}
+
+async function processPdfParts(admin: SupabaseClient, owner: string, job: Job, bytes: Uint8Array, pageCount: number, adapter: ImportAdapter, signal: AbortSignal) {
+  const { data: existing, error: readError } = await admin.from("import_parts").select("part_index,page_from,page_to,status,draft").eq("import_id", job.id).eq("owner_id", owner).order("part_index");
+  if (readError) throw readError;
+  let parts = existing ?? [];
+  if (!parts.length) {
+    const created = pdfPartRanges(pageCount).map((part) => ({ owner_id: owner, import_id: job.id, part_index: part.partIndex, page_from: part.pageFrom, page_to: part.pageTo, status: "pending" }));
+    const { error } = await admin.from("import_parts").insert(created);
+    if (error) throw error;
+    parts = created.map((part) => ({ ...part, draft: null }));
+  }
+  const pending = parts.find((part) => part.status !== "succeeded");
+  if (!pending) return await finishPdfParts(admin, owner, job, parts);
+  try {
+    const slice = await slicePdf(bytes, pending.page_from, pending.page_to);
+    const result = await adapter({ kind: "pdf", mime: "application/pdf", bytes: slice }, signal);
+    const { error } = await admin.from("import_parts").update({ status: "succeeded", draft: result.draft, error_code: null }).eq("import_id", job.id).eq("owner_id", owner).eq("part_index", pending.part_index);
+    if (error) throw error;
+    const done = parts.filter((part) => part.status === "succeeded").length + 1;
+    if (done < parts.length) {
+      await admin.from("imports").update({ status: "partial", lease_token: null, lease_until: null, updated_at: new Date().toISOString() }).eq("id", job.id).eq("owner_id", owner);
+      return { status: 202, result: { resume: true, progress: { done, total: parts.length } } };
+    }
+    return await finishPdfParts(admin, owner, job, parts.map((part) => part.part_index === pending.part_index ? { ...part, status: "succeeded", draft: result.draft } : part));
+  } catch (error) {
+    const code = signal.aborted ? "timeout" : error instanceof Error ? error.message : "unknown_error";
+    await admin.from("import_parts").update({ status: "failed", error_code: code.slice(0, 80) }).eq("import_id", job.id).eq("owner_id", owner).eq("part_index", pending.part_index);
+    await admin.rpc("finish_import_job", { p_owner: owner, p_id: job.id, p_token: job.lease_token, p_draft: null, p_issues: [], p_error: code.slice(0, 80), p_input_tokens: null, p_output_tokens: null });
+    return { status: 422, result: { error: "Nie udało się przygotować części PDF.", code } };
+  }
+}
+
+async function finishPdfParts(admin: SupabaseClient, owner: string, job: Job, parts: { part_index: number; status: string; draft: unknown }[]) {
+  if (parts.some((part) => part.status !== "succeeded")) throw new Error("incomplete_pdf");
+  const merged = mergeDraftParts([...parts].sort((a, b) => a.part_index - b.part_index).map((part) => part.draft));
+  const validated = validateDraft(merged);
+  const { data: accepted, error } = await admin.rpc("finish_import_job", { p_owner: owner, p_id: job.id, p_token: job.lease_token, p_draft: merged, p_issues: validated.issues, p_error: null, p_input_tokens: null, p_output_tokens: null });
+  if (error) throw error;
+  if (!accepted) return { status: 409, result: { error: "Wynik wygasł lub import anulowano." } };
+  const saved = await ownedJob(admin, owner, job.id);
+  return { status: 200, result: { job: saved, questions: jobQuestions(saved) } };
 }

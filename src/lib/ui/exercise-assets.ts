@@ -14,9 +14,13 @@ for (const exercise of exerciseNames) {
 }
 for (const [name, slug] of Object.entries({ "przysiad ze sztangą": "squat", squat: "squat", "martwy ciąg": "deadlift", deadlift: "deadlift", "wyciskanie nad głowę": "overhead-press", "overhead press": "overhead-press", "handstand push up": "handstand-push-up", "wyciskanie leżąc": "bench-press", "wiosłowanie hantlą": "one-arm-dumbbell-row" })) exactAssets.set(normalizeAlias(name), slug);
 
-export type ExerciseAssetContext = { variant?: string | null; equipment?: string | null };
+export type ExerciseAssetContext = { variant?: string | null; equipment?: string | null; canonicalKey?: string | null; assetFile?: string | null };
+const assetFilePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*\.(png|svg)$/;
 
 export function resolveExerciseAsset(name: string, context: ExerciseAssetContext = {}): string | null {
+  if (context.assetFile && assetFilePattern.test(context.assetFile) && context.assetFile !== "generic.png") return `/exercise-assets/${context.assetFile}`;
+  const canonical = context.canonicalKey ? canonicalAssets[context.canonicalKey] : undefined;
+  if (canonical) return `/exercise-assets/${canonical}.svg`;
   // Osobny opis może zmieniać ruch (skos, chwyt, asysta). Brak zatwierdzonego
   // mapowania takiej kombinacji oznacza neutralny znacznik, nigdy bazowy ruch.
   if (context.variant?.trim() || context.equipment?.trim()) return null;

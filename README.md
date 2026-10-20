@@ -2,7 +2,7 @@
 
 Aplikacja webowa do importowania planów treningowych i zapisywania ich wykonania, projektowana przede wszystkim na telefon. Wersja testowa dla właściciela projektu i kolegów, z osobnymi kontami.
 
-**T12-K — plan do wdrożenia (2026-10-20):** wspólna tożsamość ćwiczeń dla importu, ręcznego planu i dyktowanych fragmentów, z potwierdzaniem parafraz, wspólną historią/1RM porównywalnych ruchów i wyższymi limitami plików. [Specyfikacja i obecne ograniczenia](docs/T12_K_TOZSAMOSC_CWICZEN.md), [prompt kolejnego agenta](docs/prompts/T12-K.md). Kod i działające limity nie zostały jeszcze zmienione.
+**T12-K — done lokalnie (2026-10-20):** wspólna tożsamość ćwiczeń działa na lokalnym Supabase i na zalogowanym koncie w Chrome. Inna baza nadal potrzebuje migracji `20261020170000` i `20261020183000`. [Specyfikacja](docs/T12_K_TOZSAMOSC_CWICZEN.md), [handoff](docs/handoffs/2026-10-20-T12-K-tozsamosc.md).
 
 **T16-I — 2026-10-20:** ponowny niezależny odbiór Tempo jest done lokalnie. Przy 390×844 główny zapis serii kończy się nad dolną nawigacją, a karty zostają doskrolowalne. [Handoff](docs/handoffs/2026-10-20-T16-I-ponowny-odbior.md), [raport](docs/reports/2026-10-19-T16-I-tempo-acceptance.md). Telefon, Safari i publikacja bez zmiany.
 

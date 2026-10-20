@@ -10,6 +10,14 @@ export interface PlanEditorExercise {
   setCountSource?: string | null;
   prescriptionGroup?: string | null;
   exerciseId: string | null;
+  /** Prywatna tożsamość właściciela. Serwer sprawdza własność i nie ufa samemu identyfikatorowi. */
+  identityId?: string | null;
+  /** Klucz sprawdzonego katalogu. Serwer odrzuca nieznany klucz i sprzeczny wariant albo sprzęt. */
+  canonicalKey?: string | null;
+  assetFile?: string | null;
+  assignment?: "exact" | "private_alias" | "confirmed_decision" | "custom" | "unresolved" | null;
+  recordAlias?: boolean;
+  suggestion?: { key: string; pl: string; variant: string | null; equipment: string | null } | null;
   name: string;
   variant: string | null;
   equipment: string | null;
@@ -31,6 +39,9 @@ export interface PlanEditorDocument {
 }
 
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const canonicalKeyPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const assetFilePattern = /^[a-z0-9]+(?:-[a-z0-9]+)*\.(png|svg)$/;
+const assignments = new Set(["exact", "private_alias", "confirmed_decision", "custom", "unresolved"]);
 const record = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
 const optionalText = (value: unknown, max: number) => value === null || (typeof value === "string" && value.trim().length > 0 && value.length <= max);
 const requiredText = (value: unknown, max: number) => typeof value === "string" && value.trim().length > 0 && value.length <= max;
@@ -51,6 +62,14 @@ export function parsePlanEditorDocument(value: unknown): PlanEditorDocument {
         !optionalText(exercise.supersetGroup, 80) || !optionalText(exercise.note, 2000) ||
         !Array.isArray(exercise.sets) || exercise.sets.length < 1 || exercise.sets.length > 30) throw new Error("Każde ćwiczenie wymaga nazwy i serii.");
       checkId(exercise.reviewId);
+      if (exercise.identityId !== undefined && exercise.identityId !== null && (typeof exercise.identityId !== "string" || !uuid.test(exercise.identityId))) throw new Error("Niepoprawna tożsamość ćwiczenia.");
+      if (exercise.canonicalKey !== undefined && exercise.canonicalKey !== null && (typeof exercise.canonicalKey !== "string" || !canonicalKeyPattern.test(exercise.canonicalKey))) throw new Error("Niepoprawny klucz ćwiczenia.");
+      if (exercise.assetFile !== undefined && exercise.assetFile !== null && (typeof exercise.assetFile !== "string" || !assetFilePattern.test(exercise.assetFile))) throw new Error("Niepoprawna ilustracja ćwiczenia.");
+      if (exercise.assignment !== undefined && exercise.assignment !== null && (typeof exercise.assignment !== "string" || !assignments.has(exercise.assignment))) throw new Error("Niepoprawny status przypisania ćwiczenia.");
+      if (exercise.recordAlias !== undefined && typeof exercise.recordAlias !== "boolean") throw new Error("Niepoprawny alias ćwiczenia.");
+      if (exercise.suggestion !== undefined && exercise.suggestion !== null) {
+        if (!record(exercise.suggestion) || typeof exercise.suggestion.key !== "string" || !canonicalKeyPattern.test(exercise.suggestion.key) || !requiredText(exercise.suggestion.pl, 120)) throw new Error("Niepoprawna propozycja ćwiczenia.");
+      }
       for (const key of ["originalName", "sourceRef", "setCountSource", "prescriptionGroup"]) if (exercise[key] !== undefined && exercise[key] !== null && !requiredText(exercise[key], key === "originalName" ? 120 : 500)) throw new Error("Niepoprawne informacje ze źródła.");
       if (exercise.setCountMin != null || exercise.setCountMax != null) {
         if (!Number.isInteger(exercise.setCountMin) || !Number.isInteger(exercise.setCountMax) || (exercise.setCountMin as number) < 1 ||

@@ -86,6 +86,10 @@ describe("analityka T15-E / reference-table-v1", () => {
     expect(JSON.stringify(original)).toBe(snapshot);
     const variants = analyzeProgress([workout()], [block(), block("p2", { exercise_id: "e2" })], [set("s1"), set("s2", { performed_exercise_id: "p2", actual_kg: 200 })], [exercise, { ...exercise, id: "e2", variant: "front" }]);
     expect(variants.map(e => e.records.maxWeight?.measurement.value)).toEqual([100, 200]);
+    const shared = analyzeProgress([workout()], [block(), block("p2", { exercise_id: "e2" })], [set("s1"), set("s2", { performed_exercise_id: "p2", actual_kg: 200 })], [{ ...exercise, identityId: "same", identityName: "Przysiad" }, { ...exercise, id: "e2", identityId: "same", identityName: "Przysiad" }]);
+    expect(shared).toHaveLength(1);
+    expect(shared[0].exercise.name).toBe("Przysiad");
+    expect(shared[0].records.maxWeight?.measurement.value).toBe(200);
   });
   it("kalendarzowe miesiące, rok przestępny i przesunięcie dat", () => {
     expect(subtractMonths("2026-03-31", 1)).toBe("2026-02-28");

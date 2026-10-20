@@ -2,11 +2,15 @@
 
 Aktualizacja: 2026-10-20.
 
+## T12-K — wdrożenie wspólnej tożsamości ćwiczeń, done lokalnie
+
+Właściciel: Grok, ta sesja. Lokalny Supabase ma migracje tożsamości i wspólnego 1RM. `scripts/test-t12k-api.mjs` na prawdziwych kontach A/B/anon: jedna tożsamość `bench-press`, nazwa PL i zachowane oryginały, retry, konflikt payloadu, odrzucenie obcego ID, klucza i sprzecznego sprzętu, ponowne użycie własnej nazwy, stary snapshot 75 kg bez zmiany oraz nowa sesja 105 kg z 140 kg bliźniaczego rekordu. Chrome na `next dev` `http://localhost:3024`, `scripts/test-t12k-browser.mjs`: edytor pokazał „Wyciskanie sztangi leżąc”, „W źródle: Bench press” i `bench-press.svg`, dialog dyktowania, import z limitem 20 stron i jeden wpis tego ćwiczenia w postępie. `npm test` 284 passed / 9 skipped, build i typecheck PASS. Nie wołano płatnego Decisions. Telefon, Safari i hosting niewykonane. Katalog na tym branchu ma 49 kluczy; allowlista ilustracji to lokalne SVG. [Handoff](handoffs/2026-10-20-T12-K-tozsamosc.md).
+
 ## T12-K-P — plan wspólnej tożsamości ćwiczeń, done dokumentacyjnie
 
 Użytkownik doprecyzował cel ponad same ikony: import planów w obecnych formatach, ręczny plan i dyktowane fragmenty mają rozpoznawać tę samą tożsamość ruchu. Uzgodnił standardową polską nazwę po potwierdzeniu, zachowanie oryginału, wspólną historię i rzeczywisty 1RM tylko dla porównywalnych wariantów, prywatne nazwy własne, potwierdzanie parafraz proponowanych przez OpenAI Decisions oraz obrazki wyłącznie z lokalnych zasobów z sylwetką jako fallbackiem. Limity docelowe: PDF 10 MB/20 stron, XLSX 5 MB, PNG/JPEG 10 MB, tekst 100 KB. [Plan i pełny kontekst](T12_K_TOZSAMOSC_CWICZEN.md), [D049](DECISIONS.md#d049--t12-k-wspólna-tożsamość-ćwiczeń), [handoff](handoffs/2026-10-20-T12-K-P-plan-tozsamosci.md), [prompt wdrożenia](prompts/T12-K.md).
 
-**Stan faktyczny:** T12-K-P zapisuje plan; T12-K jest `todo`. Nie zmieniono aplikacji, bazy, ikon, konfiguracji dostawców ani obecnych limitów 1 MB/6 stron PDF, 1 MB XLSX, 2 MB obrazu i 30 KB tekstu. Brak nowych testów funkcjonalnych i próby hostowanej w tej sesji. T12-J pozostaje wynikiem eksperymentu, a szeroki T12 z głosem na żywo nadal jest odroczony. Następny krok: zlecić T12-K załączonym promptem; przed płatną próbą Decisions zapewnić serwerowy klucz i jawny limit kosztu, bez wklejania sekretu do repo lub czatu.
+**Stan faktyczny tej sekcji:** opisuje zakończenie samego planu T12-K-P. Późniejsze wdrożenie jest w sekcji T12-K powyżej.
 
 ## T12-J — porównanie Jev i OpenAI Decisions, done eksperymentalnie
 

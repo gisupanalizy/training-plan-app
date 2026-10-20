@@ -6,9 +6,9 @@ import { validateEditorExercise, synchronizeSetCounts } from '@/lib/domain/compa
 import { seriesBlocks, patchSeries, resizeSeriesBlock, exerciseSummary, goalLabel } from '@/lib/imports/review';
 import { Button } from '@/components/ui';
 import { PlanSetFields, RangeField } from './plan-set-fields';
-import { ExerciseNamePicker } from './exercise-name-picker';
+import { ExerciseIdentityFields, meaningChange } from './exercise-identity-fields';
 
-export type CatalogExercise = { id: string; name: string; variant: string | null; equipment: string | null };
+export type CatalogExercise = { id: string; name: string; variant: string | null; equipment: string | null; identityId?: string | null; canonicalKey?: string | null };
 export function PlanExerciseEdit({ exercise, document, sessionId, catalog, onApply, onCancel, onDelete }: {
   exercise: PlanEditorExercise; document: PlanEditorDocument; sessionId: string; catalog: CatalogExercise[];
   onApply: (exercise: PlanEditorExercise, targetId: string) => void; onCancel: () => void; onDelete?: () => void;
@@ -17,17 +17,17 @@ export function PlanExerciseEdit({ exercise, document, sessionId, catalog, onApp
   const [target, setTarget] = useState(sessionId);
   const [error, setError] = useState('');
   const [seriesValid, setSeriesValid] = useState(true);
-  return <form onSubmit={event => { event.preventDefault(); try { if (!seriesValid) throw new Error('Podaj poprawną liczbę serii.'); validateEditorExercise(draft); onApply(draft, target); } catch (cause) { setError((cause as Error).message); } }}>
-    <label className="editor-field">Nazwa ćwiczenia<input maxLength={120} value={draft.name} onChange={event => setDraft({ ...draft, name: event.target.value })} /></label>
+  return <form onSubmit={event => { event.preventDefault(); try { if (!seriesValid) throw new Error('Podaj poprawną liczbę serii.'); if (draft.assignment === 'unresolved' && draft.suggestion) throw new Error('Potwierdź propozycję albo zostaw własną nazwę.'); validateEditorExercise(draft); onApply(draft, target); } catch (cause) { setError((cause as Error).message); } }}>
+    <label className="editor-field">Nazwa ćwiczenia<input maxLength={120} value={draft.name} onChange={event => setDraft(meaningChange(draft, { name: event.target.value }))} /></label>
+    <ExerciseIdentityFields draft={draft} onChange={setDraft} />
     <h3>Serie i parametry</h3><FullExerciseSeries exercise={draft} onChange={setDraft} onValidity={setSeriesValid} />
     <details className="review-more"><summary>Katalog, wariant i przypisanie do treningu</summary>
     <label className="editor-field">Zapisane ćwiczenie<select value={draft.exerciseId ?? ''} onChange={event => {
       const item = catalog.find(entry => entry.id === event.target.value);
-      setDraft(current => ({ ...current, exerciseId: item?.id ?? null, ...(item ? { name: item.name, variant: item.variant, equipment: item.equipment } : {}) }));
+      setDraft(current => ({ ...current, exerciseId: item?.id ?? null, identityId: item?.identityId ?? null, canonicalKey: item?.canonicalKey ?? null, assignment: item ? (item.canonicalKey ? 'exact' : 'custom') : null, suggestion: null, ...(item ? { name: item.name, variant: item.variant, equipment: item.equipment } : {}) }));
     }}><option value="">Własne ćwiczenie</option>{catalog.map(item => <option key={item.id} value={item.id}>{item.name}{item.variant && ` · ${item.variant}`}</option>)}</select></label>
-    <details className="review-more"><summary>Znajdź nazwę w słowniku</summary><ExerciseNamePicker original={draft.originalName ?? draft.name} onSelect={name => setDraft({ ...draft, originalName: draft.originalName ?? (draft.name || null), name })} /></details>
-    <div className="editor-grid"><label className="editor-field">Wariant<input maxLength={120} value={draft.variant ?? ''} disabled={draft.exerciseId !== null} onChange={event => setDraft({ ...draft, variant: event.target.value || null })} /></label>
-      <label className="editor-field">Sprzęt<input maxLength={120} value={draft.equipment ?? ''} disabled={draft.exerciseId !== null} onChange={event => setDraft({ ...draft, equipment: event.target.value || null })} /></label></div>
+    <div className="editor-grid"><label className="editor-field">Wariant<input maxLength={120} value={draft.variant ?? ''} disabled={draft.exerciseId !== null} onChange={event => setDraft(meaningChange(draft, { variant: event.target.value || null }))} /></label>
+      <label className="editor-field">Sprzęt<input maxLength={120} value={draft.equipment ?? ''} disabled={draft.exerciseId !== null} onChange={event => setDraft(meaningChange(draft, { equipment: event.target.value || null }))} /></label></div>
     <label className="editor-field">Przypisanie do treningu<select value={target} onChange={event => setTarget(event.target.value)}>{document.sessions.map(session => <option key={session.reviewId} value={session.reviewId}>Tydzień {session.weekNumber} · {session.dayLabel || 'Bez nazwy'}</option>)}</select></label>
     {target !== sessionId && draft.supersetGroup && <p className="review-hint">Po przeniesieniu przypisz ćwiczenie do superserii w nowym treningu.</p>}
     </details>

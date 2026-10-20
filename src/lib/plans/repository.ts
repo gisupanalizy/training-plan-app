@@ -41,8 +41,12 @@ export async function getPlanDocument(planId: string, requestedVersionId?: strin
     .in("planned_exercise_id", exerciseIds).eq("owner_id", auth.user.id).order("position") : { data: [], error: null };
   if (setsError) throw setsError;
   const { data: catalog, error: catalogError } = await client.from("exercises")
-    .select("id,variant,equipment").eq("owner_id", auth.user.id);
+    .select("id,variant,equipment,identity_id").eq("owner_id", auth.user.id);
   if (catalogError) throw catalogError;
+  const { data: identities, error: identityError } = await client.from("exercise_identities")
+    .select("id,canonical_key,asset_file,display_name").eq("owner_id", auth.user.id);
+  if (identityError) throw identityError;
+  const identityById = new Map((identities ?? []).map((item) => [item.id, item]));
   const details = new Map(catalog.map((item) => [item.id, item]));
   const document: PlanEditorDocument = { name: plan.name, sessions: sessions.map((session) => ({
     weekNumber: session.week_number, dayLabel: session.day_label, note: session.note,
@@ -51,6 +55,10 @@ export async function getPlanDocument(planId: string, requestedVersionId?: strin
       reviewId: exercise.review_id ?? exercise.id, sourceRef: exercise.source_ref, setCountMin: exercise.set_count_min, setCountMax: exercise.set_count_max, setCountSource: exercise.set_count_source, prescriptionGroup: exercise.prescription_group,
       variant: details.get(exercise.exercise_id)?.variant ?? null,
       equipment: details.get(exercise.exercise_id)?.equipment ?? null,
+      identityId: details.get(exercise.exercise_id)?.identity_id ?? null,
+      canonicalKey: identityById.get(details.get(exercise.exercise_id)?.identity_id ?? "")?.canonical_key ?? null,
+      assetFile: identityById.get(details.get(exercise.exercise_id)?.identity_id ?? "")?.asset_file ?? null,
+      assignment: identityById.get(details.get(exercise.exercise_id)?.identity_id ?? "")?.canonical_key ? "exact" : details.get(exercise.exercise_id)?.identity_id ? "custom" : null,
       supersetGroup: exercise.superset_group, note: exercise.note,
       sets: sets.filter((set) => set.planned_exercise_id === exercise.id).map((set): PlannedSetInput => ({
         reviewId: set.review_id ?? undefined, sourceRef: set.source_ref, isOptional: set.is_optional, targetKgMax: set.target_kg_max, durationSecondsMax: set.duration_seconds_max, restSecondsMax: set.rest_seconds_max,
@@ -86,13 +94,35 @@ export async function getOneRepMaxData() {
     .select("rounding_increment_kg,time_zone").eq("id", auth.user.id).single();
   if (profileError) throw profileError;
   const { data: exercises, error: exerciseError } = await client.from("exercises")
-    .select("id,name,variant,equipment").eq("owner_id", auth.user.id).order("name");
+    .select("id,name,variant,equipment,identity_id,created_at").eq("owner_id", auth.user.id).order("created_at");
   if (exerciseError) throw exerciseError;
+  const { data: identities, error: identityError } = await client.from("exercise_identities")
+    .select("id,display_name,variant,equipment,canonical_key").eq("owner_id", auth.user.id);
+  if (identityError) throw identityError;
+  const identityById = new Map((identities ?? []).map((item) => [item.id, item]));
+  const grouped = new Map<string, typeof exercises[number]>();
+  for (const exercise of exercises) {
+    const key = exercise.identity_id ?? exercise.id;
+    if (grouped.has(key)) continue;
+    const identity = exercise.identity_id ? identityById.get(exercise.identity_id) : undefined;
+    grouped.set(key, identity ? { ...exercise, name: identity.display_name, variant: identity.variant, equipment: identity.equipment } : exercise);
+  }
+  const visibleExercises = [...grouped.values()].sort((a, b) => a.name.localeCompare(b.name, "pl"));
   const { data: records, error: recordsError } = await client.from("one_rep_max_records")
     .select("id,exercise_id,value_kg,effective_on,created_at,note")
     .eq("owner_id", auth.user.id).order("effective_on", { ascending: false }).order("created_at", { ascending: false });
   if (recordsError) throw recordsError;
-  return { profile, exercises, records: records.map((record): OneRepMaxRecord & { note: string | null } => ({
+  const idsByIdentity = new Map<string, string[]>();
+  for (const exercise of exercises) {
+    if (!exercise.identity_id) continue;
+    idsByIdentity.set(exercise.identity_id, [...(idsByIdentity.get(exercise.identity_id) ?? []), exercise.id]);
+  }
+  const visibleRecords = records.flatMap((record) => {
+    const owner = exercises.find((exercise) => exercise.id === record.exercise_id);
+    const ids = owner?.identity_id ? idsByIdentity.get(owner.identity_id) ?? [record.exercise_id] : [record.exercise_id];
+    return ids.map((exerciseId) => ({ ...record, exercise_id: exerciseId }));
+  });
+  return { profile, exercises: visibleExercises.map((exercise) => ({ ...exercise, identityId: exercise.identity_id ?? null, canonicalKey: identityById.get(exercise.identity_id ?? "")?.canonical_key ?? null })), records: visibleRecords.map((record): OneRepMaxRecord & { note: string | null } => ({
     id: record.id, exerciseId: record.exercise_id, valueKg: record.value_kg,
     effectiveOn: record.effective_on, createdAt: record.created_at, note: record.note,
   })) };

@@ -1,5 +1,13 @@
 # Historia zmian planu
 
+## 2026-10-20 — T12-K odbiór lokalny
+
+Po wdrożeniu dopięto klucz obcy serii, żeby cel procentowy mógł użyć datowanego 1RM innego wiersza tej samej tożsamości bez zmiany starego snapshotu. Prawdziwe konta lokalne i zalogowany Chrome potwierdziły edytor, dyktowanie, import i postęp. T12-K jest done lokalnie. Hosting nadal osobno. [Handoff](handoffs/2026-10-20-T12-K-tozsamosc.md).
+
+## 2026-10-20 — T12-K wdrożenie wspólnej tożsamości ćwiczeń
+
+Na zlecenie użytkownika wdrożono kontrakt z T12-K-P: prywatna tożsamość ruchu, dokładne aliasy, propozycje Decisions wyłącznie do potwierdzenia, wspólna historia i rzeczywisty 1RM tylko dla tej samej tożsamości oraz wyższe limity źródeł z podpisem TUS powyżej 6 MB i trwałymi częściami PDF. Powód: sama nazwa nie łączyła wyników między planami. T12-K jest w review, nie done. Migracja jest na lokalnym Supabase; inne środowiska wymagają osobnego zastosowania. Bez płatnego wywołania i bez publikacji. [Handoff](handoffs/2026-10-20-T12-K-tozsamosc.md).
+
 ## 2026-10-20 — T12-K-P plan wspólnej tożsamości ćwiczeń
 
 Po eksperymencie T12-J użytkownik skierował pracę z samych ikon na rozpoznawanie ćwiczeń we wszystkich drogach tworzenia planu. Powód: różne nazwy tego samego ruchu mają dać wspólną historię/1RM i właściwą ikonę, a specyficzny wariant ma pozostać edytowalny i odrębny. Uzgodniono potwierdzanie niepewnych propozycji OpenAI Decisions, prywatne ćwiczenia i aliasy, lokalne obrazki, standardową nazwę na karcie z zachowanym oryginałem, istniejący głos w krótkich fragmentach i wyższe limity źródeł. Wydzielono T12-K-P (done dokumentacyjnie) i T12-K (todo do osobnego wdrożenia) z D049 oraz [pełnym planem](T12_K_TOZSAMOSC_CWICZEN.md). T12-J i odroczony T12 zachowują ID; T16-I oraz D048 bez zmian. Nie zmieniono kodu, bazy, limitów działającej aplikacji, danych ani usług. Nowy [handoff](handoffs/2026-10-20-T12-K-P-plan-tozsamosci.md) zastępuje prompt ze starszego handoffu T12-J.

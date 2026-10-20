@@ -85,11 +85,14 @@ describe("T06: syntetyczny zestaw i walidacja szkicu", () => {
     await expect(validateSource("pdf", "application/pdf", new TextEncoder().encode("niby PDF"))).rejects.toThrow();
     await expect(validateSource("image", "image/png", new Uint8Array([0xff, 0xd8, 0xff, 0xd9]))).rejects.toThrow();
     await expect(validateSource("text", "text/plain", new Uint8Array(IMPORT_LIMITS.textBytes + 1))).rejects.toThrow();
+    await expect(validateSource("pdf", "application/pdf", new Uint8Array(IMPORT_LIMITS.pdfBytes + 1))).rejects.toThrow();
+    await expect(validateSource("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", new Uint8Array(IMPORT_LIMITS.xlsxBytes + 1))).rejects.toThrow();
+    await expect(validateSource("image", "image/png", new Uint8Array(IMPORT_LIMITS.imageBytes + 1))).rejects.toThrow();
   });
   it("odrzuca PDF przekraczający limit rzeczywistych stron", async () => {
     const pdf = await PDFDocument.create();
     for (let i = 0; i < IMPORT_LIMITS.pdfPages + 1; i++) pdf.addPage();
-    await expect(validateSource("pdf", "application/pdf", await pdf.save())).rejects.toThrow("od 1 do 6");
+    await expect(validateSource("pdf", "application/pdf", await pdf.save())).rejects.toThrow("od 1 do 20");
   });
   it("przyjmuje sześć stron PDF i sprawdza strukturę XLSX", async () => {
     const pdf = await PDFDocument.create();

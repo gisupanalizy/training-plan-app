@@ -1,6 +1,6 @@
 # T12-K — wspólna tożsamość ćwiczeń w planach
 
-Data planu: 2026-10-20. Status: **plan uzgodniony z użytkownikiem; implementacja niewykonana**. Zadanie dokumentacyjne T12-K-P jest odrębne od przyszłego wdrożenia T12-K. Ten dokument jest punktem startowym dla implementatora razem z [ROADMAP](ROADMAP.md), [D049](DECISIONS.md#d049--t12-k-wspólna-tożsamość-ćwiczeń) i [handoffem](handoffs/2026-10-20-T12-K-P-plan-tozsamosci.md).
+Data planu: 2026-10-20. Status: **done lokalnie na `codex/t12-k`**. Lokalny Supabase ma obie migracje tożsamości. Inna baza potrzebuje `20261020170000` i `20261020183000`. Wynik: [handoff](handoffs/2026-10-20-T12-K-tozsamosc.md).
 
 ## Cel produktu i odbiorcy
 
