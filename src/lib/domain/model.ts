@@ -179,10 +179,12 @@ export function selectApplicableOneRepMax(
   records: readonly OneRepMaxRecord[],
   exerciseId: string,
   performedOn: string,
+  exerciseIds?: readonly string[],
 ): OneRepMaxRecord | null {
   if (!isIsoDate(performedOn)) throw new Error("Niepoprawna data treningu");
+  const allowed = new Set([exerciseId, ...(exerciseIds ?? [])]);
   return records
-    .filter((record) => record.exerciseId === exerciseId && isIsoDate(record.effectiveOn) && record.effectiveOn <= performedOn)
+    .filter((record) => allowed.has(record.exerciseId) && isIsoDate(record.effectiveOn) && record.effectiveOn <= performedOn)
     .sort((a, b) => b.effectiveOn.localeCompare(a.effectiveOn) || b.createdAt.localeCompare(a.createdAt))[0] ?? null;
 }
 

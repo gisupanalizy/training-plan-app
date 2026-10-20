@@ -51,12 +51,13 @@ export function analyzeProgress(workouts: ProgressWorkout[], performed: Progress
     const session = block && sessions.get(block.workout_session_id);
     const exercise = block && catalog.get(block.exercise_id);
     if (!block || !session || !exercise) continue;
-    const id = `${session.id}:${exercise.id}`;
+    const identityKey = exercise.identityId ?? exercise.id;
+    const id = `${session.id}:${identityKey}`;
     let row = grouped.get(id);
     if (!row) {
-      row = { point: { id, workoutId: session.id, exerciseId: exercise.id, date: session.performed_on,
+      row = { point: { id, workoutId: session.id, exerciseId: identityKey, date: session.performed_on,
         performedAt: session.performed_at ?? null, timeZone: session.time_zone ?? "Europe/Warsaw", status: session.status,
-        name: block.target_name_snapshot, performedExerciseIds: [], sets: [], metrics: blankMetrics() }, external: [], bodyweight: [] };
+        name: exercise.identityName ?? block.target_name_snapshot, performedExerciseIds: [], sets: [], metrics: blankMetrics() }, external: [], bodyweight: [] };
       grouped.set(id, row);
     }
     const source = { setId: set.id, performedExerciseId: block.id, position: set.position ?? null, reps: set.actual_reps, kg: set.actual_kg };
@@ -83,7 +84,12 @@ export function analyzeProgress(workouts: ProgressWorkout[], performed: Progress
     point.metrics.totalReps = sum(bodyweight, s => s.reps!);
     point.metrics.setCount = sum(bodyweight, () => 1);
   }
-  return exercises.map(exercise => {
+  const identities = new Map<string, ExerciseInfo>();
+  for (const exercise of exercises) {
+    const key = exercise.identityId ?? exercise.id;
+    if (!identities.has(key)) identities.set(key, { ...exercise, id: key, name: exercise.identityName ?? exercise.name, variant: exercise.identityId ? exercise.variant : exercise.variant });
+  }
+  return [...identities.values()].map(exercise => {
     const points = [...grouped.values()].map(row => row.point).filter(p => p.exerciseId === exercise.id).sort(comparePointTime);
     const records: Record<Metric, ProgressRecord | null> = { estimatedMax: null, maxWeight: null, volume: null, maxReps: null, totalReps: null, setCount: null };
     for (const point of points) for (const metric of Object.keys(records) as Metric[]) {

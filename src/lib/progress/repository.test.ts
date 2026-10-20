@@ -7,7 +7,7 @@ type Row = Record<string, unknown>;
 const queries: { table: string; owner?: string; offset: number }[] = [];
 function clientFixture(tables: Record<string, Row[]>, user: string | null = "owner-a") {
   return { auth: { getUser: async () => ({ data: { user: user ? { id: user } : null } }) }, from: (table: string) => {
-    let rows = [...tables[table]], offset = 0, end = 499, owner: string | undefined;
+    let rows = [...(tables[table] ?? [])], offset = 0, end = 499, owner: string | undefined;
     const query = {
       select: () => query, order: () => query,
       eq: (key: string, value: string) => { if (key === "owner_id") owner = value; rows = rows.filter(row => row[key] === value); return query; },

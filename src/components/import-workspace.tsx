@@ -9,14 +9,15 @@ import { ImportReview } from "./import-review";
 import type { PlanEditorDocument } from "@/lib/domain/plan-editor";
 import type { ImportQuestion } from "@/lib/imports/questions";
 import type { ReviewProgress } from "@/lib/imports/review";
-import { IMPORT_LIMITS, XLSX_MIME } from "@/lib/imports/limits";
+import { IMPORT_LIMITS, STANDARD_UPLOAD_BYTES, XLSX_MIME } from "@/lib/imports/limits";
+import { uploadResumable } from "@/lib/imports/resumable-upload";
 
 type Job = { id: string; source_kind: string; status: string; attempt_number: number; draft: Record<string, unknown> | null;
   review_data: { document: PlanEditorDocument; answers: Record<string, unknown>; progress?: ReviewProgress } | null; validation_issues: { path: string; message: string }[];
   error_code: string | null; committed_plan_id?: string | null; expires_at: string };
 type Detail = { job: Job; document: PlanEditorDocument | null; questions: ImportQuestion[] };
 type ListItem = Pick<Job, "id" | "status" | "source_kind" | "attempt_number" | "error_code">;
-const labels: Record<string, string> = { upload_pending: "Czeka na plik", uploaded: "Gotowy do odczytu", processing: "Odczytywanie", needs_review: "Do korekty", failed: "Nie udało się odczytać", cancelled: "Anulowany", committed: "Zatwierdzony" };
+const labels: Record<string, string> = { upload_pending: "Czeka na plik", uploaded: "Gotowy do odczytu", processing: "Odczytywanie", partial: "Odczyt w częściach", needs_review: "Do korekty", failed: "Nie udało się odczytać", cancelled: "Anulowany", committed: "Zatwierdzony" };
 const statusTone: Record<string, "neutral" | "success" | "warning" | "danger"> = { upload_pending: "warning", uploaded: "neutral", processing: "warning", needs_review: "warning", failed: "danger", cancelled: "neutral", committed: "success" };
 const phaseCopy: Record<string, string> = {
   uploading: "Wysyłka nie jest zakończona. Plan nie jest jeszcze zapisany.",
@@ -104,7 +105,15 @@ export function ImportWorkspace({ initialId, supabaseUrl, supabaseKey }: { initi
     if (mime === "application/pdf" && selected.size <= IMPORT_LIMITS.pdfBytes) return "pdf";
     if (mime === XLSX_MIME && selected.size <= IMPORT_LIMITS.xlsxBytes) return "xlsx";
     if (["image/png", "image/jpeg"].includes(mime) && selected.size <= IMPORT_LIMITS.imageBytes) return "image";
-    throw new Error("Wybierz PDF do 1 MB i 6 stron, XLSX do 1 MB albo PNG/JPEG do 2 MB. Inne formaty nie są obsługiwane.");
+    throw new Error("Wybierz PDF do 10 MB i 20 stron, XLSX do 5 MB albo PNG/JPEG do 10 MB. Inne formaty nie są obsługiwane.");
+  }
+  async function readSource(importId: string) {
+    let step = await json(await fetch(`/api/imports/${importId}/process`, { method: "POST" }));
+    for (let guard = 0; step.resume; guard += 1) {
+      if (guard > 15) throw new Error("Odczyt PDF nie zakończył się po wszystkich częściach.");
+      setStage(`Odczytywanie źródła — część ${step.progress.done} z ${step.progress.total}`);
+      step = await json(await fetch(`/api/imports/${importId}/process`, { method: "POST" }));
+    }
   }
   async function start() {
     setError(""); setBusy(true);
@@ -114,7 +123,7 @@ export function ImportWorkspace({ initialId, supabaseUrl, supabaseKey }: { initi
       if (!selected && mode !== "text") throw new Error("Wybierz plik lub zrób zdjęcie.");
       const kind = selected ? validateFile(selected) : "text";
       const bytes = new TextEncoder().encode(text);
-      if (!selected && (!text.trim() || bytes.length > IMPORT_LIMITS.textBytes)) throw new Error("Wklej tekst do 30 KB.");
+      if (!selected && (!text.trim() || bytes.length > IMPORT_LIMITS.textBytes)) throw new Error("Wklej tekst do 100 KB.");
       setStage("Tworzenie prywatnego importu");
       const created = await json(await fetch("/api/imports", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind, mime: selected?.type ?? "text/plain", size: selected?.size ?? bytes.length, ...(selected ? {} : { text }) }) }));
       createdId = created.id ?? created.job?.id;
@@ -122,20 +131,29 @@ export function ImportWorkspace({ initialId, supabaseUrl, supabaseKey }: { initi
       select(createdId);
       if (selected) {
         setStage("Wysyłanie pliku do prywatnego magazynu");
-        const upload = await client.current.storage.from("training-imports").uploadToSignedUrl(created.path, created.token, selected, { contentType: selected.type });
-        if (upload.error) throw new Error("Nie udało się wysłać pliku. Możesz anulować import i spróbować ponownie.");
+        if (selected.size > STANDARD_UPLOAD_BYTES) {
+          const { data: sessionData } = await client.current.auth.getSession();
+          await uploadResumable({ endpoint: `${supabaseUrl}/storage/v1/upload/resumable`, token: created.token, apiKey: supabaseKey, accessToken: sessionData.session?.access_token, bucket: "training-imports", path: created.path, file: selected, contentType: selected.type, onProgress: (loaded, total) => setStage(`Wysyłanie pliku ${Math.round(loaded / total * 100)}%`) });
+        } else {
+          const upload = await client.current.storage.from("training-imports").uploadToSignedUrl(created.path, created.token, selected, { contentType: selected.type });
+          if (upload.error) throw new Error("Nie udało się wysłać pliku. Możesz anulować import i spróbować ponownie.");
+        }
         setStage("Sprawdzanie pliku");
         await json(await fetch(`/api/imports/${createdId}/upload`, { method: "POST" }));
       }
       setStage("Odczytywanie źródła — większy plik może zająć do kilku minut");
-      await json(await fetch(`/api/imports/${createdId}/process`, { method: "POST" }));
+      await readSource(createdId);
       setStage(""); await load(createdId); await loadList();
     } catch (cause) { setError((cause as Error).message); if (createdId) await load(createdId); }
     finally { setBusy(false); setStage(""); }
   }
   async function action(actionName: "process" | "cancel") {
     if (!id) return; setBusy(true); setError(""); setStage(actionName === "process" ? "Odczytywanie źródła" : "Anulowanie importu");
-    try { await json(await fetch(`/api/imports/${id}/${actionName}`, { method: "POST" })); await load(id); await loadList(); }
+    try {
+      if (actionName === "process") await readSource(id);
+      else await json(await fetch(`/api/imports/${id}/${actionName}`, { method: "POST" }));
+      await load(id); await loadList();
+    }
     catch (cause) { setError((cause as Error).message); await load(id); }
     finally { setBusy(false); setStage(""); }
   }
@@ -157,9 +175,9 @@ export function ImportWorkspace({ initialId, supabaseUrl, supabaseKey }: { initi
         <Link className={styles.secondaryAction} href="/plany/edytor"><Icon name="edit" size={22} /><span><strong>Utwórz ręcznie</strong><small>Bez odczytu AI</small></span></Link>
       </div>
       <section className={styles.sourceForm}><h2>{mode === "file" ? "Dodaj dokument" : mode === "camera" ? "Zrób zdjęcie" : "Tekst planu"}</h2>
-        {mode === "file" && <label className="editor-field">PDF (1–6 stron), XLSX, PNG lub JPEG<input type="file" accept=".pdf,.xlsx,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/png,image/jpeg" onChange={(event) => setFile(event.target.files?.[0] ?? null)} /></label>}
+        {mode === "file" && <label className="editor-field">PDF (do 20 stron), XLSX, PNG lub JPEG<input type="file" accept=".pdf,.xlsx,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,image/png,image/jpeg" onChange={(event) => setFile(event.target.files?.[0] ?? null)} /></label>}
         {mode === "camera" && <div><video className="import-video" ref={video} playsInline muted aria-label="Podgląd aparatu" /><Button variant="primary" onClick={capture} disabled={!stream.current}>Zrób zdjęcie</Button><p>Po odmowie aparatu wybierz zdjęcie z plików.</p></div>}
-        {mode === "text" && <label className="editor-field">Tekst planu<textarea value={text} maxLength={30000} onChange={(event) => setText(event.target.value)} placeholder="Wklej plan treningowy…" /></label>}
+        {mode === "text" && <label className="editor-field">Tekst planu<textarea value={text} maxLength={100000} onChange={(event) => setText(event.target.value)} placeholder="Wklej plan treningowy…" /></label>}
         {file && <p>Wybrany plik: {file.name} ({Math.ceil(file.size / 1024)} KB)</p>}
         <Button variant="primary" disabled={busy} onClick={() => void start()}>Rozpocznij import</Button>
       </section>
@@ -177,7 +195,7 @@ export function ImportWorkspace({ initialId, supabaseUrl, supabaseKey }: { initi
       <p>Źródło: {job.source_kind.toUpperCase()} · próba {job.attempt_number}/3 · dostępne do {new Date(job.expires_at).toLocaleDateString("pl-PL")}</p>
       {job.error_code && <p className="auth-error" role="alert">Błąd: {job.error_code}</p>}
       <div className={styles.jobActions}>
-        {(["uploaded", "failed", "processing"].includes(job.status)) && <Button variant={job.status === "failed" ? "primary" : "secondary"} disabled={busy} onClick={() => void action("process")}>Odczytaj / ponów próbę</Button>}
+        {(["uploaded", "failed", "processing", "partial"].includes(job.status)) && <Button variant={job.status === "failed" ? "primary" : "secondary"} disabled={busy} onClick={() => void action("process")}>Odczytaj / ponów próbę</Button>}
         {!["committed", "cancelled"].includes(job.status) && <Button variant="ghost" disabled={busy && job.status !== "processing"} onClick={() => void action("cancel")}>Anuluj import</Button>}
         {job.status === "committed" && job.committed_plan_id && <Link className={styles.primaryLink} href={`/plany/${job.committed_plan_id}`}>Otwórz zapisany plan</Link>}
       </div>

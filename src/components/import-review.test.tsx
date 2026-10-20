@@ -9,7 +9,7 @@ import {ImportReview} from './import-review';
 vi.mock('next/navigation',()=>({useRouter:()=>({push:vi.fn(),refresh:vi.fn()})}));
 vi.mock('./import-source',()=>({ImportSource:()=> <p>Oryginalny dokument</p>,pageFromReference:(r:string)=>Number(/strona\s+(\d+)/i.exec(r)?.[1])||null}));
 const requests:{url:string;body:Record<string,unknown>}[]=[];
-beforeEach(()=>{requests.length=0;vi.stubGlobal('fetch',vi.fn(async(url:string,init:RequestInit)=>{requests.push({url,body:JSON.parse(String(init.body))});return {ok:true,json:async()=>({saved:true})};}));});
+beforeEach(()=>{requests.length=0;vi.stubGlobal('fetch',vi.fn(async(url:string,init:RequestInit)=>{if(String(url).includes('/api/exercises/suggest'))return {ok:true,json:async()=>({results:[]})};requests.push({url,body:JSON.parse(String(init.body))});return {ok:true,json:async()=>({saved:true})};}));});
 afterEach(()=>{cleanup();vi.unstubAllGlobals();});
 function props(index=0){const raw=real.rows[index].result.job.draft;const {document,issues}=validateDraft(raw);return {id:'00000000-0000-4000-8000-000000000007',kind:index?'xlsx':'pdf',text:'',initial:document,rawDraft:raw as unknown as Record<string,unknown>,questions:importQuestions(raw,issues)};}
 it('zaczyna od krótkiej listy ćwiczeń bez otwartego źródła i formularzy serii',async()=>{
@@ -32,9 +32,9 @@ it('edytuje cały blok, zachowuje ID/uwagi/optional i odrzuca niezastosowany for
  expect(next.sets.map(s=>s.reviewId)).toEqual(old.sets.map(s=>s.reviewId));expect(next.sets.map(s=>s.note)).toEqual(old.sets.map(s=>s.note));expect(next.sets.map(s=>s.isOptional)).toEqual(old.sets.map(s=>s.isOptional));expect(next.sets.every(s=>s.repsMin===2)).toBe(true);
 });
 it('pozostaje w kroku pierwszym po błędzie zapisu i pozwala ponowić',async()=>{
- const fetch=vi.fn().mockRejectedValueOnce(new Error('network')).mockResolvedValue({ok:true,json:async()=>({saved:true})});vi.stubGlobal('fetch',fetch);
+ let saves=0;const fetch=vi.fn(async(url:string)=>{if(String(url).includes('/api/exercises/suggest'))return {ok:true,json:async()=>({results:[]})};saves+=1;if(saves===1)throw new Error('network');return {ok:true,json:async()=>({saved:true})};});vi.stubGlobal('fetch',fetch);
  render(<ImportReview {...props()}/>);fireEvent.click(screen.getByRole('button',{name:'Potwierdź ćwiczenia'}));await screen.findByRole('alert');expect(screen.getByRole('heading',{name:'Nazwy ćwiczeń i kolejność'})).toBeTruthy();
- fireEvent.click(screen.getByRole('button',{name:'Potwierdź ćwiczenia'}));await screen.findByRole('heading',{name:'Serie i superserie'});expect(fetch).toHaveBeenCalledTimes(2);
+ fireEvent.click(screen.getByRole('button',{name:'Potwierdź ćwiczenia'}));await screen.findByRole('heading',{name:'Serie i superserie'});expect(fetch.mock.calls.filter(([url])=>!String(url).includes('/api/exercises/suggest'))).toHaveLength(2);
 });
 it('wybór ankiety jest etapowy, ma podgląd i nie zmienia danych przed zastosowaniem',async()=>{
  render(<ImportReview {...props(1)}/>);fireEvent.click(screen.getByRole('button',{name:/Wyjaśnij niejasności/}));
@@ -82,6 +82,7 @@ it('tworzy grupę i zmienia kolejność bez utraty celów, ale wymaga ponownego 
 it('ponawia zatwierdzenie tym samym ID bez PATCH, jeśli odpowiedź z publikacji zaginęła',async()=>{
  const p=props();let approved=0;const approveBodies:Record<string,unknown>[]=[];let patches=0;
  vi.stubGlobal('fetch',vi.fn(async(url:string,init:RequestInit)=>{
+  if(String(url).includes('/api/exercises/suggest'))return {ok:true,json:async()=>({results:[]})};
   if(url.endsWith('/approve')){approveBodies.push(JSON.parse(String(init.body)));if(++approved===1)throw new Error('lost response after commit');return {ok:true,json:async()=>({planId:'00000000-0000-4000-8000-000000000099'})};}
   patches++;return approved?{ok:false,json:async()=>({error:'Szkic zatwierdzony'})}:{ok:true,json:async()=>({saved:true})};
  }));

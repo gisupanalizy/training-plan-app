@@ -7,6 +7,7 @@ import { seriesBlocks, exerciseSummary, loadLabel, restLabel, optionalLabel, ses
 import { ReviewDialog } from './review-dialog';
 import { ReviewGroupEdit } from './review-group-edit';
 import { PlanExerciseEdit, PlanSeriesEdit, PlanDayEdit, type CatalogExercise } from './plan-edit-dialogs';
+import { applyExactIdentity, applySuggestionResult, identityProposalOpen } from '@/lib/exercises/identity';
 import { Button, ExerciseIllustration, Icon } from '@/components/ui';
 import { PrescriptionFacts } from './exercise-summary';
 import { planMetrics } from '@/lib/workouts/presentation';
@@ -105,6 +106,8 @@ export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog,
       }
       setError(message); return;
     }
+    const proposal = document.sessions.flatMap(session => session.exercises).find(identityProposalOpen);
+    if (proposal) { setError(`Potwierdź propozycję albo zostaw własną nazwę: ${proposal.suggestion?.pl ?? proposal.name}.`); return; }
     pending.current ??= { operationId: crypto.randomUUID(), planId, expectedVersionId, document: structuredClone(document) };
     busy.current = true; setSaving(true);
     try {
@@ -119,19 +122,31 @@ export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog,
   const modalSession = modal && 'sessionId' in modal ? document.sessions.find(session => session.reviewId === modal.sessionId) : undefined;
   const modalExercise = modal && 'exerciseId' in modal ? modalSession?.exercises.find(exercise => exercise.reviewId === modal.exerciseId) : undefined;
   const voicePlan = voiceResult?.proposal as { document: PlanEditorDocument; issues: { path: string; message: string }[] } | undefined;
-  function applyVoice() {
+  async function applyVoice() {
     if (!voicePlan) return;
+    const incoming = withReviewIds(voicePlan.document);
+    incoming.sessions.forEach(session => {
+      session.reviewId = crypto.randomUUID();
+      session.exercises.forEach(exercise => {
+        exercise.reviewId = crypto.randomUUID();
+        Object.assign(exercise, applyExactIdentity(exercise));
+        exercise.sets.forEach(set => { set.reviewId = crypto.randomUUID(); });
+      });
+    });
+    const unresolved = incoming.sessions.flatMap(session => session.exercises).filter(exercise => !exercise.canonicalKey && exercise.assignment !== "custom");
+    if (unresolved.length) {
+      try {
+        const response = await fetch("/api/exercises/suggest", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ items: unresolved.map(exercise => ({ id: exercise.reviewId, name: exercise.originalName ?? exercise.name, variant: exercise.variant, equipment: exercise.equipment })) }) });
+        const body = response.ok ? await response.json() : null;
+        for (const exercise of unresolved) {
+          const result = body?.results?.find((item: { id?: string; source?: string; suggestion?: { key?: string } }) => item.id === exercise.reviewId);
+          if (result) Object.assign(exercise, applySuggestionResult(exercise, result.source && result.suggestion?.key ? { source: result.source, key: result.suggestion.key } : null));
+        }
+      } catch { /* Brak sugestii zostawia ręczny wybór. */ }
+    }
     edit(draft => {
       if (!draft.name.trim()) draft.name = voicePlan.document.name;
       const blank = draft.sessions.every(session => session.exercises.every(exercise => !exercise.name.trim()));
-      const incoming = withReviewIds(voicePlan.document);
-      incoming.sessions.forEach(session => {
-        session.reviewId = crypto.randomUUID();
-        session.exercises.forEach(exercise => {
-          exercise.reviewId = crypto.randomUUID();
-          exercise.sets.forEach(set => { set.reviewId = crypto.randomUUID(); });
-        });
-      });
       draft.sessions = blank ? incoming.sessions : [...draft.sessions, ...incoming.sessions];
     });
     close();
@@ -139,7 +154,7 @@ export function CompactPlanEditor({ initial, planId, expectedVersionId, catalog,
   function card(exercise: PlanEditorExercise, session: PlanEditorSession, readonly = false) {
     const blocks = seriesBlocks(exercise);
     const shortGoal = blocks.slice(0, 2).map(block => `${block.minimum === block.maximum ? block.maximum : `${block.minimum}–${block.maximum}`} × ${goalLabel(block.sets[0], true)}`).join(' + ') + (blocks.length > 2 ? ` + ${blocks.length - 2} ${blocks.length === 3 ? 'blok' : 'bloków'}` : '');
-    const content = <><div className={styles.cardTop}><ExerciseIllustration className={styles.thumb} name={exercise.name} variant={exercise.variant} equipment={exercise.equipment} /><div><h3>{exercise.name || 'Uzupełnij ćwiczenie'}</h3>{[exercise.variant, exercise.equipment, optionalLabel(exercise)].filter(Boolean).length > 0 && <small>{[exercise.variant, exercise.equipment, optionalLabel(exercise)].filter(Boolean).join(' · ')}</small>}</div>{!readonly && <Icon name="chevronRight" size={18} />}</div><PrescriptionFacts metrics={{ ...planMetrics(exercise), series: shortGoal }} /></>;
+    const content = <><div className={styles.cardTop}><ExerciseIllustration className={styles.thumb} name={exercise.name} variant={exercise.variant} equipment={exercise.equipment} canonicalKey={exercise.canonicalKey} assetFile={exercise.assetFile} /><div><h3>{exercise.name || 'Uzupełnij ćwiczenie'}</h3>{exercise.originalName && exercise.originalName !== exercise.name && <small>W źródle: {exercise.originalName}</small>}{[exercise.variant, exercise.equipment, optionalLabel(exercise)].filter(Boolean).length > 0 && <small>{[exercise.variant, exercise.equipment, optionalLabel(exercise)].filter(Boolean).join(' · ')}</small>}</div>{!readonly && <Icon name="chevronRight" size={18} />}</div><PrescriptionFacts metrics={{ ...planMetrics(exercise), series: shortGoal }} /></>;
     return <article className="review-exercise-card plan-exercise-card" key={exercise.reviewId} data-exercise-id={exercise.reviewId}>{readonly ? <div className={styles.cardOpen}>{content}</div> : <button type="button" className={styles.cardOpen} aria-label={`Edytuj ćwiczenie: ${exercise.name || 'Uzupełnij ćwiczenie'}`} onClick={() => open({ type: 'exercise', sessionId: session.reviewId!, exerciseId: exercise.reviewId! })}>{content}</button>}</article>;
   }
   function trainingCards(session: PlanEditorSession, readonly = false) {

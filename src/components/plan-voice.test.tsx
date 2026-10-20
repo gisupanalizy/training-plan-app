@@ -21,5 +21,6 @@ test("podyktowany plan jest widocznym szkicem i nie publikuje się sam", async (
   expect(fetchMock).toHaveBeenCalledTimes(1);
   fireEvent.click(screen.getByRole("button", { name: "Dodaj propozycję do szkicu" }));
   await waitFor(() => expect(screen.getByRole("textbox", { name: "Nazwa planu" })).toHaveProperty("value", "Plan z głosu"));
-  expect(fetchMock).toHaveBeenCalledTimes(1);
+  expect(fetchMock.mock.calls.some(([url]) => String(url).includes("/api/plans"))).toBe(false);
+  expect(String(fetchMock.mock.calls.at(-1)?.[0])).toBe("/api/exercises/suggest");
 });

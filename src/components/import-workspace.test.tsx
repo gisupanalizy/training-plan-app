@@ -44,7 +44,7 @@ describe("T07 ekran importu", () => {
     fireEvent.click(screen.getByRole("button", { name: "Aparat" }));
     expect(await screen.findByRole("alert")).toHaveProperty("textContent", expect.stringContaining("Odmówiono dostępu"));
     fireEvent.click(screen.getByRole("button", { name: "Plik" }));
-    expect(screen.getByLabelText(/PDF \(1–6 stron\)/)).toBeTruthy();
+    expect(screen.getByLabelText(/PDF \(do 20 stron\)/)).toBeTruthy();
     expect(screen.getByRole("region", { name: "Historia importów" })).toBeTruthy();
     expect(screen.getByText("Nie masz jeszcze importów.")).toBeTruthy();
   });

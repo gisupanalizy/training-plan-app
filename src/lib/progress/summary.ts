@@ -5,7 +5,7 @@ export type ProgressSet = { id?: string; position?: number; performed_exercise_i
   target_duration_seconds_snapshot?: number | null; target_duration_seconds_max_snapshot?: number | null; target_distance_meters_snapshot?: number | null;
   actual_duration_seconds?: number | null; actual_distance_meters?: number | null;
 };
-export type ExerciseInfo = { id: string; name: string; variant: string | null; equipment: string | null; load_mode: string };
+export type ExerciseInfo = { id: string; name: string; variant: string | null; equipment: string | null; load_mode: string; identityId?: string | null; identityName?: string | null };
 
 export function summarizeProgress(workouts: ProgressWorkout[], performed: ProgressExercise[], sets: ProgressSet[], exerciseInfo: ExerciseInfo[]) {
   const byExercise = new Map(exerciseInfo.map((item) => [item.id, item]));
