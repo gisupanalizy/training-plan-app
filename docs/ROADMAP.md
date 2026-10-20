@@ -455,9 +455,38 @@ D047. Tempo jest jedynym docelowym wyglądem i zastępuje paletę Noc. D046 zost
 
 ### T16-I — Niezależny odbiór
 
-- Status: bramka nieprzyjęta. Właściciel: Cursor agent, sesja 2026-10-20; pliki dokumentacji zwolnione, `src/` nie ruszane. Zależności: odebrane B–H, inny agent niż ich autorzy. Brak propozycji `T16-CONTRACT`. Poprawka zapisu jest w drzewie roboczym i nie zamyka tej bramki.
-- Zakres: macierz 85 stanów i lokalny przepływ na `next start`. Defekt z tego odbioru: przy 390×844 `Zapisz i przejdź dalej` nie kończył się nad dolną nawigacją. D046 tego nie zamyka. Poprawkę wykonał T16-D 2026-10-20.
-- Odbiór: `npm test` 271/9 skip, build i sekwencyjny typecheck PASS. Chrome i API A/F/import/edytor/D/E/T13-A/T05/T09/T15-C HTTP oraz osobny T13-C PASS. T15-B exit 1. [Raport](reports/2026-10-19-T16-I-tempo-acceptance.md), [handoff](handoffs/2026-10-19-T16-I-niezalezny-odbior.md).
-- Przekazanie: nowy T16-I innym agentem niż autor poprawki z 2026-10-20. High; główna akcja zapisu.
-- Zakres/odbiór/własność: [etap I](T16_TEMPO_IMPLEMENTATION.md#i--niezależny-odbiór). Macierz 85 stanów i pełny lokalny przepływ. Recenzent nie poprawia `src/` po cichu.
-- Przekazanie: prompt w specyfikacji I. High; odbiór przekrojowy.
+- Status: done lokalnie (2026-10-20, ponowny odbiór). Właściciel: Cursor agent, sesja inna niż autorzy B–H i poprawki widoczności; pliki dokumentacji zwolnione, `src/` nie ruszane. Zależności: odebrane B–H i poprawka zapisu — spełnione. Brak propozycji `T16-CONTRACT`.
+- Zakres: macierz 85 stanów i lokalny przepływ na `next start`. Pierwsza bramka odrzuciła zasłonięty zapis; poprawka T16-D jest objęta tym odbiorem. D046 zostaje doskrolowaniem kart.
+- Odbiór: `npm test` 274/9 skip, build i sekwencyjny typecheck PASS. Chrome i API na `localhost:3018`: T15-A, T15-B z T13-C, import, edytor, T15-D, T15-E przeglądarka i API, T15-F, T13-A, T05, T09, T15-C HTTP — PASS. Przy 390×844 zapis serii kończy się nad nawigacją. [Raport](reports/2026-10-19-T16-I-tempo-acceptance.md), [handoff](handoffs/2026-10-20-T16-I-ponowny-odbior.md). Pierwsze odrzucenie: [handoff](handoffs/2026-10-19-T16-I-niezalezny-odbior.md).
+- Przekazanie: brak kolejnego zadania programu T16. T16-K, telefon, Safari i publikacja wymagają osobnego zlecenia.
+
+### Ilustracje ćwiczeń — po T15
+
+- Status: done lokalnie (2026-10-20). Poza programem T16. Właściciel: Cursor agent, ta sesja.
+- Zakres: resolver w `src/lib/ui/exercise-assets.ts` i 25 dodatkowych SVG w `public/exercise-assets/`. D048. Nie zmienia T16-I.
+- Odbiór: testy resolvera i wspólnych kontrolek PASS. [Handoff](handoffs/2026-10-20-ilustracje-cwiczen.md).
+
+### Ilustracje ćwiczeń — podpięcie PNG
+
+- Status: done lokalnie (2026-10-20). Właściciel: Codex — integrator tej sesji. Zależności: gotowy katalog PNG i wcześniejszy resolver — spełnione. Poza programem T16; nie zamyka T16-I.
+- Zakres: jawna mapa plików dla sprawdzonych nazw, osobny bazowy muscle-up, obsługa sprzętu kółek, testy i dokumentacja. Bez zmian danych treningu, snapshotów i manifestu CC BY-SA.
+- Odbiór: każda sprawdzona nazwa wskazuje istniejący SVG lub PNG, obcy sprzęt nadal gasi ikonę, nieznany wariant zostaje sylwetką; testy resolvera i UI, typy oraz — jeśli dostępna — karta planu w lokalnej przeglądarce.
+- Wynik: 50 kluczy z plikami, także zapis sprzętu `rings` wykryty w istniejącym planie. 13 testów celowanych i 274/9 skip w pełnej suite, typy PASS; Chrome na `localhost:3000` potwierdził pięć kart i załadowane PNG. [Handoff](handoffs/2026-10-20-ikony-png-podpiecie.md).
+
+### T12-J — porównanie modeli decyzyjnych dla nazw ćwiczeń
+
+- Status: done jako eksperyment (2026-10-20). Właściciel: Codex, ta sesja. Zależności: 50 sprawdzonych kluczy, lokalne przykłady importu i dostęp do Vercel AI Gateway — spełnione. Nie zamyka odroczonego T12 ani nie uruchamia integracji.
+- Zakres: porównanie `typesafe-ai/jev-1.14.0` z `openai/gpt-6-luna-decisions` na tych samych 47 nazwach ze źródeł i 15 syntetycznych parafrazach, z wyborem jednego z 50 kluczy lub `none`. Basal pominięty po doprecyzowaniu wymogu działania online przez Vercel. Bez zmian aplikacji, danych treningu i resolvera ikon.
+- Odbiór: rzeczywiste odpowiedzi, osobno trafne przypisania i bezpieczne odmowy, czas oraz szacunkowy koszt. [Raport](reports/2026-10-20-T12-J-porownanie-jev-decisions.md), [handoff](handoffs/2026-10-20-T12-J-porownanie-decyzji.md).
+
+### T12-K-P — plan wspólnej tożsamości ćwiczeń
+
+- Status: done dokumentacyjnie (2026-10-20). Właściciel: Codex — integrator tej sesji. Zależności: T06-R1/T07-R1/T08/T09 i wynik T12-J — spełnione; odpowiedzi właściciela na wybory produktu — uzyskane.
+- Zakres: jednolita tożsamość ruchu dla importu, ręcznego edytora i istniejącego dyktowania; historia/1RM, nazwa standardowa i oryginał, prywatne ćwiczenia, lokalne ikony, sugestie Decisions z potwierdzeniem oraz realistyczniejsze limity źródeł. Bez implementacji, płatnych prób, migracji i publikacji.
+- Odbiór: samowystarczalny [plan T12-K](T12_K_TOZSAMOSC_CWICZEN.md), D049, prompt wdrożenia i [handoff](handoffs/2026-10-20-T12-K-P-plan-tozsamosci.md); propozycje techniczne odróżnione od wdrożenia. Sprawdzenie spójności dokumentów i linków zamiast testów aplikacji.
+
+### T12-K — wdrożenie wspólnej tożsamości ćwiczeń
+
+- Status: todo, gotowe do rozpoczęcia po zleceniu promptem. Właściciel: —. Zależności: T12-K-P, istniejące T04/T05/T06-R1/T07-R1/T08/T09/T11-C1; przed wywołaniami płatnego modelu wymagane serwerowy klucz i jawny dodatni limit kosztu. Nie zamyka szerokiego, odroczonego T12 ani T16-I.
+- Zakres: [pełny kontrakt i kontekst](T12_K_TOZSAMOSC_CWICZEN.md) — prywatna tożsamość, wspólny matcher, potwierdzenie niepewnych propozycji, wersjonowane plany i historyczne snapshoty, wspólny postęp/1RM, lokalne ilustracje custom, limity PDF 10 MB/20 stron, XLSX 5 MB, obrazu 10 MB i tekstu 100 KB z odpornym przetwarzaniem.
+- Odbiór: wszystkie scenariusze i bramki w specyfikacji, lokalne A/B/anon i retry, pełne testy/typy/build oraz faktycznie wykonana przeglądarka; status `review` po implementacji do odbioru właściciela. Hostowany test i publikacja osobno. [Prompt wdrożenia](prompts/T12-K.md).

@@ -2,6 +2,46 @@
 
 Aktualizacja: 2026-10-20.
 
+## T12-K-P — plan wspólnej tożsamości ćwiczeń, done dokumentacyjnie
+
+Użytkownik doprecyzował cel ponad same ikony: import planów w obecnych formatach, ręczny plan i dyktowane fragmenty mają rozpoznawać tę samą tożsamość ruchu. Uzgodnił standardową polską nazwę po potwierdzeniu, zachowanie oryginału, wspólną historię i rzeczywisty 1RM tylko dla porównywalnych wariantów, prywatne nazwy własne, potwierdzanie parafraz proponowanych przez OpenAI Decisions oraz obrazki wyłącznie z lokalnych zasobów z sylwetką jako fallbackiem. Limity docelowe: PDF 10 MB/20 stron, XLSX 5 MB, PNG/JPEG 10 MB, tekst 100 KB. [Plan i pełny kontekst](T12_K_TOZSAMOSC_CWICZEN.md), [D049](DECISIONS.md#d049--t12-k-wspólna-tożsamość-ćwiczeń), [handoff](handoffs/2026-10-20-T12-K-P-plan-tozsamosci.md), [prompt wdrożenia](prompts/T12-K.md).
+
+**Stan faktyczny:** T12-K-P zapisuje plan; T12-K jest `todo`. Nie zmieniono aplikacji, bazy, ikon, konfiguracji dostawców ani obecnych limitów 1 MB/6 stron PDF, 1 MB XLSX, 2 MB obrazu i 30 KB tekstu. Brak nowych testów funkcjonalnych i próby hostowanej w tej sesji. T12-J pozostaje wynikiem eksperymentu, a szeroki T12 z głosem na żywo nadal jest odroczony. Następny krok: zlecić T12-K załączonym promptem; przed płatną próbą Decisions zapewnić serwerowy klucz i jawny limit kosztu, bez wklejania sekretu do repo lub czatu.
+
+## T12-J — porównanie Jev i OpenAI Decisions, done eksperymentalnie
+
+Na tych samych 62 nazwach i 51 odpowiedziach przez Vercel AI Gateway Jev uzyskał 56/62, a OpenAI Decisions 59/62 względem wstępnych etykiet. Dla 10 nazw bez bezpiecznego odpowiednika Jev poprawnie odmówił 5 razy, OpenAI 7 razy; oba przypisały błędny ruch w pozostałych przypadkach. 52 nazwy z odpowiednikiem: Jev 51 trafień, OpenAI 52. Powtórzenie 25 trudnych nazw utrzymało te same błędy. Etykiety nie są zatwierdzonym przez użytkownika złotym zbiorem. Wynik modelu może być co najwyżej propozycją w korekcie importu, bez automatycznego wyboru ikony lub dopisywania aliasu. Kod i dane aplikacji bez zmian. [Raport](reports/2026-10-20-T12-J-porownanie-jev-decisions.md), [handoff](handoffs/2026-10-20-T12-J-porownanie-decyzji.md).
+
+Późniejszy plan T12-K-P powyżej zastępuje dawną propozycję następnego kroku w tym zakresie. T12 pozostaje odroczone.
+
+## T16-I — ponowny odbiór, done lokalnie
+
+Niezależny recenzent, inny niż autorzy T16-B–H i poprawki widoczności zapisu, nie zmieniał `src/`. Bramka Tempo jest przyjęta lokalnie. Przy 390×844, po uzupełnieniu celów i „Zostań”, `Zapisz i przejdź dalej` kończy się nad `.mobile-nav`. D046 zostaje: czwarta karta podglądu ma dół 1015,75, a czwarta karta treningu 1195,96875, obie przy nawigacji 768, i obie są doskrolowalne. Jedna paleta, pięć tras, brak propozycji `T16-CONTRACT`. [Raport](reports/2026-10-19-T16-I-tempo-acceptance.md), [handoff](handoffs/2026-10-20-T16-I-ponowny-odbior.md).
+
+Sprawdzenia: `npm test` 274 passed / 9 skipped, `npm run build`, potem `npm run typecheck` — PASS. Chrome i prawdziwe lokalne API na produkcyjnym `next start` `localhost:3018`: T15-A, T15-B z T13-C, import, edytor, T15-D, T15-E przeglądarka i API, T15-F, T13-A, T05, T09 oraz T15-C HTTP — PASS. Głos i szkic modelu to mocki; `process` i interpretacja głosu dostały 503. Telefon, Safari i ponowny odczyt Make niewykonane. Serwer 3018 zatrzymany. Po buildzie `.next` jest produkcyjny; wcześniejszy `next dev` na 3000 może wymagać restartu.
+
+Następny krok: brak kolejnego zadania programu T16. T16-K zostaje niegotowe. Telefon, Safari, T10-R1, T11 i publikacja wymagają osobnego zlecenia.
+
+Poniższa sekcja podpięcia PNG jest wcześniejsza i nie jest tym odbiorem.
+
+## Podpięcie PNG ćwiczeń — done lokalnie
+
+Resolver wskazuje jawny istniejący plik SVG lub PNG dla wszystkich 50 sprawdzonych kluczy `exerciseNames`, w tym nowego bazowego muscle-up. Szerokie dopasowanie każdej nazwy zawierającej „muscle up” usunięto. Uzgodnione przybliżenia dostały osobne PNG, a kółka przyjmują `kółka`, `kółka gimnastyczne` oraz `rings` znalezione w istniejącym planie. „Wejście z kopnięciem i wykrok w tył” pokazuje wybrane `step-up-kick.png`. Użytkownik wybrał dostępne PNG dla wycieraczek i rotacji zewnętrznej mimo opisanych niedokładności pozy. Nieznane nazwy nadal dostają wbudowaną sylwetkę; 790 nazw z części 5 nie jest mapowanych automatycznie. [Handoff](handoffs/2026-10-20-ikony-png-podpiecie.md).
+
+Sprawdzenia: 13/13 testów `exercise-assets` i `ui.test`, pełne `npm test` 274 passed / 9 skipped, `npm run typecheck` PASS. W lokalnym Chrome na `localhost:3000` pięć kart istniejącego planu wskazało właściwe PNG; pliki załadowały się z szerokością 1024 px. Nie sprawdzano w przeglądarce wycieraczek ani wszystkich 50 ćwiczeń. Telefon, Safari, build i T16-I niewykonane.
+
+Następny odrębny krok projektu: niezależny ponowny odbiór T16-I przez agenta innego niż autorzy poprawki; podpięcie ikon nie jest jego odbiorem.
+
+## Ilustracje ćwiczeń — lokalny katalog rozszerzony
+
+Poniższy zapis dokumentuje stan sprzed podpięcia PNG opisanego wyżej.
+
+Resolver nie gasi już rysunku, gdy dokument ma własny sprzęt tej nazwy. Doszły klatki Workout Guide, w tym skos, maszyna nad głowę i uzgodnione przybliżenia z D048. Muscle-up w aplikacji nadal używa podciągania: nowe PNG nie są podpięte. Nauka stania na rękach używa dostarczonego rysunku z przodu, z przezroczystym tłem i białą kreską, poza licencją Workout Guide. Brak rysunku pokazuje ogólną sylwetkę, nie napis „ĆW”. W `public/exercise-assets/` leży 809 PNG 1024×1024 z alfą: `handstand-practice.png` oraz wygenerowane ikony z listy [gemini-ikony-cwiczen.md](design/gemini-ikony-cwiczen.md) (ikona ogólna, punkty 1–20 i 787 nazw z części 5). Nie są w manifeście CC BY-SA. Resolver ich nie podpina. `windshield-wiper.png` ma złą poza. [Handoff](handoffs/2026-10-20-ikony-png-calosc.md).
+
+Sprawdzenia: `npx vitest run src/lib/ui/exercise-assets.test.ts src/components/ui/ui.test.tsx` — 11 testów PASS. `localhost:3000` oddaje nowe SVG. Prywatnego planu w przeglądarce nie klikano. Telefon i Safari niewykonane.
+
+Następny krok w tym zakresie: podpiąć gotowe PNG w resolverze albo poprawić poza wycieraczek. Osobno otwarta zostaje bramka T16-I.
+
 ## Subtelne ramy — jak w Figmie
 
 Ramy pól, kart i wierszy biorą `#344245`, ten sam token co separator. Wcześniej `--control` wskazywał tekst pomocniczy `#9daaa7`, więc obrys wyglądał grubiej przy tej samej grubości 1 px. Fokus zostaje bursztynowym obrysem 3 px, a błąd pola ramą `#ffb4ab`. Krok obciążenia zostaje polem, nie wierszem z chevronem. Ta zmiana nie zamyka T16-I. [Handoff](handoffs/2026-10-20-subtelne-ramy.md).

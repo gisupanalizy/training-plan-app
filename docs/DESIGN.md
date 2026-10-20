@@ -1,6 +1,6 @@
 # Forma — system wizualny
 
-Status: docelowy wygląd to Tempo (D047, [brief](tempo-implementation-brief.md), [katalog](tempo-frame-catalog.md)). T16-B–H są w drzewie roboczym jako jeden system, bez drugiego motywu. T16-I nie przyjął bramki: główny zapis serii przy 390×844 nie kończy się nad dolną nawigacją. Nie oznacza publikacji. Historyczne wybory układów: D039/D042/D043/D044 oraz [makiety T14](design/t14-selected-spec.md).
+Status: docelowy wygląd to Tempo (D047, [brief](tempo-implementation-brief.md), [katalog](tempo-frame-catalog.md)). T16-B–H są jednym systemem, bez drugiego motywu. T16-I przyjął lokalną bramkę 2026-10-20: główny zapis serii przy 390×844 kończy się nad dolną nawigacją. Nie oznacza publikacji. Historyczne wybory układów: D039/D042/D043/D044 oraz [makiety T14](design/t14-selected-spec.md).
 
 ## Cel i charakter
 

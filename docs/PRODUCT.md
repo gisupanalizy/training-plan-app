@@ -45,6 +45,10 @@ Panel trenera, subskrypcje, publiczny katalog i ranking, integracje zegarków, p
 
 Dwóch testerów na osobnych kontach może zaimportować plan, poprawić go, wykonać trening z ręcznym i głosowym zapisem, wrócić do wyników po ponownym zalogowaniu i nie ma dostępu do danych drugiej osoby. Scenariusze akceptacyjne: [TESTING](TESTING.md).
 
+## T12-K — uzgodnione rozszerzenie rozpoznawania ćwiczeń, do wdrożenia
+
+Różne zapisy tego samego ruchu w imporcie, ręcznym planie i dyktowanym fragmencie mają prowadzić do jednej prywatnej tożsamości ćwiczenia i wspólnej historii/1RM. Potwierdzony odpowiednik pokazuje standardową nazwę PL, zachowuje źródłową, a istotny wariant pozostaje oddzielny. Dla parafrazy model może jedynie zaproponować przypisanie do ręcznego potwierdzenia; własny specyficzny ruch i aliasy zostają prywatne. Ikona pochodzi z zatwierdzonego ruchu lub ręcznie wybranego lokalnego zasobu, z sylwetką jako fallbackiem. Obecne formaty wystarczą; docelowe limity to PDF 10 MB/20 stron, XLSX 5 MB, obraz 10 MB i tekst 100 KB. Dyktowanie fragmentów do 30 s wystarczy w tym etapie. [Pełny plan](T12_K_TOZSAMOSC_CWICZEN.md) i [D049](DECISIONS.md#d049--t12-k-wspólna-tożsamość-ćwiczeń) opisują zachowanie; nie jest to opis wdrożonej funkcji.
+
 ## Uzgodnione rozszerzenie T13 — planowane, 2026-10-17
 
 Po feedbacku właściciela uzgodniono zwarty mobilny plan/trening z osobnym widokiem ćwiczenia i jedną serią, bibliotekę treningów bez tygodni w bieżącej obsłudze, jeden aktywny trening konta z wyborem powrotu/zakończenia/trwałego usunięcia, atomowe zastąpienie, kalendarz historii i automatyczną datę/godzinę z korektą przy zakończeniu. Wymagania R01–R16 i pełne szczegóły: [T13](T13_MOBILE_WORKOUT.md), D033. Dane tygodni i wariantów, historia/1RM, prywatność, ręczny zapis i zatwierdzanie głosu pozostają zachowane. A/B/C wykonano wyłącznie lokalnie, review do E; D–E nadal wymagają osobnego zlecenia. T13 nie jest funkcją obecnego wdrożenia produkcji.

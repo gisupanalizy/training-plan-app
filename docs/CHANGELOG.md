@@ -1,5 +1,33 @@
 # Historia zmian planu
 
+## 2026-10-20 — T12-K-P plan wspólnej tożsamości ćwiczeń
+
+Po eksperymencie T12-J użytkownik skierował pracę z samych ikon na rozpoznawanie ćwiczeń we wszystkich drogach tworzenia planu. Powód: różne nazwy tego samego ruchu mają dać wspólną historię/1RM i właściwą ikonę, a specyficzny wariant ma pozostać edytowalny i odrębny. Uzgodniono potwierdzanie niepewnych propozycji OpenAI Decisions, prywatne ćwiczenia i aliasy, lokalne obrazki, standardową nazwę na karcie z zachowanym oryginałem, istniejący głos w krótkich fragmentach i wyższe limity źródeł. Wydzielono T12-K-P (done dokumentacyjnie) i T12-K (todo do osobnego wdrożenia) z D049 oraz [pełnym planem](T12_K_TOZSAMOSC_CWICZEN.md). T12-J i odroczony T12 zachowują ID; T16-I oraz D048 bez zmian. Nie zmieniono kodu, bazy, limitów działającej aplikacji, danych ani usług. Nowy [handoff](handoffs/2026-10-20-T12-K-P-plan-tozsamosci.md) zastępuje prompt ze starszego handoffu T12-J.
+
+## 2026-10-20 — T12-J porównanie Jev i OpenAI Decisions
+
+Na życzenie użytkownika przed dalszą integracją przetestowano Jev, a potem OpenAI Decisions przez Vercel AI Gateway na identycznych 47 nazwach lokalnych źródeł i 15 syntetycznych parafrazach. Powód: sprawdzić rozpoznawanie parafraz, odmowę sąsiednich ruchów oraz koszt w architekturze online. Jev uzyskał 56/62 i 5/10 poprawnych odmów, OpenAI 59/62 i 7/10; żaden nie spełnia warunku bezpiecznego automatycznego mapowania. Po doprecyzowaniu wymogu Vercel/online zatrzymano przygotowanie lokalnego Basal przed pobraniem wag i bez uruchomienia modelu. Wydzielono i zamknięto eksperyment T12-J, bez zmiany statusu szerszego T12. Dodano raport i handoff; nie zmieniono kodu, prywatnych danych, D048 ani zatwierdzonych wymagań. Integracja pozostaje propozycją.
+
+## 2026-10-20 — T16-I ponowny odbiór przyjęty
+
+Niezależny odbiór Tempo zamyka lokalną bramkę programu. Powód: po poprawce widoczności zapis serii przy 390×844 kończy się nad dolną nawigacją, a pozostały lokalny przepływ planu, importu, edycji, treningu, historii, postępu i profilu przechodzi bez luki kontraktu. Wpływ: T16-I jest done lokalnie. D046 i D047 bez zmian. Recenzent nie zmieniał `src/`, API ani progu testu. Telefon, Safari i publikacja zostają otwarte. [Handoff](handoffs/2026-10-20-T16-I-ponowny-odbior.md).
+
+## 2026-10-20 — jawne podpięcie PNG ćwiczeń
+
+Na osobne zlecenie użytkownika wydzielono po wcześniejszej sesji ilustracji zadanie „Ilustracje ćwiczeń — podpięcie PNG” z gotowymi zależnościami i zamknięto je lokalnie. Powód: gotowe PNG nie były używane, a sprzęt `kółka` gasił ikony; rzeczywisty plan miał również równoważny wpis `rings`. Użytkownik wybrał `step-up-kick.png` dla złożonego ruchu, podpięcie niedokładnych póz wycieraczek i rotacji oraz zastąpienie wszystkich wskazanych przybliżeń SVG. Po konsultacji zatwierdził osobny sprawdzony klucz bazowego muscle-up zamiast szerokiego dopasowania tekstu. D048 ma dopisek z tymi rozstrzygnięciami. Zakres ograniczono do resolvera, słownika, testów i dokumentacji: bez 790 automatycznych skojarzeń, danych treningu, snapshotów, manifestu CC BY-SA i T16-I. [Handoff](handoffs/2026-10-20-ikony-png-podpiecie.md).
+
+## 2026-10-20 — komplet PNG z listy ikon
+
+Na zlecenie użytkownika dokończono całą listę z `docs/design/gemini-ikony-cwiczen.md`, bez dzielenia części 5 na paczki po 20. Doszło 788 plików: wycieraczki i 787 nazw, których jeszcze nie było. Każdy to PNG 1024×1024 z alfą po wycięciu zieleni. Katalog ma 809 PNG. Nie weszły do manifestu Workout Guide. Resolver bez zmian. SVG z części 4 nie były rysowane ponownie. `windshield-wiper.png` jest, ale poza to zwis ze zgiętymi nogami.
+
+## 2026-10-20 — pierwsze docelowe PNG ikon
+
+Na zlecenie użytkownika wygenerowano 20 ikon z bieżącej listy w `docs/design/gemini-ikony-cwiczen.md` (ikona ogólna i punkty 1–20, bez wycieraczek). Powód: próbki JPEG z zielonym tłem nie nadawały się do katalogu. Zieleń wycięto do PNG 1024×1024 z kanałem alfa. Pliki leżą w `public/exercise-assets/` i nie są w manifeście Workout Guide. Resolver nadal pokazuje dotychczasowe przybliżenia. 790 nazw na przyszłe plany nie było w tej partii.
+
+## 2026-10-20 — ilustracje ćwiczeń w aplikacji
+
+Na zlecenie użytkownika rozszerzono lokalny katalog Workout Guide i zmieniono resolver. Powód: po T15 karty podawały sprzęt z dokumentu, a resolver gasił wtedy każdy rysunek, także własny dla tej nazwy. D048 zawęża wcześniejszą regułę D040: własny sprzęt zostaje, obcy ruch nie dostaje cudzej ikony, guma schodzi do ruchu bez gumy, a kilka wariantów ma jawnie uzgodniony sąsiedni rysunek. Po kartach planu dopisano martwy ciąg ze sztangą, skos sztangą i hantlami, maszynę nad głowę, drugą stronę deski bokiem oraz muscle-up jako podciąganie. Napis „ĆW” zastępuje ogólna sylwetka. Bez npm, CDN i animacji. T16-I pozostaje osobną, nieprzyjętą bramką.
+
 ## 2026-10-13 — rozpoczęcie T04-R1
 
 Użytkownik zatwierdził osobną przebudowę ręcznego edytora nowych i istniejących planów: jeden trening, podgląd całości, karty, okna edycji i bloki jednakowych serii, dodatkowe pola na żądanie. Powód: pełne formularze i puste parametry utrudniają przegląd. Wydzielono T04-R1 po zakończonych T04/T06-R1/T07-R1, zachowując wcześniejsze ID i zależności. D024 rozwija D023 w nowym, jawnie uzgodnionym zakresie. Nie zmieniamy API, danych/historycznych snapshotów ani przepływu importu; T09 nadal review. Bez innych agentów i płatnych prób AI.

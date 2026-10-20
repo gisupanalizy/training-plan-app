@@ -224,7 +224,7 @@ Projekt: /Users/jakub.olech/GIT/apka-plan-treningowy. Wykonaj warunkowe T16-K wy
 
 ## I — niezależny odbiór
 
-- Właściciel: nieprzejęty. Zależności: odebrane B–H. Inny agent niż autorzy B–H i ewentualnego K. Otwarta propozycja kontraktu blokuje pełny PASS do odebranego K albo jawnego odłożenia tego stanu przez użytkownika.
+- Status: done lokalnie (2026-10-20, ponowny odbiór). Właściciel: Cursor agent, inny niż autorzy B–H i poprawki widoczności. Zależności B–H spełnione. Brak propozycji kontraktu. Otwarta propozycja nadal blokowałaby pełny PASS. [Handoff](handoffs/2026-10-20-T16-I-ponowny-odbior.md).
 - Wyłączna edycja: nowy `scripts/test-t16-tempo-acceptance.mjs` tylko jeśli potrzebny, `docs/reports/2026-10-19-T16-I-tempo-acceptance.md`, `docs/handoffs/2026-10-19-T16-I-niezalezny-odbior.md`, ROADMAP, STATUS, CHANGELOG, TESTING, DESIGN, UX i README.
 - Odczyt: cały `src/`, testy i handoffy A–H oraz ewentualne K, propozycje kontraktów, API, baza, migracje, Make, brief i katalog.
 - Odbiór: macierz każdej nazwanej klatki wskazuje realny stan aplikacji albo wspólny komponent. Przepływ login, ręczny lub importowany plan, korekta, edycja, konflikt i start, seria, głos z mockiem, finish, historia, postęp i profil przechodzi lokalnie. A/B/anon, retry, 409, ACK i GET, szkice, null, 0, „Nie dotyczy”, D046, daty i historyczne cele bez regresji. Jedna paleta Tempo i pięć tras. Brak danych z klatek w kodzie. Żaden stan nie jest zaliczony fixture udającym brakujące pole. Defekty wracają do właścicieli B–H lub K. Recenzent nie poprawia `src/` po cichu.

@@ -2,7 +2,9 @@
 
 Aplikacja webowa do importowania planów treningowych i zapisywania ich wykonania, projektowana przede wszystkim na telefon. Wersja testowa dla właściciela projektu i kolegów, z osobnymi kontami.
 
-**T16-D poprawka — 2026-10-20:** przy 390×844 główny zapis serii kończy się nad dolną nawigacją. D046 kart zostaje. T16-I nie był powtórzony i nie zamyka programu. [Handoff poprawki](docs/handoffs/2026-10-20-T16-D-widocznosc-zapisu.md), [raport odrzuconej bramki](docs/reports/2026-10-19-T16-I-tempo-acceptance.md). Bez publikacji.
+**T12-K — plan do wdrożenia (2026-10-20):** wspólna tożsamość ćwiczeń dla importu, ręcznego planu i dyktowanych fragmentów, z potwierdzaniem parafraz, wspólną historią/1RM porównywalnych ruchów i wyższymi limitami plików. [Specyfikacja i obecne ograniczenia](docs/T12_K_TOZSAMOSC_CWICZEN.md), [prompt kolejnego agenta](docs/prompts/T12-K.md). Kod i działające limity nie zostały jeszcze zmienione.
+
+**T16-I — 2026-10-20:** ponowny niezależny odbiór Tempo jest done lokalnie. Przy 390×844 główny zapis serii kończy się nad dolną nawigacją, a karty zostają doskrolowalne. [Handoff](docs/handoffs/2026-10-20-T16-I-ponowny-odbior.md), [raport](docs/reports/2026-10-19-T16-I-tempo-acceptance.md). Telefon, Safari i publikacja bez zmiany.
 
 **T13-C lokalnie — 2026-10-18:** A/B/C w `review` z przyjętymi lokalnymi bramkami. Przegląd czterech kart, jedna seria, rundy superserii, szkice i retry bez reload, konflikty/legacy oraz finish z korektą czasu działają w lokalnym Chrome/API. 198 testów, build i typy PASS. [Rzeczywisty handoff C](docs/handoffs/2026-10-18-T13-C-prowadzenie-treningu.md). D–E niewykonane; D wymaga osobnego zlecenia. Bez publikacji produkcji.
 
