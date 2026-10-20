@@ -2,6 +2,14 @@
 
 Aktualizacja: 2026-10-20.
 
+## Subtelne ramy — jak w Figmie
+
+Ramy pól, kart i wierszy biorą `#344245`, ten sam token co separator. Wcześniej `--control` wskazywał tekst pomocniczy `#9daaa7`, więc obrys wyglądał grubiej przy tej samej grubości 1 px. Fokus zostaje bursztynowym obrysem 3 px, a błąd pola ramą `#ffb4ab`. Krok obciążenia zostaje polem, nie wierszem z chevronem. Ta zmiana nie zamyka T16-I. [Handoff](handoffs/2026-10-20-subtelne-ramy.md).
+
+Sprawdzenia: Chrome na `localhost:3000`, viewport 390×844, trasy logowanie, start, plany, podgląd, import, edytor, historia, postęp, profil i ustawienie hasła. Aktywnego treningu nie otwarto. Telefon, Safari, `npm test`, build i typecheck niewykonane.
+
+Następny krok: inny agent niż autor poprawki zapisu i tej zmiany ram powtarza T16-I. Ta sesja nie przechodzi do odbioru.
+
 ## T16-D — widoczność zapisu serii, review
 
 Poprawka wady z niezależnego T16-I. Przy 390×844, po uzupełnieniu celów i wyborze „Zostań”, dół `Zapisz i przejdź dalej` jest nad górą `.mobile-nav`. Zapis stoi pod przewijaną treścią serii. D046 bez zmian: czwarta karta podglądu ma dół 1015,75, a czwarta karta treningu 1195,97, obie przy nawigacji 768, i obie są doskrolowalne. Komenda, API i próg T15-B bez zmian. Ta sesja nie jest nowym T16-I i nie zamyka T16. [Handoff](handoffs/2026-10-20-T16-D-widocznosc-zapisu.md).
