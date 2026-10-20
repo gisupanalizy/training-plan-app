@@ -31,7 +31,7 @@
   --hero-ink:var(--tempo-text);
   --hero-muted:var(--tempo-soft);
   --focus:var(--tempo-accent);
-  --control:var(--tempo-muted);
+  --control:var(--tempo-line);
   --hover:var(--tempo-accent-hover);
   --soft-hover:var(--tempo-surface-hover);
   --warning:var(--tempo-warning-surface);
